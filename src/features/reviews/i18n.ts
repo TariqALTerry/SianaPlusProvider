@@ -1,0 +1,58 @@
+import { registerTranslations } from '@/i18n'
+
+registerTranslations('reviews', {
+  ar: {
+    title: 'التقييمات',
+    description: 'ما يقوله العملاء عن خدمات منشأتك وفنييها — التقييمات المنشورة فقط',
+    summary: {
+      average: 'متوسط تقييم الخدمة',
+      count: '{{count}} تقييم',
+      distribution: 'توزيع التقييمات',
+      starsLabel: 'تقييم {{stars}} من 5',
+      leaderboard: 'ترتيب الفنيين',
+      leaderboardEmpty: 'لا توجد تقييمات للفنيين بعد',
+      ratings: '{{count}} تقييم',
+      filterBy: 'عرض تقييمات {{name}}',
+      empty: 'لا توجد تقييمات منشورة بعد',
+    },
+    filters: { executor: 'الفني', allExecutors: 'كل الفنيين' },
+    empty: 'لا توجد تقييمات منشورة',
+    columns: {
+      date: 'التاريخ',
+      service: 'الخدمة',
+      serviceRating: 'تقييم الخدمة',
+      executorRating: 'تقييم الفني',
+      comment: 'التعليق',
+      customer: 'العميل',
+      executor: 'الفني',
+      item: 'رقم الخدمة',
+    },
+  },
+  en: {
+    title: 'Reviews',
+    description: 'What customers say about your services and technicians — published reviews only',
+    summary: {
+      average: 'Average service rating',
+      count: '{{count}} ratings',
+      distribution: 'Rating distribution',
+      starsLabel: '{{stars}} out of 5',
+      leaderboard: 'Technician leaderboard',
+      leaderboardEmpty: 'No technician ratings yet',
+      ratings: '{{count}} ratings',
+      filterBy: 'Show reviews for {{name}}',
+      empty: 'No published reviews yet',
+    },
+    filters: { executor: 'Technician', allExecutors: 'All technicians' },
+    empty: 'No published reviews',
+    columns: {
+      date: 'Date',
+      service: 'Service',
+      serviceRating: 'Service rating',
+      executorRating: 'Technician rating',
+      comment: 'Comment',
+      customer: 'Customer',
+      executor: 'Technician',
+      item: 'Service no.',
+    },
+  },
+})

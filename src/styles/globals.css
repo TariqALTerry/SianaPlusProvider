@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Siana Plus brand (§3), as HSL triplets so Tailwind can apply opacity:
+ * deep #013B37 · deep2 #02554A · primary #047760 · teal #01A897 · mint #90E5C5 · yellow #F5D048
+ * cream #FFF9E9 · ink #102320 · muted #667772 · line #E1EAE7 · background #F6FAF8 · error #B42318
+ * Status tones are tuned for WCAG AA text on their own soft background in both themes.
+ */
+
+@layer base {
+  :root {
+    --brand-deep: 176 97% 12%;
+    --brand-deep2: 172 95% 17%;
+    --brand-teal: 174 99% 33%;
+    --brand-mint: 157 62% 73%;
+    --brand-yellow: 47 90% 62%;
+    --brand-cream: 44 100% 96%;
+
+    --background: 150 29% 97%;
+    --surface: 0 0% 100%;
+    --foreground: 170 37% 10%;
+    --muted: 160 20% 94%;
+    --muted-foreground: 162 8% 40%;
+    --primary: 168 93% 24%;
+    --primary-foreground: 0 0% 100%;
+    --primary-soft: 157 55% 92%;
+    --destructive: 4 76% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-soft: 4 85% 95%;
+    --border: 160 18% 90%;
+    --input: 160 16% 84%;
+    --ring: 174 99% 33%;
+    --radius: 0.875rem;
+
+    --sidebar: 176 97% 12%;
+    --sidebar-foreground: 160 30% 92%;
+    --sidebar-muted: 160 18% 68%;
+    --sidebar-accent: 172 95% 17%;
+
+    --tone-neutral: 162 10% 34%;
+    --tone-neutral-soft: 160 16% 93%;
+    --tone-info: 214 80% 38%;
+    --tone-info-soft: 214 90% 94%;
+    --tone-waiting: 38 92% 28%;
+    --tone-waiting-soft: 47 95% 88%;
+    --tone-active: 174 99% 24%;
+    --tone-active-soft: 174 60% 91%;
+    --tone-attention: 20 88% 36%;
+    --tone-attention-soft: 28 100% 92%;
+    --tone-success: 158 80% 24%;
+    --tone-success-soft: 157 62% 90%;
+    --tone-danger: 4 76% 40%;
+    --tone-danger-soft: 4 85% 95%;
+    --tone-muted: 162 8% 40%;
+    --tone-muted-soft: 160 14% 91%;
+
+    --chart-1: 168 93% 30%;
+    --chart-2: 174 99% 33%;
+    --chart-3: 38 92% 40%;
+    --chart-4: 214 80% 50%;
+    --chart-5: 4 76% 48%;
+  }
+
+  .dark {
+    --background: 175 40% 6%;
+    --surface: 174 34% 9%;
+    --foreground: 160 25% 93%;
+    --muted: 174 24% 14%;
+    --muted-foreground: 160 10% 66%;
+    --primary: 170 70% 42%;
+    --primary-foreground: 176 97% 8%;
+    --primary-soft: 172 50% 15%;
+    --destructive: 4 80% 64%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-soft: 4 45% 17%;
+    --border: 174 20% 18%;
+    --input: 174 20% 24%;
+    --ring: 174 80% 45%;
+
+    --sidebar: 176 90% 6%;
+    --sidebar-foreground: 160 25% 90%;
+    --sidebar-muted: 160 12% 60%;
+    --sidebar-accent: 174 60% 12%;
+
+    --tone-neutral: 160 12% 76%;
+    --tone-neutral-soft: 174 16% 18%;
+    --tone-info: 212 90% 72%;
+    --tone-info-soft: 214 50% 18%;
+    --tone-waiting: 47 92% 64%;
+    --tone-waiting-soft: 40 50% 16%;
+    --tone-active: 172 80% 60%;
+    --tone-active-soft: 174 50% 15%;
+    --tone-attention: 25 95% 66%;
+    --tone-attention-soft: 22 50% 17%;
+    --tone-success: 157 62% 64%;
+    --tone-success-soft: 158 40% 14%;
+    --tone-danger: 4 90% 72%;
+    --tone-danger-soft: 4 45% 18%;
+    --tone-muted: 160 8% 62%;
+    --tone-muted-soft: 174 14% 17%;
+
+    --chart-1: 170 70% 45%;
+    --chart-2: 157 62% 60%;
+    --chart-3: 47 92% 60%;
+    --chart-4: 212 90% 66%;
+    --chart-5: 4 85% 66%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background font-sans text-sm text-foreground antialiased;
+  }
+
+  /* Focus ring: teal at 24% (§3), plus a solid edge so it's visible on any surface. */
+  :focus-visible {
+    @apply outline-none;
+    box-shadow:
+      0 0 0 2px hsl(var(--background)),
+      0 0 0 4px hsl(var(--ring) / 0.6),
+      0 0 0 7px hsl(var(--ring) / 0.24);
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Human numbers (SI-10053-2), phones and codes stay LTR inside RTL text. */
+  .ltr-nums {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+
+  /* The brand pattern (mint arcs + yellow stripes) behind hero areas, at low opacity. */
+  .brand-pattern {
+    background-image:
+      radial-gradient(circle at 12% 18%, transparent 46px, hsl(var(--brand-mint) / 0.14) 47px, hsl(var(--brand-mint) / 0.14) 52px, transparent 53px),
+      radial-gradient(circle at 88% 82%, transparent 70px, hsl(var(--brand-mint) / 0.1) 71px, hsl(var(--brand-mint) / 0.1) 78px, transparent 79px),
+      linear-gradient(135deg, transparent 47%, hsl(var(--brand-yellow) / 0.12) 47%, hsl(var(--brand-yellow) / 0.12) 53%, transparent 53%);
+    background-size: 220px 220px, 260px 260px, 140px 140px;
+  }
+
+  .hero-gradient {
+    background-image: linear-gradient(135deg, hsl(var(--brand-deep)), hsl(var(--brand-deep2)));
+  }
+}
+
+/* Leaflet ships its CSS separately; the map editor imports it. These keep popups themed. */
+.leaflet-container {
+  font-family: inherit;
+  background: hsl(var(--muted));
+}
