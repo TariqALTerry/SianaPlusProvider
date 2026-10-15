@@ -13,6 +13,8 @@ import { RouteGuard } from './RouteGuard'
 import { Sidebar } from './Sidebar'
 import { StatusBanner } from './StatusBanner'
 import { Topbar } from './Topbar'
+import { EnablePrompt } from '@/features/push/EnablePrompt'
+import { WebPushBridge } from '@/features/push/WebPushBridge'
 
 function RateLimitBanner() {
   const { t } = useTranslation()
@@ -50,6 +52,8 @@ export function AppShell() {
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar onOpenMenu={() => setMobileOpen(true)} />
         <StatusBanner />
+        <EnablePrompt />
+        <WebPushBridge />
         <RateLimitBanner />
         <main id="main" className="flex-1">
           <div className="mx-auto w-full max-w-[1440px] px-3 py-4 md:px-6 md:py-6">

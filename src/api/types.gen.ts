@@ -2,6 +2,30 @@
 // `npm run gen:types` — do not edit by hand.
 /* eslint-disable */
 
+export const DayOfWeekValues = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const
+export type DayOfWeek = (typeof DayOfWeekValues)[number]
+export const AiProviderValues = ['AimlApi', 'Anthropic'] as const
+export type AiProvider = (typeof AiProviderValues)[number]
+export const AiReviewRatingValues = ['Good', 'Bad'] as const
+export type AiReviewRating = (typeof AiReviewRatingValues)[number]
+export const AiReviewTagValues = ['None', 'WrongService', 'TooManyQuestions', 'Hallucination', 'WrongPrice', 'Tone', 'Slow', 'ToolProblem', 'Handoff', 'GoodExample', 'Other'] as const
+export type AiReviewTag = (typeof AiReviewTagValues)[number]
+export const AppExperienceValues = ['Customer', 'Executor', 'Supplier'] as const
+export type AppExperience = (typeof AppExperienceValues)[number]
+export const AssistantConversationStatusValues = ['Active', 'HandedOff', 'Closed'] as const
+export type AssistantConversationStatus = (typeof AssistantConversationStatusValues)[number]
+export const AssistantMessageRoleValues = ['Customer', 'Assistant'] as const
+export type AssistantMessageRole = (typeof AssistantMessageRoleValues)[number]
+export const AssistantCardTypeValues = ['Service', 'Unavailable', 'Addresses', 'Slots', 'Summary', 'Safety', 'Handoff', 'Warranty'] as const
+export type AssistantCardType = (typeof AssistantCardTypeValues)[number]
+export const AssistantStageValues = ['Started', 'ServiceFound', 'TimeOffered', 'AddedToCart', 'SummaryShown'] as const
+export type AssistantStage = (typeof AssistantStageValues)[number]
+export const AssistantOutcomeValues = ['Ordered', 'LeftInCart', 'HandedOff', 'AreaNotCovered', 'NoServiceMatched', 'LeftAfterPrice', 'LeftAtTime', 'Failed', 'InProgress'] as const
+export type AssistantOutcome = (typeof AssistantOutcomeValues)[number]
+export const AvailabilityAlertStatusValues = ['Waiting', 'Notified', 'Cancelled'] as const
+export type AvailabilityAlertStatus = (typeof AvailabilityAlertStatusValues)[number]
+export const AvailabilityAlertSourceValues = ['App', 'Assistant'] as const
+export type AvailabilityAlertSource = (typeof AvailabilityAlertSourceValues)[number]
 export const ExecutionModeValues = ['Appliance', 'DirectRepair', 'ScheduledService', 'ProjectService', 'Delivery', 'Workshop'] as const
 export type ExecutionMode = (typeof ExecutionModeValues)[number]
 export const PricingTypeValues = ['Fixed', 'InspectionThenQuote', 'QuoteRequired'] as const
@@ -10,16 +34,54 @@ export const DynamicFieldTypeValues = ['Text', 'Number', 'Select', 'MultiSelect'
 export type DynamicFieldType = (typeof DynamicFieldTypeValues)[number]
 export const PriceItemTypeValues = ['Labor', 'Part', 'AddOn', 'Inspection', 'Discount'] as const
 export type PriceItemType = (typeof PriceItemTypeValues)[number]
+export const HomeBannerActionTypeValues = ['Category', 'Service', 'Store', 'StoreProduct', 'Assistant', 'Url'] as const
+export type HomeBannerActionType = (typeof HomeBannerActionTypeValues)[number]
 export const ActiveFilterValues = ['Active', 'Inactive', 'All'] as const
 export type ActiveFilter = (typeof ActiveFilterValues)[number]
 export const AuditActionValues = ['Create', 'Update', 'Delete', 'Login', 'Logout', 'PasswordChange', 'StatusChange', 'Assign', 'Approve', 'Reject', 'Refund', 'Settle', 'Cancel'] as const
 export type AuditAction = (typeof AuditActionValues)[number]
 export const NotificationTypeValues = ['Info', 'Success', 'Warning', 'Alert'] as const
 export type NotificationType = (typeof NotificationTypeValues)[number]
-export const FileCategoryValues = ['Avatar', 'Attachment', 'Document', 'Import', 'Export', 'Evidence', 'ProviderDocument', 'CatalogMedia', 'ProductImage'] as const
+export const FileCategoryValues = ['Avatar', 'Attachment', 'Document', 'Import', 'Export', 'Evidence', 'ProviderDocument', 'CatalogMedia', 'ProductImage', 'CommunityMedia', 'AssistantMedia'] as const
 export type FileCategory = (typeof FileCategoryValues)[number]
 export const ActorTypeValues = ['System', 'Customer', 'Admin', 'Provider', 'Executor'] as const
 export type ActorType = (typeof ActorTypeValues)[number]
+export const CommunityMemberTypeValues = ['Technician', 'Supplier'] as const
+export type CommunityMemberType = (typeof CommunityMemberTypeValues)[number]
+export const CommunityMemberStatusValues = ['Active', 'Suspended'] as const
+export type CommunityMemberStatus = (typeof CommunityMemberStatusValues)[number]
+export const PartConditionValues = ['New', 'Used', 'Refurbished', 'ForParts'] as const
+export type PartCondition = (typeof PartConditionValues)[number]
+export const PartPriceTypeValues = ['Fixed', 'Negotiable', 'OnContact'] as const
+export type PartPriceType = (typeof PartPriceTypeValues)[number]
+export const PartListingStatusValues = ['Active', 'Paused', 'SoldOut', 'Removed'] as const
+export type PartListingStatus = (typeof PartListingStatusValues)[number]
+export const PartRequestStatusValues = ['Open', 'OfferChosen', 'Closed'] as const
+export type PartRequestStatus = (typeof PartRequestStatusValues)[number]
+export const PartRequestCloseReasonValues = ['Found', 'NoLongerNeeded'] as const
+export type PartRequestCloseReason = (typeof PartRequestCloseReasonValues)[number]
+export const PartOfferStatusValues = ['Submitted', 'Chosen', 'Withdrawn', 'NotChosen'] as const
+export type PartOfferStatus = (typeof PartOfferStatusValues)[number]
+export const CommunityPostTypeValues = ['Question', 'Experience', 'Tutorial', 'PartDiscussion', 'PartRequest'] as const
+export type CommunityPostType = (typeof CommunityPostTypeValues)[number]
+export const CommunityMediaTypeValues = ['Image', 'Video'] as const
+export type CommunityMediaType = (typeof CommunityMediaTypeValues)[number]
+export const CommunityTargetTypeValues = ['Listing', 'PartRequest', 'Offer', 'Post', 'Comment', 'Member', 'Message'] as const
+export type CommunityTargetType = (typeof CommunityTargetTypeValues)[number]
+export const ConversationContextValues = ['Listing', 'PartRequest', 'Direct'] as const
+export type ConversationContext = (typeof ConversationContextValues)[number]
+export const CommunityReportReasonValues = ['Spam', 'Fake', 'Inappropriate', 'Fraud', 'Other'] as const
+export type CommunityReportReason = (typeof CommunityReportReasonValues)[number]
+export const CommunityReportStatusValues = ['Open', 'Dismissed', 'ActionTaken'] as const
+export type CommunityReportStatus = (typeof CommunityReportStatusValues)[number]
+export const CommunityReportActionValues = ['Dismiss', 'HideContent', 'SuspendMember'] as const
+export type CommunityReportAction = (typeof CommunityReportActionValues)[number]
+export const CommunitySavedTypeValues = ['Listing', 'PartRequest', 'Post'] as const
+export type CommunitySavedType = (typeof CommunitySavedTypeValues)[number]
+export const CommunityListingSortValues = ['Newest', 'PriceLowToHigh', 'PriceHighToLow'] as const
+export type CommunityListingSort = (typeof CommunityListingSortValues)[number]
+export const CommunityPostFilterValues = ['Unanswered', 'Popular', 'Videos'] as const
+export type CommunityPostFilter = (typeof CommunityPostFilterValues)[number]
 export const QuotationStatusValues = ['Draft', 'Sent', 'Approved', 'Rejected', 'Expired', 'Cancelled'] as const
 export type QuotationStatus = (typeof QuotationStatusValues)[number]
 export const EvidenceStageValues = ['CustomerRequest', 'Before', 'During', 'After', 'Custody', 'Handover'] as const
@@ -56,7 +118,7 @@ export const AssignmentStatusValues = ['Pending', 'Accepted', 'Rejected', 'Reass
 export type AssignmentStatus = (typeof AssignmentStatusValues)[number]
 export const OrderSourceValues = ['CustomerApp', 'SmartRequest', 'Admin', 'Store'] as const
 export type OrderSource = (typeof OrderSourceValues)[number]
-export const OtpPurposeValues = ['CustomerLogin', 'ProviderLogin', 'ProviderRegistration'] as const
+export const OtpPurposeValues = ['CustomerLogin', 'ProviderLogin', 'ProviderRegistration', 'AppLogin'] as const
 export type OtpPurpose = (typeof OtpPurposeValues)[number]
 export const ProviderTypeValues = ['IndependentTechnician', 'Company'] as const
 export type ProviderType = (typeof ProviderTypeValues)[number]
@@ -74,16 +136,300 @@ export const CoverageShapeValues = ['CityDistrict', 'Circle', 'Polygon'] as cons
 export type CoverageShape = (typeof CoverageShapeValues)[number]
 export const ExecutorAvailabilityValues = ['Available', 'Busy', 'Offline', 'OnLeave'] as const
 export type ExecutorAvailability = (typeof ExecutorAvailabilityValues)[number]
+export const ProviderWithdrawalStateValues = ['Open', 'Cancelled', 'Rejected'] as const
+export type ProviderWithdrawalState = (typeof ProviderWithdrawalStateValues)[number]
+export const ProviderWithdrawalStatusValues = ['Requested', 'Approved', 'Paid', 'OnHold', 'Cancelled', 'Rejected'] as const
+export type ProviderWithdrawalStatus = (typeof ProviderWithdrawalStatusValues)[number]
+export const ConversationSideValues = ['Customer', 'Provider', 'Executor'] as const
+export type ConversationSide = (typeof ConversationSideValues)[number]
+export const ExecutorTimeOffReasonValues = ['Leave', 'Sick', 'Training', 'Other'] as const
+export type ExecutorTimeOffReason = (typeof ExecutorTimeOffReasonValues)[number]
+export const PushPlatformValues = ['Android', 'Ios', 'Web'] as const
+export type PushPlatform = (typeof PushPlatformValues)[number]
+export const PushAppValues = ['Customer', 'Executor', 'Provider', 'Dashboard'] as const
+export type PushApp = (typeof PushAppValues)[number]
+export const NotificationPushStatusValues = ['Skipped', 'Pending', 'Sent', 'NoDevice', 'Failed'] as const
+export type NotificationPushStatus = (typeof NotificationPushStatusValues)[number]
 export const DisputeStatusValues = ['Open', 'UnderReview', 'Resolved', 'Rejected', 'Escalated'] as const
 export type DisputeStatus = (typeof DisputeStatusValues)[number]
 export const DisputeResolutionTypeValues = ['None', 'FullRefund', 'PartialRefund', 'Rework', 'NoAction'] as const
 export type DisputeResolutionType = (typeof DisputeResolutionTypeValues)[number]
-export const RoleValues = ['SuperAdmin', 'TenantAdmin', 'Manager', 'Member', 'PlatformAdmin', 'Customer', 'ProviderOwner', 'ProviderSupervisor', 'Executor'] as const
+export const RoleValues = ['SuperAdmin', 'TenantAdmin', 'Manager', 'Member', 'PlatformAdmin', 'Customer', 'ProviderOwner', 'ProviderSupervisor', 'Executor', 'Supplier'] as const
 export type Role = (typeof RoleValues)[number]
 export const StoreOrderStatusValues = ['Draft', 'PendingPayment', 'Paid', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] as const
 export type StoreOrderStatus = (typeof StoreOrderStatusValues)[number]
 export const UserStatusValues = ['PendingApproval', 'Active', 'Suspended'] as const
 export type UserStatus = (typeof UserStatusValues)[number]
+export const WalletItemsBucketValues = ['Available', 'OnHold'] as const
+export type WalletItemsBucket = (typeof WalletItemsBucketValues)[number]
+
+// ── Ai/AiDtos.cs
+export interface AiSettingsResponse {
+  provider: AiProvider
+  model: string
+  hasApiKey: boolean
+  apiKeyMasked: string | null
+  baseUrl: string | null
+  effectiveBaseUrl: string
+  thinking: boolean
+  maxTokens: number
+  enabled: boolean
+  inputPricePerMTok: number
+  outputPricePerMTok: number
+  cacheReadPricePerMTok: number
+  cacheWritePricePerMTok: number
+  promptVersion: string
+  fromConfiguration: boolean
+  apiKeyUnreadable: boolean
+  mode: string
+  updatedAt: string | null
+  updatedBy: string | null
+}
+export interface UpdateAiSettingsRequest {
+  provider: AiProvider
+  model: string
+  apiKey?: string | null
+  clearApiKey: boolean
+  baseUrl?: string | null
+  thinking: boolean
+  maxTokens: number
+  enabled: boolean
+  inputPricePerMTok: number
+  outputPricePerMTok: number
+  cacheReadPricePerMTok: number
+  cacheWritePricePerMTok: number
+}
+export interface TestAiSettingsRequest {
+  provider?: AiProvider | null
+  model?: string | null
+  apiKey?: string | null
+  baseUrl?: string | null
+}
+export interface AiConnectionTestResponse {
+  ok: boolean
+  model: string
+  latencyMs: number
+  reply: string | null
+  error: string | null
+}
+export interface AiModelOption {
+  provider: AiProvider
+  model: string
+  label: string
+  recommended: boolean
+  inputPricePerMTok: number
+  outputPricePerMTok: number
+  cacheReadPricePerMTok: number
+  cacheWritePricePerMTok: number
+  note: string | null
+}
+export interface AiUsageRequest {
+  from?: string | null
+  to?: string | null
+}
+export interface AiUsageTotals {
+  calls: number
+  failedCalls: number
+  conversations: number
+  customers: number
+  inputTokens: number
+  outputTokens: number
+  cacheReadTokens: number
+  cacheWriteTokens: number
+  costUsd: number
+  averageLatencyMs: number
+}
+export interface AiUsageOverviewResponse {
+  from: string
+  to: string
+  totals: AiUsageTotals
+  orders: number
+  costPerOrderUsd: number
+  days: AiUsageDay[]
+  models: AiUsageByModel[]
+}
+export interface AiUsageDay {
+  date: string
+  calls: number
+  conversations: number
+  tokens: number
+  costUsd: number
+}
+export interface AiUsageByModel {
+  provider: AiProvider
+  model: string
+  calls: number
+  tokens: number
+  costUsd: number
+  averageLatencyMs: number
+}
+export interface AiUserUsageListRequest extends PaginatedRequest {
+  from?: string | null
+  to?: string | null
+  search?: string | null
+}
+export interface AiUserUsageResponse {
+  userId: string
+  name: string | null
+  phone: string | null
+  conversations: number
+  customerMessages: number
+  calls: number
+  tokens: number
+  costUsd: number
+  orders: number
+  lastUsedAt: string | null
+}
+export interface AiUserUsageDetailResponse {
+  summary: AiUserUsageResponse
+  days: AiUsageDay[]
+  conversations: AdminAssistantConversationResponse[]
+}
+export interface AiCallListRequest extends PaginatedRequest {
+  from?: string | null
+  to?: string | null
+  model?: string | null
+  promptVersion?: string | null
+  feature?: string | null
+  failed?: boolean | null
+  tool?: string | null
+  toolErrors?: boolean | null
+}
+export interface AiCallResponse {
+  id: string
+  feature: string
+  conversationId: string | null
+  serviceItemId: string | null
+  userId: string
+  customerName: string | null
+  provider: AiProvider
+  model: string
+  promptVersion: string
+  round: number
+  inputTokens: number
+  outputTokens: number
+  cacheReadTokens: number
+  cacheWriteTokens: number
+  costUsd: number
+  latencyMs: number
+  stopReason: string
+  error: string | null
+  tools: AiToolCallResponse[]
+  createdAt: string
+}
+export interface AiToolCallResponse {
+  id: string
+  toolName: string
+  inputJson: string
+  resultJson: string
+  isError: boolean
+  durationMs: number
+}
+export interface AiTraceResponse {
+  conversation: AdminAssistantConversationResponse
+  steps: AiTraceStep[]
+  review: AiReviewResponse | null
+}
+export interface AiTraceStep {
+  sequence: number
+  kind: string
+  text: string | null
+  cardType: AssistantCardType | null
+  quickReplies: string[]
+  requestPhoto: boolean
+  photos: number
+  blocksJson: string | null
+  call: AiCallResponse | null
+  createdAt: string
+}
+export interface AiToolStatsResponse {
+  from: string
+  to: string
+  tools: AiToolStat[]
+}
+export interface AiToolStat {
+  toolName: string
+  calls: number
+  errors: number
+  errorRate: number
+  averageDurationMs: number
+  maxDurationMs: number
+}
+export interface AiVersionComparisonResponse {
+  from: string
+  to: string
+  versions: AiVersionStat[]
+}
+export interface AiVersionStat {
+  model: string | null
+  promptVersion: string | null
+  firstSeen: string
+  lastSeen: string
+  conversations: number
+  ordered: number
+  conversionRate: number
+  averageCustomerMessages: number
+  averageCostUsd: number
+  failures: number
+  reviewedGood: number
+  reviewedBad: number
+}
+export interface SaveAiReviewRequest {
+  rating: AiReviewRating
+  tags: AiReviewTag
+  note?: string | null
+  expectedBehavior?: string | null
+}
+export interface AiReviewResponse {
+  conversationId: string
+  rating: AiReviewRating
+  tags: AiReviewTag
+  tagList: AiReviewTag[]
+  note: string | null
+  expectedBehavior: string | null
+  reviewedBy: string | null
+  reviewedAt: string
+}
+export interface AiReviewListRequest extends PaginatedRequest {
+  rating?: AiReviewRating | null
+  tag?: AiReviewTag | null
+  from?: string | null
+  to?: string | null
+}
+export interface AiReviewListItem {
+  review: AiReviewResponse
+  title: string | null
+  model: string | null
+  promptVersion: string | null
+  outcome: AssistantOutcome
+}
+export interface AiExportRequest {
+  from?: string | null
+  to?: string | null
+  rating?: AiReviewRating | null
+  limit: number
+}
+export interface AiExportResponse {
+  generatedAt: string
+  promptVersion: string
+  conversations: AiExportConversation[]
+}
+export interface AiExportConversation {
+  id: string
+  model: string | null
+  promptVersion: string | null
+  outcome: AssistantOutcome
+  review: AiReviewResponse | null
+  turns: AiExportTurn[]
+  tools: AiToolCallResponse[]
+}
+export interface AiExportTurn {
+  role: AssistantMessageRole
+  text: string
+  card: AssistantCardType | null
+  quickReplies: string[]
+  photos: number
+}
 
 // ── Assignments/AssignmentDtos.cs
 export interface AssignProviderRequest {
@@ -132,6 +478,8 @@ export interface ExecutorCandidateResponse {
   averageRating: number
   completedItemsCount: number
   distanceKm: number | null
+  isOffDuty: boolean
+  offDutyReason: string | null
   isEligible: boolean
   score: number
   hasCapacity: boolean
@@ -149,6 +497,215 @@ export interface AssignmentResponse {
   respondedAt: string | null
   responseNote: string | null
   createdAt: string
+}
+
+// ── Assistant/AssistantDtos.cs
+export interface StartAssistantConversationRequest {
+  addressId?: string | null
+}
+export interface SendAssistantMessageRequest {
+  text: string
+  mediaIds: string[]
+}
+export interface AssistantConversationListRequest extends PaginatedRequest {
+}
+export interface AssistantConversationResponse {
+  id: string
+  status: AssistantConversationStatus
+  title: string | null
+  addressId: string | null
+  canSend: boolean
+  messages: AssistantMessageResponse[]
+  createdAt: string
+  lastMessageAt: string
+}
+export interface AssistantConversationSummaryResponse {
+  id: string
+  status: AssistantConversationStatus
+  title: string | null
+  lastMessagePreview: string | null
+  cartItemsAdded: number
+  createdAt: string
+  lastMessageAt: string
+}
+export interface AssistantMessageResponse {
+  id: string
+  role: AssistantMessageRole
+  text: string
+  quickReplies: string[]
+  card: AssistantCardResponse | null
+  requestPhoto: boolean
+  media: AssistantMediaResponse[]
+  createdAt: string
+}
+export interface AssistantMediaResponse {
+  id: string
+  url: string
+  contentType: string
+  sizeBytes: number
+}
+export interface AssistantTurnResponse {
+  conversationId: string
+  status: AssistantConversationStatus
+  canSend: boolean
+  customerMessage: AssistantMessageResponse
+  reply: AssistantMessageResponse
+}
+export interface AssistantCardResponse {
+  type: AssistantCardType
+  service: AssistantServiceCard | null
+  unavailable: AssistantUnavailableCard | null
+  addresses: AssistantAddressOption[] | null
+  slots: AssistantSlotOption[] | null
+  summary: AssistantSummaryCard | null
+  warranty: AssistantWarrantyCard | null
+}
+export interface AssistantWarrantyCard {
+  warrantyId: string
+  warrantyNumber: string
+  orderId: string
+  serviceItemId: string
+  serviceNameAr: string
+  serviceNameEn: string
+  serviceDate: string
+  endsAt: string
+}
+export interface AssistantServiceCard {
+  serviceId: string
+  nameAr: string
+  nameEn: string
+  imageUrl: string | null
+  pricingType: PricingType
+  basePrice: number | null
+  currency: string
+  estimatedDurationMinutes: number | null
+  warrantyDays: number | null
+  isAvailable: boolean
+  address: AssistantAddressOption | null
+}
+export interface AssistantUnavailableCard {
+  serviceId: string
+  nameAr: string
+  nameEn: string
+  address: AssistantAddressOption | null
+  availableAt: AssistantAddressOption[]
+}
+export interface AssistantAddressOption {
+  id: string
+  label: string
+  city: string
+  district: string | null
+  isDefault: boolean
+}
+export interface AssistantSlotOption {
+  label: string
+  start: string
+  end: string
+}
+export interface AssistantSummaryCard {
+  items: AssistantSummaryLine[]
+  currency: string
+  total: number
+  hasPriceOnQuoteItems: boolean
+  address: AssistantAddressOption | null
+  slot: AssistantSlotOption | null
+  paymentMethods: PaymentMethod[]
+  checkout: AssistantCheckoutPayload
+}
+export interface AssistantSummaryLine {
+  cartItemId: string
+  serviceNameAr: string
+  serviceNameEn: string
+  baseAmount: number
+  priceOnQuote: boolean
+  deviceCount: number
+}
+export interface AssistantCheckoutPayload {
+  addressId: string | null
+  preferredStart: string | null
+  preferredEnd: string | null
+  customerNotes: string | null
+}
+export interface AdminAssistantConversationListRequest extends PaginatedRequest {
+  status?: AssistantConversationStatus | null
+  outcome?: AssistantOutcome | null
+  userId?: string | null
+  from?: string | null
+  to?: string | null
+  search?: string | null
+}
+export interface AdminAssistantConversationResponse {
+  id: string
+  userId: string
+  customerName: string | null
+  customerPhone: string | null
+  status: AssistantConversationStatus
+  title: string | null
+  handoffReason: string | null
+  outcome: AssistantOutcome
+  furthestStage: AssistantStage
+  failures: number
+  model: string | null
+  promptVersion: string | null
+  costUsd: number
+  customerMessagesCount: number
+  cartItemsAdded: number
+  modelCalls: number
+  inputTokens: number
+  outputTokens: number
+  cacheReadTokens: number
+  cacheWriteTokens: number
+  createdAt: string
+  lastMessageAt: string
+  messages: AssistantMessageResponse[] | null
+}
+export interface AssistantFunnelRequest {
+  from?: string | null
+  to?: string | null
+}
+export interface AssistantFunnelResponse {
+  from: string
+  to: string
+  conversations: number
+  ordered: number
+  conversionRate: number
+  averageCustomerMessages: number
+  stages: AssistantFunnelStage[]
+  outcomes: AssistantFunnelOutcome[]
+  inputTokens: number
+  outputTokens: number
+  cacheReadTokens: number
+  cacheWriteTokens: number
+}
+export interface AssistantFunnelStage {
+  stage: AssistantStage | null
+  reached: number
+}
+export interface AssistantFunnelOutcome {
+  outcome: AssistantOutcome
+  count: number
+}
+
+// ── Auth/AppAuthDtos.cs
+export interface AppVerifyOtpRequest {
+  phoneNumber: string
+  code: string
+  deviceId?: string | null
+  preferredCulture?: string | null
+}
+export interface AppSwitchRequest {
+  experience: AppExperience
+  deviceId?: string | null
+}
+export interface AppAuthResponse extends AuthResponse {
+  experience: AppExperience
+  availableExperiences: AppExperience[]
+  hasProviderManagementAccount: boolean
+}
+export interface AppExperiencesResponse {
+  current: AppExperience
+  availableExperiences: AppExperience[]
+  hasProviderManagementAccount: boolean
 }
 
 // ── Auth/AuthRequests.cs
@@ -570,6 +1127,77 @@ export interface PublicCapabilityResponse {
   servicesCount: number
 }
 
+// ── Catalog/DiscoveryDtos.cs
+export interface PopularServicesRequest {
+  count: number
+  latitude?: number | null
+  longitude?: number | null
+  city?: string | null
+  district?: string | null
+}
+export interface PopularServiceResponse extends ServiceCardResponse {
+  rank: number
+  ordersCount: number
+  averageRating: number | null
+  ratingsCount: number
+  isAvailable: boolean | null
+}
+export interface ServiceUnderstandRequest {
+  q: string
+  latitude?: number | null
+  longitude?: number | null
+}
+export interface ServiceUnderstandResponse {
+  analyzer: string
+  problems: ProblemMatch[]
+  alternatives: ServiceCardResponse[]
+}
+export interface ProblemMatch {
+  text: string
+  matches: SmartRequestMatch[]
+}
+export interface HomeBannerResponse {
+  id: string
+  titleAr: string
+  titleEn: string
+  subtitleAr: string | null
+  subtitleEn: string | null
+  imageUrl: string | null
+  actionLabelAr: string
+  actionLabelEn: string
+  actionType: HomeBannerActionType
+  actionTargetId: string | null
+  actionUrl: string | null
+  sortOrder: number
+  startsAt: string | null
+  endsAt: string | null
+}
+export interface HomeBannerAdminResponse extends HomeBannerResponse {
+  isActive: boolean
+  isLive: boolean
+  actionTargetNameAr: string | null
+  createdAt: string
+  updatedAt: string | null
+}
+export interface SaveHomeBannerRequest {
+  titleAr: string
+  titleEn: string
+  subtitleAr?: string | null
+  subtitleEn?: string | null
+  actionLabelAr: string
+  actionLabelEn: string
+  actionType: HomeBannerActionType
+  actionTargetId?: string | null
+  actionUrl?: string | null
+  sortOrder: number
+  startsAt?: string | null
+  endsAt?: string | null
+  isActive: boolean
+}
+export interface SyncFavoriteServicesRequest {
+  serviceIds: string[]
+}
+
 // ── Catalog/SmartRequestDtos.cs
 export interface SmartRequestAnalyzeRequest {
   text: string
@@ -660,6 +1288,490 @@ export interface PaginatedResponse<T> {
   totalPages: number
   hasNextPage: boolean
   hasPreviousPage: boolean
+}
+
+// ── Community/CommunityAdminDtos.cs
+export interface AdminCommunityMemberListRequest extends PaginatedRequest {
+  search?: string | null
+  type?: CommunityMemberType | null
+  status?: CommunityMemberStatus | null
+  verified?: boolean | null
+}
+export interface SetCommunityMemberStatusRequest {
+  status: CommunityMemberStatus
+  reason?: string | null
+}
+export interface SetCommunityMemberVerifiedRequest {
+  isVerified: boolean
+}
+export interface SaveSupplierRequest {
+  fullName: string
+  phone: string
+  businessName: string
+  city: string
+  bio?: string | null
+  specialtyIds: string[]
+  isVerified: boolean
+}
+export interface SaveCommunitySpecialtyRequest {
+  code: string
+  nameAr: string
+  nameEn: string
+  sortOrder: number
+}
+export interface AdminCommunityContentListRequest extends PaginatedRequest {
+  search?: string | null
+  memberId?: string | null
+  hidden?: boolean | null
+}
+export interface SetCommunityVisibilityRequest {
+  isHidden: boolean
+  reason?: string | null
+}
+export interface AdminCommunityReportListRequest extends PaginatedRequest {
+  status?: CommunityReportStatus | null
+  targetType?: CommunityTargetType | null
+}
+export interface ResolveCommunityReportRequest {
+  action: CommunityReportAction
+  note?: string | null
+}
+export interface CommunityOverviewResponse {
+  membersCount: number
+  techniciansCount: number
+  suppliersCount: number
+  suspendedCount: number
+  activeListings: number
+  openRequests: number
+  offersLast7Days: number
+  postsLast7Days: number
+  openReports: number
+}
+export interface AdminCommunityMemberResponse {
+  id: string
+  userId: string
+  type: CommunityMemberType
+  displayName: string
+  businessName: string | null
+  phone: string | null
+  city: string | null
+  avatarUrl: string | null
+  isVerified: boolean
+  status: CommunityMemberStatus
+  suspensionReason: string | null
+  accountActive: boolean
+  organizationName: string | null
+  specialties: CommunitySpecialtyResponse[]
+  listingsCount: number
+  requestsCount: number
+  postsCount: number
+  openReportsAgainst: number
+  joinedAt: string
+}
+export interface AdminCommunityReportResponse {
+  id: string
+  targetType: CommunityTargetType
+  targetId: string
+  targetPreview: string | null
+  targetHidden: boolean
+  targetMember: CommunityMemberSummaryResponse | null
+  reporter: CommunityMemberSummaryResponse
+  reason: CommunityReportReason
+  details: string | null
+  status: CommunityReportStatus
+  action: CommunityReportAction | null
+  reviewNote: string | null
+  reviewedAt: string | null
+  otherOpenReports: number
+  createdAt: string
+}
+
+// ── Community/CommunityDtos.cs
+export interface UpdateCommunityProfileRequest {
+  displayName: string
+  bio?: string | null
+  city?: string | null
+  businessName?: string | null
+  specialtyIds: string[]
+}
+export interface ListingListRequest extends PaginatedRequest {
+  search?: string | null
+  specialtyId?: string | null
+  condition?: PartCondition | null
+  priceType?: PartPriceType | null
+  city?: string | null
+  sellerId?: string | null
+  includeUnavailable?: boolean
+  sort?: CommunityListingSort
+}
+export interface MyListingsRequest extends PaginatedRequest {
+  status?: PartListingStatus | null
+}
+export interface SaveListingRequest {
+  specialtyId: string
+  title: string
+  partNumber?: string | null
+  compatibleModels?: string | null
+  description?: string | null
+  condition: PartCondition
+  quantity: number
+  priceType: PartPriceType
+  price?: number | null
+  city: string
+  district?: string | null
+  deliveryAvailable: boolean
+  mediaIds: string[]
+}
+export interface SetListingStatusRequest {
+  status: PartListingStatus
+}
+export interface PartRequestListRequest extends PaginatedRequest {
+  search?: string | null
+  specialtyId?: string | null
+  city?: string | null
+  status?: PartRequestStatus | null
+}
+export interface MyPartRequestsRequest extends PaginatedRequest {
+  status?: PartRequestStatus | null
+}
+export interface SavePartRequestRequest {
+  specialtyId: string
+  title: string
+  partNumber?: string | null
+  deviceModel?: string | null
+  description?: string | null
+  quantity: number
+  city: string
+  mediaIds: string[]
+}
+export interface ClosePartRequestRequest {
+  reason: PartRequestCloseReason
+}
+export interface SavePartOfferRequest {
+  listingId?: string | null
+  partName?: string | null
+  condition: PartCondition
+  quantity: number
+  priceType: PartPriceType
+  price?: number | null
+  availableInDays: number
+  note?: string | null
+  mediaIds: string[]
+}
+export interface MyOffersRequest extends PaginatedRequest {
+  status?: PartOfferStatus | null
+}
+export interface PostListRequest extends PaginatedRequest {
+  search?: string | null
+  type?: CommunityPostType | null
+  specialtyId?: string | null
+  authorId?: string | null
+  filter?: CommunityPostFilter | null
+}
+export interface SavePostRequest {
+  type: CommunityPostType
+  specialtyId?: string | null
+  title?: string | null
+  body: string
+  linkedListingId?: string | null
+  linkedRequestId?: string | null
+  mediaIds: string[]
+}
+export interface CommentListRequest extends PaginatedRequest {
+  parentCommentId?: string | null
+}
+export interface CreateCommentRequest {
+  body: string
+  parentCommentId?: string | null
+  mediaIds: string[]
+}
+export interface AcceptAnswerRequest {
+  commentId?: string | null
+}
+export interface SaveItemRequest {
+  itemType: CommunitySavedType
+  itemId: string
+}
+export interface OpenConversationRequest {
+  context: ConversationContext
+  listingId?: string | null
+  requestId?: string | null
+  offerId?: string | null
+  memberId?: string | null
+}
+export interface MessageListRequest {
+  before?: string | null
+  take?: number
+}
+export interface SendMessageRequest {
+  body?: string | null
+  mediaId?: string | null
+}
+export interface CreateCommunityReportRequest {
+  targetType: CommunityTargetType
+  targetId: string
+  reason: CommunityReportReason
+  details?: string | null
+}
+export interface CommunitySearchRequest {
+  q: string
+}
+export interface CommunitySpecialtyResponse {
+  id: string
+  code: string
+  nameAr: string
+  nameEn: string
+  sortOrder: number
+  isActive: boolean
+}
+export interface CommunityMediaResponse {
+  id: string
+  type: CommunityMediaType
+  url: string
+  contentType: string
+  sizeBytes: number
+}
+export interface CommunityMemberSummaryResponse {
+  id: string
+  type: CommunityMemberType
+  displayName: string
+  businessName: string | null
+  avatarUrl: string | null
+  city: string | null
+  isVerified: boolean
+}
+export interface CommunityProfileResponse extends CommunityMemberSummaryResponse {
+  bio: string | null
+  status: CommunityMemberStatus
+  suspensionReason: string | null
+  specialties: CommunitySpecialtyResponse[]
+  listingsCount: number
+  postsCount: number
+  unreadMessages: number
+  joinedAt: string
+}
+export interface CommunityMemberProfileResponse extends CommunityMemberSummaryResponse {
+  bio: string | null
+  specialties: CommunitySpecialtyResponse[]
+  listingsCount: number
+  postsCount: number
+  joinedAt: string
+  isSuspended: boolean
+  isBlockedByMe: boolean
+  canMessage: boolean
+}
+export interface ListingSummaryResponse {
+  id: string
+  title: string
+  specialty: LookupResponse
+  condition: PartCondition
+  quantity: number
+  priceType: PartPriceType
+  price: number | null
+  currency: string
+  city: string
+  status: PartListingStatus
+  isAvailable: boolean
+  coverUrl: string | null
+  hasVideo: boolean
+  seller: CommunityMemberSummaryResponse
+  isSaved: boolean
+  isMine: boolean
+  isHidden: boolean
+  hiddenReason: string | null
+  createdAt: string
+}
+export interface ListingDetailResponse extends ListingSummaryResponse {
+  partNumber: string | null
+  compatibleModels: string | null
+  description: string | null
+  district: string | null
+  deliveryAvailable: boolean
+  media: CommunityMediaResponse[]
+  viewsCount: number
+  savesCount: number
+  updatedAt: string | null
+}
+export interface PartRequestSummaryResponse {
+  id: string
+  title: string
+  specialty: LookupResponse
+  quantity: number
+  city: string
+  status: PartRequestStatus
+  offersCount: number
+  coverUrl: string | null
+  requester: CommunityMemberSummaryResponse
+  isMine: boolean
+  isSaved: boolean
+  myOfferStatus: PartOfferStatus | null
+  isHidden: boolean
+  hiddenReason: string | null
+  createdAt: string
+}
+export interface PartRequestDetailResponse extends PartRequestSummaryResponse {
+  partNumber: string | null
+  deviceModel: string | null
+  description: string | null
+  media: CommunityMediaResponse[]
+  chosenOfferId: string | null
+  closeReason: PartRequestCloseReason | null
+  closedAt: string | null
+  offers: PartOfferResponse[]
+}
+export interface PartOfferResponse {
+  id: string
+  requestId: string
+  requestTitle: string
+  seller: CommunityMemberSummaryResponse
+  listingId: string | null
+  partName: string | null
+  condition: PartCondition
+  quantity: number
+  priceType: PartPriceType
+  price: number | null
+  currency: string
+  availableInDays: number
+  note: string | null
+  status: PartOfferStatus
+  media: CommunityMediaResponse[]
+  isMine: boolean
+  conversationId: string | null
+  createdAt: string
+  updatedAt: string | null
+}
+export interface CommunityPostResponse {
+  id: string
+  type: CommunityPostType
+  specialty: LookupResponse | null
+  title: string | null
+  body: string
+  author: CommunityMemberSummaryResponse
+  media: CommunityMediaResponse[]
+  linkedListing: ListingSummaryResponse | null
+  linkedRequest: PartRequestSummaryResponse | null
+  acceptedCommentId: string | null
+  likesCount: number
+  commentsCount: number
+  hasVideo: boolean
+  isLiked: boolean
+  isSaved: boolean
+  isMine: boolean
+  isHidden: boolean
+  hiddenReason: string | null
+  createdAt: string
+  updatedAt: string | null
+}
+export interface CommunityCommentResponse {
+  id: string
+  postId: string
+  parentCommentId: string | null
+  author: CommunityMemberSummaryResponse
+  body: string
+  media: CommunityMediaResponse[]
+  repliesCount: number
+  isAccepted: boolean
+  isMine: boolean
+  isHidden: boolean
+  createdAt: string
+}
+export interface CommunityConversationResponse {
+  id: string
+  context: ConversationContext
+  listing: ListingSummaryResponse | null
+  request: PartRequestSummaryResponse | null
+  offerId: string | null
+  otherMember: CommunityMemberSummaryResponse
+  lastMessagePreview: string | null
+  lastMessageAt: string
+  unreadCount: number
+  isBlocked: boolean
+}
+export interface CommunityMessageResponse {
+  id: string
+  conversationId: string
+  senderId: string
+  isMine: boolean
+  body: string | null
+  media: CommunityMediaResponse | null
+  isHidden: boolean
+  createdAt: string
+}
+export interface CommunityHomeResponse {
+  openRequestsCount: number
+  newListingsCount: number
+  unreadMessages: number
+  requestsNeedingParts: PartRequestSummaryResponse[]
+  suggestedListings: ListingSummaryResponse[]
+  trendingPosts: CommunityPostResponse[]
+}
+export interface CommunitySearchResponse {
+  listings: ListingSummaryResponse[]
+  requests: PartRequestSummaryResponse[]
+  posts: CommunityPostResponse[]
+  members: CommunityMemberSummaryResponse[]
+}
+export interface CommunityReportResponse {
+  id: string
+  targetType: CommunityTargetType
+  targetId: string
+  reason: CommunityReportReason
+  status: CommunityReportStatus
+  createdAt: string
+}
+
+// ── Customers/AvailabilityAlertDtos.cs
+export interface CreateAvailabilityAlertRequest {
+  canonicalServiceId: string
+  addressId?: string | null
+}
+export interface AvailabilityAlertListRequest extends PaginatedRequest {
+  status?: AvailabilityAlertStatus | null
+}
+export interface AvailabilityAlertResponse {
+  id: string
+  canonicalServiceId: string
+  serviceNameAr: string
+  serviceNameEn: string
+  addressId: string
+  addressLabel: string | null
+  city: string
+  district: string | null
+  status: AvailabilityAlertStatus
+  source: AvailabilityAlertSource
+  createdAt: string
+  notifiedAt: string | null
+}
+export interface AvailabilityDemandRequest {
+  city?: string | null
+  from?: string | null
+}
+export interface AvailabilityDemandResponse {
+  waitingAlerts: number
+  customers: number
+  notifiedAlerts: number
+  rows: AvailabilityDemandRow[]
+  districts: AvailabilityDemandDistrict[]
+}
+export interface AvailabilityDemandRow {
+  city: string
+  district: string | null
+  canonicalServiceId: string
+  serviceNameAr: string
+  serviceNameEn: string
+  waiting: number
+  oldestAt: string
+  newestAt: string
+  latitude: number | null
+  longitude: number | null
+}
+export interface AvailabilityDemandDistrict {
+  city: string
+  district: string | null
+  waiting: number
+  services: number
+  latitude: number | null
+  longitude: number | null
 }
 
 // ── Customers/CustomerAccountDtos.cs
@@ -936,6 +2048,62 @@ export interface OrderTimelineEventResponse {
   serviceNameAr: string
   serviceNameEn: string
   event: TimelineEventResponse
+}
+
+// ── Customers/CustomerServiceHistoryDtos.cs
+export interface CustomerServiceHistoryItem {
+  orderId: string
+  serviceItemId: string
+  itemNumber: string | null
+  canonicalServiceId: string
+  serviceNameAr: string
+  serviceNameEn: string
+  status: ServiceItemStatus
+  date: string
+  addressLabel: string | null
+  district: string | null
+  devices: CustomerServiceHistoryDevice[]
+  warranty: CustomerServiceHistoryWarranty | null
+}
+export interface CustomerServiceHistoryDevice {
+  name: string
+  brand: string | null
+  model: string | null
+}
+export interface CustomerServiceHistoryWarranty {
+  warrantyId: string
+  warrantyNumber: string
+  status: WarrantyStatus
+  endsAt: string
+}
+
+// ── Executors/ExecutorAiDtos.cs
+export interface SuggestQuotationRequest {
+  findings?: string | null
+}
+export interface QuotationSuggestionResponse {
+  source: string
+  lines: SuggestedQuotationLine[]
+  summary: string | null
+  checks: string[]
+  estimatedTotal: number
+}
+export interface SuggestedQuotationLine {
+  priceItemId: string
+  code: string
+  nameAr: string
+  nameEn: string
+  itemType: PriceItemType
+  quantity: number
+  unitPrice: number
+  maxUnitPrice: number | null
+  reason: string | null
+}
+export interface JobBriefResponse {
+  serviceItemId: string
+  text: string
+  source: string
+  createdAt: string
 }
 
 // ── Executors/ExecutorEarningsDtos.cs
@@ -1429,6 +2597,47 @@ export interface ProviderOfferResponse {
   settlementNumber: string | null
 }
 
+// ── Messaging/ServiceMessageDtos.cs
+export interface ServiceConversationResponse {
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  itemStatus: ServiceItemStatus
+  canSend: boolean
+  customerName: string | null
+  providerName: string | null
+  executorName: string | null
+  messages: ServiceMessageResponse[]
+}
+export interface ServiceMessageResponse {
+  id: string
+  senderSide: ConversationSide
+  senderName: string
+  isMine: boolean
+  text: string | null
+  imageUrl: string | null
+  createdAt: string
+}
+export interface SendServiceMessageRequest {
+  text?: string | null
+}
+export interface ServiceConversationSummary {
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  itemStatus: ServiceItemStatus
+  counterpartName: string | null
+  lastMessageText: string | null
+  lastMessageSide: ConversationSide
+  lastMessageAt: string
+  unreadCount: number
+}
+export interface ServiceInboxRequest extends PaginatedRequest {
+  unreadOnly?: boolean | null
+}
+
 // ── Notifications/NotificationDtos.cs
 export interface CreateNotificationRequest {
   userId: string
@@ -1455,6 +2664,57 @@ export interface NotificationResponse {
 }
 export interface UnreadCountResponse {
   count: number
+}
+
+// ── Notifications/PushDtos.cs
+export interface RegisterPushDeviceRequest {
+  token: string
+  platform: PushPlatform
+  app: PushApp
+  deviceId?: string | null
+  appVersion?: string | null
+}
+export interface PushDeviceResponse {
+  id: string
+  platform: PushPlatform
+  app: PushApp
+  deviceId: string | null
+  appVersion: string | null
+  createdAt: string
+  lastSeenAt: string
+}
+export interface UnregisterPushDeviceRequest {
+  token: string
+}
+export interface PushStatusResponse {
+  provider: string
+  configured: boolean
+  projectId: string | null
+  problem: string | null
+  devices: number
+  devicesByApp: PushDeviceCount[]
+  last24Hours: PushOutcomeCount[]
+}
+export interface PushDeviceCount {
+  app: PushApp
+  platform: PushPlatform
+  count: number
+}
+export interface PushOutcomeCount {
+  status: NotificationPushStatus
+  count: number
+}
+export interface SendTestPushRequest {
+  userId: string
+  title?: string | null
+  body?: string | null
+}
+export interface SendTestPushResponse {
+  notificationId: string
+  status: NotificationPushStatus
+  devices: number
+  delivered: number
+  errors: string[]
 }
 
 // ── Operations/AdminOrderDtos.cs
@@ -2237,6 +3497,204 @@ export interface ProviderAdminDetailResponse {
   activeItems: number
   pendingAssignments: number
   totalItems: number
+}
+
+// ── Providers/ProviderGrowthDtos.cs
+export interface WalletResponse {
+  availableAmount: number
+  availableItems: number
+  onHoldAmount: number
+  onHoldItems: number
+  nextReleaseAt: string | null
+  inProcessingAmount: number
+  paidAmount: number
+  lastPaidAt: string | null
+  currency: string
+  minWithdrawalAmount: number
+  holdDays: number
+  hasOpenWithdrawal: boolean
+  canWithdraw: boolean
+  cannotWithdrawReason: string | null
+  bankAccount: BankAccountResponse | null
+}
+export interface BankAccountResponse {
+  bankName: string
+  ibanMasked: string
+  accountHolderName: string
+}
+export interface UpdateBankAccountRequest {
+  bankName: string
+  iban: string
+  accountHolderName: string
+}
+export interface BankAccountDetailResponse {
+  bankName: string | null
+  iban: string | null
+  accountHolderName: string | null
+}
+export interface WalletItemResponse {
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  completedAt: string
+  grossAmount: number
+  commissionAmount: number
+  netAmount: number
+  availableAt: string | null
+}
+export interface WalletItemsRequest extends PaginatedRequest {
+  bucket?: WalletItemsBucket
+}
+export interface CreateWithdrawalRequest {
+  note?: string | null
+}
+export interface WithdrawalListRequest extends PaginatedRequest {
+  status?: ProviderWithdrawalStatus | null
+}
+export interface WithdrawalResponse {
+  id: string
+  status: ProviderWithdrawalStatus
+  amount: number
+  itemsCount: number
+  bankName: string
+  ibanMasked: string
+  accountHolderName: string
+  note: string | null
+  rejectionReason: string | null
+  settlementId: string | null
+  settlementNumber: string | null
+  paymentReference: string | null
+  createdAt: string
+  paidAt: string | null
+  closedAt: string | null
+}
+export interface AdminWithdrawalResponse extends WithdrawalResponse {
+  providerOrganizationId: string
+  organizationName: string
+  iban: string
+  requestedBy: string | null
+}
+export interface AdminWithdrawalListRequest extends PaginatedRequest {
+  status?: ProviderWithdrawalStatus | null
+  providerOrganizationId?: string | null
+}
+export interface RejectWithdrawalRequest {
+  reason: string
+}
+export interface ProviderDemandRequest {
+  radiusKm: number
+}
+export interface ProviderDemandResponse {
+  waitingCustomers: number
+  baseLatitude: number | null
+  baseLongitude: number | null
+  rows: ProviderDemandRow[]
+}
+export interface ProviderDemandRow {
+  canonicalServiceId: string
+  serviceNameAr: string
+  serviceNameEn: string
+  city: string
+  district: string | null
+  waiting: number
+  oldestSince: string
+  distanceKm: number | null
+  needsCapability: boolean
+  needsCoverage: boolean
+  missingCapabilityIds: string[]
+}
+export interface TeamPerformanceRequest {
+  from?: string | null
+  to?: string | null
+}
+export interface TeamPerformanceResponse {
+  from: string
+  to: string
+  executors: ExecutorPerformance[]
+}
+export interface ExecutorPerformance {
+  executorId: string
+  fullName: string
+  isActive: boolean
+  completed: number
+  averageRating: number | null
+  ratingsCount: number
+  onTimeRate: number | null
+  scheduledArrivals: number
+  acceptanceRate: number | null
+  assignmentsOffered: number
+  assignmentsRejected: number
+  averageWorkMinutes: number | null
+  warrantyClaims: number
+  disputes: number
+  cancelledAfterAssignment: number
+  revenue: number
+}
+export interface ExecutorScheduleResponse {
+  executorId: string
+  workingHours: WorkingHoursEntry[]
+  timeOff: TimeOffResponse[]
+  timeZone: string
+  isOffNow: boolean
+}
+export interface WorkingHoursEntry {
+  dayOfWeek: DayOfWeek
+  start: string
+  end: string
+}
+export interface UpdateWorkingHoursRequest {
+  days: WorkingHoursEntry[]
+}
+export interface TimeOffResponse {
+  id: string
+  startsAt: string
+  endsAt: string
+  reason: ExecutorTimeOffReason
+  note: string | null
+  conflictingJobs: number
+}
+export interface CreateTimeOffRequest {
+  startsAt: string
+  endsAt: string
+  reason: ExecutorTimeOffReason
+  note?: string | null
+}
+export interface TeamMapResponse {
+  generatedAt: string
+  baseLatitude: number | null
+  baseLongitude: number | null
+  executors: TeamMapExecutor[]
+  jobs: TeamMapJob[]
+}
+export interface TeamMapExecutor {
+  executorId: string
+  fullName: string
+  availability: ExecutorAvailability
+  isOffNow: boolean
+  latitude: number | null
+  longitude: number | null
+  locationAt: string | null
+  locationStale: boolean
+  activeJobs: number
+  currentJobId: string | null
+  distanceToJobKm: number | null
+  etaMinutes: number | null
+}
+export interface TeamMapJob {
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  status: ServiceItemStatus
+  executorId: string | null
+  executorName: string | null
+  latitude: number | null
+  longitude: number | null
+  district: string | null
+  scheduledStart: string | null
+  scheduledEnd: string | null
+  isLate: boolean
 }
 
 // ── Providers/ProviderOrganizationDtos.cs

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { AlertTriangle, Check, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { qk } from '@/api/keys'
 import { LOOKUP_STALE_TIME } from '@/api/queryClient'
@@ -84,7 +85,10 @@ function CapabilityPicker({ catalog, current }: { catalog: PublicCapabilityRespo
   // the server refuses them (`CapabilityNotFound`), so a save drops them.
   const unavailable = useMemo(() => current.capabilities.filter((c) => !catalogIds.has(c.id)), [current, catalogIds])
 
-  const [selected, setSelected] = useState<Set<string>>(() => new Set(currentIds.filter((id) => catalogIds.has(id))))
+  // From "طلب قريب منك" (PHASE2 §3): `?add=id1,id2` preselects the missing capabilities; the user still saves.
+  const [params] = useSearchParams()
+  const suggested = (params.get('add') ?? '').split(',').filter((id) => catalogIds.has(id))
+  const [selected, setSelected] = useState<Set<string>>(() => new Set([...currentIds.filter((id) => catalogIds.has(id)), ...suggested]))
   const { added, removed } = capabilityChanges(currentIds, [...selected])
   const dirty = added.length > 0 || removed.length > 0
 

@@ -16,7 +16,12 @@
     "disputes": "الشكاوى",
     "store": "المتجر",
     "organization": "ملف المنشأة",
-    "notifications": "الإشعارات"
+    "notifications": "الإشعارات",
+    "messages": "الرسائل",
+    "teamPerformance": "الأداء",
+    "teamMap": "الخريطة",
+    "wallet": "المحفظة",
+    "growthDemand": "النمو: طلب قريب منك"
   },
   "shell": {
     "language": "اللغة",

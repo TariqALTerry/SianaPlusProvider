@@ -280,4 +280,11 @@ export const http = {
     form.append('file', file)
     return send<T>({ method: 'POST', url, data: form })
   },
+  /** multipart/form-data with text fields and an optional file (e.g. a service message). */
+  form: <T>(url: string, fields: Record<string, string | null | undefined>, file?: File | null) => {
+    const form = new FormData()
+    for (const [key, value] of Object.entries(fields)) if (value) form.append(key, value)
+    if (file) form.append('file', file)
+    return send<T>({ method: 'POST', url, data: form })
+  },
 }

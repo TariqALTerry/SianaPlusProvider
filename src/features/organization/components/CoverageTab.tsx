@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Info } from 'lucide-react'
 import { lazy, Suspense } from 'react'
+import { useSearchParams } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { ErrorState } from '@/components/States'
 import { Card, CardBody, CardHeader } from '@/components/ui/card'
@@ -25,6 +26,10 @@ function EditorSkeleton() {
 /** مناطق التغطية (§8.9). */
 export function CoverageTab() {
   const { t } = useTranslation('organization')
+  // From "طلب قريب منك" (PHASE2 §3): open a new area for that district, prefilled.
+  const [params] = useSearchParams()
+  const suggestCity = params.get('city')
+  const suggest = suggestCity ? { city: suggestCity, district: params.get('district') ?? '' } : null
   const query = useQuery({
     queryKey: organizationKeys.coverage,
     queryFn: ({ signal }) => organizationApi.coverage(signal),
@@ -44,7 +49,7 @@ export function CoverageTab() {
           <ErrorState error={query.error} onRetry={() => void query.refetch()} compact />
         ) : (
           <Suspense fallback={<EditorSkeleton />}>
-            <CoverageEditor areas={query.data} />
+            <CoverageEditor areas={query.data} suggest={suggest} />
           </Suspense>
         )}
       </CardBody>

@@ -36,14 +36,17 @@ interface SaveVars {
  * مناطق التغطية map editor (§8.9). Loaded lazily by `CoverageTab`, so Leaflet, geoman and turf
  * live only in this chunk.
  */
-export default function CoverageEditor({ areas }: { areas: CoverageAreaResponse[] }) {
+export default function CoverageEditor({ areas, suggest }: { areas: CoverageAreaResponse[]; suggest?: { city: string; district: string } | null }) {
   const { t } = useTranslation('organization')
   const { lang } = useLang()
   const { org } = useProvider()
   const queryClient = useQueryClient()
   const engine = useRef<CoverageMapHandle>(null)
 
-  const [editor, setEditor] = useState<Editor>(null)
+  // A suggested district (PHASE2 §3) starts as a new city/district area form, prefilled.
+  const [editor, setEditor] = useState<Editor>(() =>
+    suggest ? { phase: 'form', kind: 'CityDistrict', area: null, initial: { name: suggest.district || suggest.city, city: suggest.city, district: suggest.district } } : null,
+  )
   const [draft, setDraft] = useState<DraftGeometry | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<CoverageAreaResponse | null>(null)

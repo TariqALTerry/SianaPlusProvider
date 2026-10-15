@@ -8,4 +8,10 @@ export const teamRoutes: RouteObject[] = [
     handle: { full: true } satisfies RouteAccess,
     lazy: () => import('./TeamPage').then((m) => ({ Component: m.TeamPage })),
   },
+  // One technician: performance cards and schedule (PHASE2 §4, §5). /team/performance and /team/map are static and win.
+  {
+    path: 'team/:executorId',
+    handle: { full: true } satisfies RouteAccess,
+    lazy: () => import('./ExecutorPage').then((m) => ({ Component: m.ExecutorPage })),
+  },
 ]

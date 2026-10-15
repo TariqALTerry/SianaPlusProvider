@@ -54,6 +54,11 @@ export const useAuthStore = create<AuthState>()((set) => ({
   },
 
   signOut: async (notice = null, callServer = true) => {
+    // Before the session ends: stop browser notifications here so the next person to sign in on this
+    // browser never receives this account's (PHASE2 §8 / dashboard push §3.6). Lazy; a no-op when unused.
+    await import('@/features/push/webPush')
+      .then((m) => m.disableWebPush({ callServer: callServer && !!session.accessToken }))
+      .catch(() => undefined)
     if (callServer && session.accessToken) {
       // Network failure is irrelevant: the local session ends either way.
       await authApi.logout().catch(() => undefined)

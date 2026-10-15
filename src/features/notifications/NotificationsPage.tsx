@@ -18,6 +18,7 @@ import { listQueryOptions } from '@/api/queryClient'
 import type { NotificationResponse, NotificationType } from '@/api/types'
 import { cn } from '@/lib/utils'
 import { notificationHref, notificationKeys, notificationsApi, useUnreadCount } from './api'
+import { BrowserAlertsCard } from '@/features/push/BrowserAlertsCard'
 
 const schema = { ...paginationDefaults, type: '', unread: false }
 
@@ -84,6 +85,9 @@ export function NotificationsPage() {
           </Button>
         }
       />
+      <div className="mb-4">
+        <BrowserAlertsCard />
+      </div>
       <DataTable
         id="notifications"
         columns={columns}

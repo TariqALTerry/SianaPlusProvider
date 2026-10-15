@@ -103,6 +103,8 @@ const ar = {
     reason: 'سبب الاختيار',
     selected: 'الفني المختار',
     reasons: {
+      offDutyTimeOff: 'في إجازة وقت الزيارة',
+      offDutyHours: 'خارج ساعات عمله وقت الزيارة',
       capabilities: 'قدرات ناقصة',
       unavailable: 'غير متاح',
       maxJobs: 'وصل الحد الأقصى',
@@ -119,6 +121,7 @@ const ar = {
   },
   detail: {
     back: 'الأعمال',
+    conversation: 'المحادثة',
     order: 'الطلب',
     customer: 'العميل والعنوان',
     privacy: 'تظهر بيانات العميل بعد قبول الفني',
@@ -295,6 +298,8 @@ const en: typeof ar = {
     reason: 'Reason',
     selected: 'Selected technician',
     reasons: {
+      offDutyTimeOff: 'On time off at the visit time',
+      offDutyHours: 'Outside working hours at the visit time',
       capabilities: 'Missing skills',
       unavailable: 'Unavailable',
       maxJobs: 'At max jobs',
@@ -311,6 +316,7 @@ const en: typeof ar = {
   },
   detail: {
     back: 'Work',
+    conversation: 'Conversation',
     order: 'Order',
     customer: 'Customer and address',
     privacy: 'Customer details appear after the technician accepts',

@@ -4,18 +4,23 @@ import {
   Gavel,
   Home,
   Inbox,
+  BarChart3,
   LayoutDashboard,
   ListChecks,
+  Map as MapIcon,
+  MessagesSquare,
   MessageSquareWarning,
   ReceiptText,
   ShoppingBag,
   Star,
+  TrendingUp,
   Users,
+  Wallet,
   type LucideIcon,
 } from 'lucide-react'
 import type { ProviderContext } from './provider'
 
-export type NavBadge = 'incoming'
+export type NavBadge = 'incoming' | 'messages'
 
 export interface NavItem {
   to: string
@@ -27,6 +32,8 @@ export interface NavItem {
   /** Shown in onboarding/review mode too (§8: only الرئيسية, ملف المنشأة, الإشعارات). */
   always?: boolean
   visible?: (ctx: ProviderContext) => boolean
+  /** An indented entry under the item above it (e.g. الأداء under الفريق). */
+  sub?: boolean
 }
 
 /** The deep sidebar, in the brief's order (§8). */
@@ -35,12 +42,19 @@ export const NAV: readonly NavItem[] = [
   { to: '/incoming', label: 'incoming', icon: Inbox, badge: 'incoming' },
   { to: '/work', label: 'work', icon: ListChecks },
   { to: '/board', label: 'board', icon: LayoutDashboard },
+  { to: '/messages', label: 'messages', icon: MessagesSquare, badge: 'messages' },
   { to: '/team', label: 'team', icon: Users },
+  // Under الفريق (PHASE2 §4, §6).
+  { to: '/team/performance', label: 'teamPerformance', icon: BarChart3, sub: true },
+  { to: '/team/map', label: 'teamMap', icon: MapIcon, sub: true },
   { to: '/marketplace', label: 'marketplace', icon: Gavel, visible: (c) => c.marketplaceEnabled },
+  { to: '/wallet', label: 'wallet', icon: Wallet },
   { to: '/settlements', label: 'settlements', icon: ReceiptText },
   { to: '/reviews', label: 'reviews', icon: Star },
   { to: '/disputes', label: 'disputes', icon: MessageSquareWarning },
   { to: '/store', label: 'store', icon: ShoppingBag, visible: (c) => c.storeEnabled },
+  // النمو (PHASE2 §3).
+  { to: '/growth/demand', label: 'growthDemand', icon: TrendingUp },
   { to: '/organization', label: 'organization', icon: Building2, always: true },
   { to: '/notifications', label: 'notifications', icon: Bell, always: true },
 ]

@@ -16,7 +16,12 @@
     "disputes": "Complaints",
     "store": "Store",
     "organization": "Organization",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "messages": "Messages",
+    "teamPerformance": "Performance",
+    "teamMap": "Map",
+    "wallet": "Wallet",
+    "growthDemand": "Growth: demand near you"
   },
   "shell": {
     "language": "Language",

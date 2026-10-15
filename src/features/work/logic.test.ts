@@ -115,6 +115,8 @@ describe('candidate picker (§8.5)', () => {
     isEligible: true,
     score: 0.8,
     hasCapacity: true,
+    isOffDuty: false,
+    offDutyReason: null,
     ...over,
   })
 
@@ -124,6 +126,9 @@ describe('candidate picker (§8.5)', () => {
     expect(ineligibleReasons(c({ isEligible: false, availability: 'Busy', hasCapacity: false }))).toEqual(['unavailable', 'maxJobs'])
     // Inactive account: the server says ineligible without a specific flag.
     expect(ineligibleReasons(c({ isEligible: false }))).toEqual(['unavailable'])
+    // Off duty at the visit time (PHASE2 §5).
+    expect(ineligibleReasons(c({ isEligible: false, isOffDuty: true, offDutyReason: 'TimeOff' }))).toEqual(['offDutyTimeOff'])
+    expect(ineligibleReasons(c({ isEligible: false, isOffDuty: true, offDutyReason: 'OutsideWorkingHours' }))).toEqual(['offDutyHours'])
   })
 
   it('marks the first eligible row as the best, keeping the server order', () => {

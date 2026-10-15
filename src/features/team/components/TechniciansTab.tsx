@@ -1,5 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table'
 import { Activity, MoreHorizontal, Pencil, Power, PowerOff, Sparkles, UserPlus } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ActiveFilter, ExecutorAvailability, ExecutorResponse } from '@/api/types'
@@ -8,7 +9,9 @@ import { EnumFilter, FilterChips, SearchInput, type FilterChip } from '@/compone
 import { PhoneText } from '@/components/PhoneText'
 import { Rating } from '@/components/Stars'
 import { StatusBadge } from '@/components/StatusBadge'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { insightKeys, insightsApi } from '@/features/insights/api'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,6 +52,9 @@ export function TechniciansTab() {
   const executors = useExecutors(params)
   const members = useMembers()
   const owners = useMemo(() => ownerUserIds(members.data), [members.data])
+  // "في إجازة" (PHASE2 §5): the team map carries isOffNow for every technician in one call.
+  const teamMap = useQuery({ queryKey: insightKeys.map, queryFn: ({ signal }) => insightsApi.teamMap(signal), staleTime: 60_000 })
+  const offNow = useMemo(() => new Set((teamMap.data?.executors ?? []).filter((x) => x.isOffNow).map((x) => x.executorId)), [teamMap.data])
 
   const [adding, setAdding] = useState(false)
   const [editing, setEditing] = useState<ExecutorResponse | null>(null)
@@ -68,6 +74,7 @@ export function TechniciansTab() {
             <div className={cn('flex flex-wrap items-center gap-1.5', !e.isActive && 'text-muted-foreground')}>
               <span className="font-medium">{e.fullName}</span>
               {owners.has(e.userId) && <OwnerBadge />}
+              {offNow.has(e.id) && <Badge tone="muted">{t('schedule.offNow')}</Badge>}
             </div>
           )
         },
@@ -148,7 +155,7 @@ export function TechniciansTab() {
         },
       },
     ],
-    [t, owners],
+    [t, owners, offNow],
   )
 
   const chips: FilterChip[] = []
@@ -182,6 +189,7 @@ export function TechniciansTab() {
         onPageChange={(page) => set({ page })}
         onPageSizeChange={(pageSize) => set({ pageSize })}
         getRowId={(e) => e.id}
+        rowHref={(e) => `/team/${e.id}`}
         rowClassName={(e) => (!e.isActive ? 'bg-muted/30' : undefined)}
         filtered={filtered}
         onClearFilters={clear}

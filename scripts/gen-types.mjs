@@ -15,7 +15,10 @@ function walk(d) {
 }
 
 const enums = new Map()
-for (const f of walk(enumDir)) {
+// .NET enums the DTOs use directly (serialized as their names).
+enums.set('DayOfWeek', ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])
+// Enums live in Siana.Core/Enums, but a few are declared next to the DTO that uses them.
+for (const f of [...walk(enumDir), ...walk(dtoDir)]) {
   const src = fs.readFileSync(f, 'utf8').replace(/\/\/.*$/gm, '')
   for (const m of src.matchAll(/public enum (\w+)\s*\{([^}]*)\}/g)) {
     const names = m[2].split(',').map((s) => s.trim().split('=')[0].trim()).filter(Boolean)

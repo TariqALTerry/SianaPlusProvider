@@ -288,6 +288,58 @@ export const UserStatus: EnumMap<T.UserStatus> = {
   Suspended: e('معلّق', 'Suspended', 'danger'),
 }
 
+/** Provider withdrawals (PROVIDER-PLATFORM-PHASE2-PROMPT §1.3). */
+export const ProviderWithdrawalStatus: EnumMap<T.ProviderWithdrawalStatus> = {
+  Requested: e('بانتظار المراجعة', 'Awaiting review', 'waiting'),
+  Approved: e('معتمد، الدفع قريبًا', 'Approved, payment soon', 'info'),
+  Paid: e('تم الدفع', 'Paid', 'success'),
+  OnHold: e('معلّق من المنصة', 'On hold by the platform', 'attention'),
+  Cancelled: e('ملغي', 'Cancelled', 'muted'),
+  Rejected: e('مرفوض', 'Rejected', 'danger'),
+}
+
+export const WalletItemsBucket: EnumMap<T.WalletItemsBucket> = {
+  Available: e('المتاح', 'Available', 'success'),
+  OnHold: e('المعلّق', 'On hold', 'waiting'),
+}
+
+/** Who wrote a service-conversation message (§2). */
+export const ConversationSide: EnumMap<T.ConversationSide> = {
+  Customer: e('العميل', 'Customer', 'info'),
+  Provider: e('المنشأة', 'Provider', 'success'),
+  Executor: e('الفني', 'Technician', 'attention'),
+}
+
+export const ExecutorTimeOffReason: EnumMap<T.ExecutorTimeOffReason> = {
+  Leave: e('إجازة', 'Leave', 'info'),
+  Sick: e('مرضية', 'Sick leave', 'attention'),
+  Training: e('تدريب', 'Training', 'active'),
+  Other: e('أخرى', 'Other', 'muted'),
+}
+
+export const DayOfWeek: EnumMap<T.DayOfWeek> = {
+  Sunday: e('الأحد', 'Sunday'),
+  Monday: e('الاثنين', 'Monday'),
+  Tuesday: e('الثلاثاء', 'Tuesday'),
+  Wednesday: e('الأربعاء', 'Wednesday'),
+  Thursday: e('الخميس', 'Thursday'),
+  Friday: e('الجمعة', 'Friday'),
+  Saturday: e('السبت', 'Saturday'),
+}
+
+export const PushApp: EnumMap<T.PushApp> = {
+  Customer: e('تطبيق العميل', 'Customer app'),
+  Executor: e('تطبيق الفني', 'Technician app'),
+  Provider: e('منصة المزود', 'Provider platform'),
+  Dashboard: e('لوحة التحكم', 'Admin dashboard'),
+}
+
+export const PushPlatform: EnumMap<T.PushPlatform> = {
+  Android: e('أندرويد', 'Android'),
+  Ios: e('آيفون', 'iPhone'),
+  Web: e('متصفح', 'Browser'),
+}
+
 export const Role: EnumMap<T.Role> = {
   SuperAdmin: e('مدير عام', 'Super admin', 'active'),
   PlatformAdmin: e('مشرف منصة', 'Platform admin', 'info'),
@@ -295,6 +347,7 @@ export const Role: EnumMap<T.Role> = {
   ProviderOwner: e('مالك منشأة', 'Provider owner', 'success'),
   ProviderSupervisor: e('مشرف منشأة', 'Provider supervisor', 'success'),
   Executor: e('فني', 'Technician', 'attention'),
+  Supplier: e('مورّد قطع', 'Parts supplier', 'neutral'),
   // Legacy roles from the pre–Siana Plus template; still in the enum, never issued to new users.
   TenantAdmin: e('مسؤول مستأجر (قديم)', 'Tenant admin (legacy)', 'muted'),
   Manager: e('مدير (قديم)', 'Manager (legacy)', 'muted'),
@@ -357,6 +410,7 @@ export const enumMaps = {
   EvidenceStage, EvidenceType, DynamicFieldType, RefundStatus, SettlementStatus, SettlementPartyType,
   DisputeStatus, DisputeResolutionType, WarrantyStatus, MarketplaceRequestStatus, MarketplaceOfferStatus,
   StoreOrderStatus, UserStatus, Role, ActiveFilter, NotificationType, ExecutionStep, CoverageShape,
+  ProviderWithdrawalStatus, WalletItemsBucket, ConversationSide, ExecutorTimeOffReason, DayOfWeek, PushApp, PushPlatform,
 } as const
 
 export type EnumName = keyof typeof enumMaps

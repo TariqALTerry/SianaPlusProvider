@@ -3,7 +3,17 @@ import * as generated from '@/api/types.gen'
 import { enumLabel, enumMaps, enumTone, type EnumEntry } from './enums'
 
 /** Backend enums the provider platform never renders. */
-const NOT_DISPLAYED = new Set(['AuditAction', 'FileCategory', 'OtpPurpose'])
+/** Backend enums this platform never shows (other apps' features, internal states). */
+const NOT_DISPLAYED = new Set([
+  'AuditAction', 'FileCategory', 'OtpPurpose',
+  'AiProvider', 'AiReviewRating', 'AiReviewTag', 'AppExperience', 'HomeBannerActionType', 'NotificationPushStatus',
+  'AssistantConversationStatus', 'AssistantMessageRole', 'AssistantCardType', 'AssistantStage', 'AssistantOutcome',
+  'AvailabilityAlertStatus', 'AvailabilityAlertSource', 'ConversationContext', 'ProviderWithdrawalState',
+  'CommunityMemberType', 'CommunityMemberStatus', 'PartCondition', 'PartPriceType', 'PartListingStatus', 'PartRequestStatus',
+  'PartRequestCloseReason', 'PartOfferStatus', 'CommunityPostType', 'CommunityMediaType', 'CommunityTargetType',
+  'CommunityReportReason', 'CommunityReportStatus', 'CommunityReportAction', 'CommunitySavedType', 'CommunityListingSort',
+  'CommunityPostFilter',
+])
 
 const generatedEnums = Object.entries(generated)
   .filter(([key, value]) => key.endsWith('Values') && Array.isArray(value))

@@ -1,13 +1,15 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Gavel, RefreshCw, ShieldAlert, Sparkles } from 'lucide-react'
+import { Gavel, MessagesSquare, RefreshCw, ShieldAlert, Sparkles } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams, useSearchParams } from 'react-router'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 import { HumanNumber } from '@/components/EntityLink'
 import { PageHeader } from '@/components/PageHeader'
 import { ErrorState, PageSkeleton } from '@/components/States'
 import { StatusBadge } from '@/components/StatusBadge'
 import { Timeline } from '@/components/Timeline'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { VisitBrief } from '@/features/insights/VisitBrief'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { detailQueryOptions } from '@/api/queryClient'
@@ -76,6 +78,14 @@ export function WorkItemPage() {
     <>
       <PageHeader
         back={{ to: '/work', label: t('detail.back') }}
+        // The service's conversation with the customer and the technician (PHASE2 §2).
+        actions={
+          <Button asChild size="sm" variant="outline">
+            <Link to={`/messages/${item.id}`}>
+              <MessagesSquare /> {t('detail.conversation')}
+            </Link>
+          </Button>
+        }
         title={
           <span className="flex flex-wrap items-center gap-x-2">
             {pick(item.serviceNameAr, item.serviceNameEn)}
@@ -169,6 +179,7 @@ export function WorkItemPage() {
           </Tabs>
         </div>
         <aside className="min-w-0 space-y-4">
+          <VisitBrief serviceItemId={item.id} />
           <NetBlock item={item} />
           <TechnicianCard item={item} />
           <ScheduleCard item={item} schedules={schedules} />

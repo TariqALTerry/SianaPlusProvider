@@ -4,15 +4,22 @@ import { Link, useLocation } from 'react-router'
 import { Tooltip } from '@/components/ui/menu'
 import { StatusBadge } from '@/components/StatusBadge'
 import { useIncoming } from '@/features/incoming/queries'
+import { useUnreadMessages } from '@/features/messages/api'
 import { LogoMark } from '@/features/auth/AuthLayout'
 import { useLang } from '@/hooks/useLang'
 import { cn } from '@/lib/utils'
 import { visibleNav, type NavBadge, type NavItem } from './nav'
 import { useProvider } from './provider'
 
-function isActive(item: NavItem, pathname: string): boolean {
+function matches(item: NavItem, pathname: string): boolean {
   if (item.end) return pathname === item.to
   return pathname === item.to || pathname.startsWith(`${item.to}/`)
+}
+
+/** Only the most specific match lights up: /team/map highlights الخريطة, not الفريق too. */
+function isActive(item: NavItem, pathname: string, all: readonly NavItem[]): boolean {
+  if (!matches(item, pathname)) return false
+  return !all.some((other) => other !== item && other.to.length > item.to.length && other.to.startsWith(item.to) && matches(other, pathname))
 }
 
 /** The deep sidebar (§3, §8). */
@@ -22,7 +29,8 @@ export function Sidebar({ collapsed, onToggle, onNavigate }: { collapsed: boolea
   const { pathname } = useLocation()
   const ctx = useProvider()
   const incoming = useIncoming(ctx.mode === 'full')
-  const badges: Record<NavBadge, number | undefined> = { incoming: incoming.data?.length }
+  const unreadMessages = useUnreadMessages(ctx.mode === 'full')
+  const badges: Record<NavBadge, number | undefined> = { incoming: incoming.data?.length, messages: unreadMessages.data }
   const items = visibleNav(ctx)
   const CollapseIcon = collapsed !== isRtl ? ChevronsRight : ChevronsLeft
 
@@ -53,7 +61,7 @@ export function Sidebar({ collapsed, onToggle, onNavigate }: { collapsed: boolea
       <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-3 [scrollbar-width:thin]">
         <ul className="space-y-0.5">
           {items.map((item) => {
-            const active = isActive(item, pathname)
+            const active = isActive(item, pathname, items)
             const count = item.badge ? badges[item.badge] : undefined
             const label = t(`nav.${item.label}`)
             const link = (
@@ -65,6 +73,7 @@ export function Sidebar({ collapsed, onToggle, onNavigate }: { collapsed: boolea
                   'relative flex h-10 items-center gap-3 rounded-lg px-3 text-sm transition-colors',
                   active ? 'bg-primary font-medium text-white shadow-sm' : 'text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-white',
                   collapsed && 'justify-center px-2',
+                  item.sub && !collapsed && 'h-9 ps-9 text-[0.8125rem]',
                 )}
               >
                 <item.icon className="size-[1.125rem] shrink-0" aria-hidden />

@@ -89,7 +89,7 @@ export function delegateSkipped(view: Pick<ServiceItemProviderView, 'status' | '
   return !view.executor && ASSIGNABLE.includes(view.status)
 }
 
-export type IneligibleReason = 'capabilities' | 'unavailable' | 'maxJobs'
+export type IneligibleReason = 'offDutyTimeOff' | 'offDutyHours' | 'capabilities' | 'unavailable' | 'maxJobs'
 
 /**
  * Why a candidate can't take the item (§8.5): قدرات ناقصة · غير متاح · وصل الحد الأقصى.
@@ -99,6 +99,8 @@ export type IneligibleReason = 'capabilities' | 'unavailable' | 'maxJobs'
 export function ineligibleReasons(c: ExecutorCandidateResponse): IneligibleReason[] {
   if (c.isEligible) return []
   const r: IneligibleReason[] = []
+  // Off duty at the visit time (PHASE2 §5): on time off, or outside the weekly working hours.
+  if (c.isOffDuty) r.push(c.offDutyReason === 'TimeOff' ? 'offDutyTimeOff' : 'offDutyHours')
   if (!c.hasAllCapabilities) r.push('capabilities')
   if (c.availability !== 'Available') r.push('unavailable')
   if (!c.hasCapacity) r.push('maxJobs')

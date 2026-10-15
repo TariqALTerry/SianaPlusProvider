@@ -4,6 +4,7 @@ import { http } from '@/api/http'
 import { qk } from '@/api/keys'
 import type { ListParams, NotificationListRequest, NotificationResponse, PaginatedResponse, UnreadCountResponse } from '@/api/types'
 import { usePollingInterval } from '@/hooks/usePageVisible'
+import { useWebPush } from '@/features/push/webPush'
 
 export const notificationsApi = {
   list: (params: ListParams<NotificationListRequest>, signal?: AbortSignal) =>
@@ -23,7 +24,9 @@ export const notificationKeys = {
  * arrived — usually "assigned to you" — so Incoming and the dashboard refresh too (§8.14).
  */
 export function useUnreadCount() {
-  const interval = usePollingInterval(60_000)
+  // A push refreshes the bell at once (PHASE2 §8), so with browser notifications on the poll slows to 5 minutes.
+  const pushOn = useWebPush((s) => s.state === 'on')
+  const interval = usePollingInterval(pushOn ? 5 * 60_000 : 60_000)
   const queryClient = useQueryClient()
   const query = useQuery({
     queryKey: notificationKeys.unread,
@@ -55,6 +58,14 @@ export function notificationHref(n: Pick<NotificationResponse, 'referenceId' | '
       return n.referenceId ? `/marketplace/${n.referenceId}` : null
     case 'ProviderOrganization':
       return '/organization'
+    case 'ServiceItemConversation':
+      return n.referenceId ? `/messages/${n.referenceId}` : '/messages'
+    case 'ProviderWithdrawal':
+      return '/wallet?tab=withdrawals'
+    case 'Settlement':
+      return n.referenceId ? `/settlements/${n.referenceId}` : '/settlements'
+    case 'Dispute':
+      return n.referenceId ? `/disputes/${n.referenceId}` : '/disputes'
     default:
       return null
   }

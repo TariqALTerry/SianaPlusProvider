@@ -1,7 +1,7 @@
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { useEffect, useMemo, useRef, type ReactNode } from 'react'
-import { Circle, CircleMarker, MapContainer, Polyline, Popup, TileLayer, Tooltip, useMap } from 'react-leaflet'
+import { Circle, CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer, Tooltip, useMap } from 'react-leaflet'
 
 export interface MapMarker {
   id: string
@@ -14,6 +14,10 @@ export interface MapMarker {
   label?: ReactNode
   popup?: ReactNode
   highlighted?: boolean
+  /** A short text badge (e.g. a technician's initial) drawn as a filled circle instead of a dot. */
+  text?: string
+  /** Faded (e.g. a stale location). */
+  faded?: boolean
   onClick?: () => void
 }
 
@@ -90,7 +94,13 @@ export default function MapView({ markers = [], circles = [], lines = [], classN
       {lines.map((l) => (
         <Polyline key={l.id} positions={[l.from, l.to]} pathOptions={{ color: l.color ?? 'hsl(243 60% 50%)', weight: 2, dashArray: '4 4' }} />
       ))}
-      {markers.map((m) => (
+      {markers.filter((m) => m.text).map((m) => (
+        <Marker key={m.id} position={[m.lat, m.lng]} icon={letterIcon(m)} eventHandlers={m.onClick ? { click: m.onClick } : undefined}>
+          {m.label && <Tooltip>{m.label}</Tooltip>}
+          {m.popup && <Popup>{m.popup}</Popup>}
+        </Marker>
+      ))}
+      {markers.filter((m) => !m.text).map((m) => (
         <CircleMarker
           key={m.id}
           center={[m.lat, m.lng]}
@@ -99,7 +109,8 @@ export default function MapView({ markers = [], circles = [], lines = [], classN
             color: m.variant === 'executor' ? '#fff' : m.color ?? 'hsl(214 80% 45%)',
             weight: m.variant === 'executor' ? 2 : m.highlighted ? 3 : 1.5,
             fillColor: m.color ?? 'hsl(214 80% 45%)',
-            fillOpacity: m.variant === 'executor' ? 1 : 0.75,
+            fillOpacity: m.faded ? 0.35 : m.variant === 'executor' ? 1 : 0.75,
+            opacity: m.faded ? 0.5 : 1,
           }}
           eventHandlers={m.onClick ? { click: m.onClick } : undefined}
         >
@@ -109,4 +120,18 @@ export default function MapView({ markers = [], circles = [], lines = [], classN
       ))}
     </MapContainer>
   )
+}
+
+const escapeHtml = (v: string) => v.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
+
+/** A round badge with a letter; built as a divIcon so it needs no image assets. */
+function letterIcon(m: MapMarker): L.DivIcon {
+  const size = m.highlighted ? 34 : 28
+  const color = m.color ?? 'hsl(214 80% 45%)'
+  return L.divIcon({
+    className: '',
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    html: `<span style="display:flex;align-items:center;justify-content:center;width:${size}px;height:${size}px;border-radius:9999px;background:${color};color:#fff;font:600 13px system-ui,sans-serif;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.35);opacity:${m.faded ? 0.45 : 1}">${escapeHtml(m.text ?? '')}</span>`,
+  })
 }
