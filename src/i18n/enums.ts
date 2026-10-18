@@ -402,6 +402,41 @@ export const ExecutionStep: EnumMap<T.ExecutionStep> = {
   Return: e('الإرجاع', 'Return'),
 }
 
+/** Where a device physically is (service tracking — custody). */
+export const DeviceCustodyStage: EnumMap<T.DeviceCustodyStage> = {
+  AtCustomer: e('عند العميل', 'With the customer', 'neutral'),
+  PickedUp: e('استُلم — في الطريق للورشة', 'Collected — on its way to the workshop', 'active'),
+  AtWorkshop: e('في الورشة', 'At the workshop', 'info'),
+  ReadyForReturn: e('جاهز للإرجاع', 'Ready for return', 'attention'),
+  OutForReturn: e('في طريق الإرجاع', 'On its way back', 'active'),
+  Returned: e('رجع للعميل', 'Back with the customer', 'success'),
+}
+
+/** What the customer was told about the work, without asking. */
+export const ProgressUpdateKind: EnumMap<T.ProgressUpdateKind> = {
+  InspectionStarted: e('بدأ الفحص', 'Inspection started', 'info'),
+  DiagnosisDone: e('انتهى التشخيص', 'Diagnosis done', 'info'),
+  WaitingForParts: e('بانتظار قطعة غيار', 'Waiting for a spare part', 'waiting'),
+  PartsArrived: e('وصلت القطعة', 'The part arrived', 'info'),
+  RepairInProgress: e('الإصلاح جارٍ', 'Repair in progress', 'active'),
+  Testing: e('اختبار الجهاز بعد الإصلاح', 'Testing after the repair', 'active'),
+  ReadyForReturn: e('جاهز', 'Ready', 'success'),
+  Delayed: e('تأخير', 'Delayed', 'attention'),
+  Other: e('تحديث', 'Update', 'neutral'),
+}
+
+export const ServiceItemLegType: EnumMap<T.ServiceItemLegType> = {
+  Pickup: e('استلام من العميل', 'Pickup from the customer'),
+  Return: e('إرجاع للعميل', 'Return to the customer'),
+}
+
+export const ServiceItemLegStatus: EnumMap<T.ServiceItemLegStatus> = {
+  Planned: e('مخططة', 'Planned', 'info'),
+  Done: e('تمت', 'Done', 'success'),
+  Cancelled: e('ملغاة', 'Cancelled', 'muted'),
+}
+
+
 export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
@@ -411,6 +446,7 @@ export const enumMaps = {
   DisputeStatus, DisputeResolutionType, WarrantyStatus, MarketplaceRequestStatus, MarketplaceOfferStatus,
   StoreOrderStatus, UserStatus, Role, ActiveFilter, NotificationType, ExecutionStep, CoverageShape,
   ProviderWithdrawalStatus, WalletItemsBucket, ConversationSide, ExecutorTimeOffReason, DayOfWeek, PushApp, PushPlatform,
+  DeviceCustodyStage, ProgressUpdateKind, ServiceItemLegType, ServiceItemLegStatus,
 } as const
 
 export type EnumName = keyof typeof enumMaps

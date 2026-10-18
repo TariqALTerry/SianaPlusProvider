@@ -14,6 +14,7 @@ import type {
   ListParams,
   PaginatedResponse,
   ProviderCapabilitiesResponse,
+  SetExecutorRolesRequest,
   TeamMemberResponse,
   UpdateExecutorRequest,
 } from '@/api/types'
@@ -41,6 +42,8 @@ export const teamApi = {
   setExecutorActive: (id: string, isActive: boolean) => http.patch<ExecutorResponse>(`${base}/executors/${id}/active`, { isActive }),
   setExecutorAvailability: (id: string, availability: ExecutorAvailability) =>
     http.patch<ExecutorResponse>(`${base}/executors/${id}/availability`, { availability }),
+  /** Repair and delivery roles, independent; at least one on (`ExecutorRolesRequired`). Service tracking. */
+  setExecutorRoles: (id: string, body: SetExecutorRolesRequest) => http.patch<string>(`/api/provider/team/executors/${id}/roles`, body),
 
   createSupervisor: (body: CreateSupervisorRequest) => http.post<TeamMemberResponse>(`${base}/supervisors`, body),
   setSupervisorActive: (memberId: string, isActive: boolean) =>
@@ -74,6 +77,8 @@ export const teamInvalidation = {
   skills: [qk.team],
   supervisor: [qk.team, qk.organization],
   executor: [qk.team, qk.organization, qk.board, qk.dashboard],
+  /** Roles change who is offered repairs (candidates) and trips. */
+  roles: [qk.team, qk.work],
 } as const
 
 export function useMembers() {

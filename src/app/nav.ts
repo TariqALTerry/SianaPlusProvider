@@ -12,6 +12,7 @@ import {
   MessageSquareWarning,
   ReceiptText,
   ShoppingBag,
+  Warehouse,
   Star,
   TrendingUp,
   Users,
@@ -42,6 +43,8 @@ export const NAV: readonly NavItem[] = [
   { to: '/incoming', label: 'incoming', icon: Inbox, badge: 'incoming' },
   { to: '/work', label: 'work', icon: ListChecks },
   { to: '/board', label: 'board', icon: LayoutDashboard },
+  // Devices away from their customers (service tracking).
+  { to: '/workshop', label: 'workshop', icon: Warehouse },
   { to: '/messages', label: 'messages', icon: MessagesSquare, badge: 'messages' },
   { to: '/team', label: 'team', icon: Users },
   // Under الفريق (PHASE2 §4, §6).

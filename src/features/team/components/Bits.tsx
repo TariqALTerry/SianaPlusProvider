@@ -49,6 +49,25 @@ export function ActiveBadge({ active }: { active: boolean }) {
   )
 }
 
+/** "فني" and/or "مندوب" from the member's two roles. */
+export function RoleBadges({ canRepair, canDeliver }: { canRepair: boolean; canDeliver: boolean }) {
+  const { t } = useTranslation('team')
+  return (
+    <>
+      {canRepair && (
+        <Badge tone="neutral" className="text-[0.6875rem]" title={t('roles.repair')}>
+          {t('roles.repairShort')}
+        </Badge>
+      )}
+      {canDeliver && (
+        <Badge tone="info" className="text-[0.6875rem]" title={t('roles.delivery')}>
+          {t('roles.deliveryShort')}
+        </Badge>
+      )}
+    </>
+  )
+}
+
 export function OwnerBadge() {
   const { t } = useTranslation('team')
   return (

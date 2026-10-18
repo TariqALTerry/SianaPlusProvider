@@ -89,7 +89,7 @@ export function delegateSkipped(view: Pick<ServiceItemProviderView, 'status' | '
   return !view.executor && ASSIGNABLE.includes(view.status)
 }
 
-export type IneligibleReason = 'offDutyTimeOff' | 'offDutyHours' | 'capabilities' | 'unavailable' | 'maxJobs'
+export type IneligibleReason = 'cannotRepair' | 'offDutyTimeOff' | 'offDutyHours' | 'capabilities' | 'unavailable' | 'maxJobs'
 
 /**
  * Why a candidate can't take the item (§8.5): قدرات ناقصة · غير متاح · وصل الحد الأقصى.
@@ -98,6 +98,8 @@ export type IneligibleReason = 'offDutyTimeOff' | 'offDutyHours' | 'capabilities
  */
 export function ineligibleReasons(c: ExecutorCandidateResponse): IneligibleReason[] {
   if (c.isEligible) return []
+  // Without the repair role (delivery only) a member is never offered a repair; nothing else matters here.
+  if (!c.canRepair) return ['cannotRepair']
   const r: IneligibleReason[] = []
   // Off duty at the visit time (PHASE2 §5): on time off, or outside the weekly working hours.
   if (c.isOffDuty) r.push(c.offDutyReason === 'TimeOff' ? 'offDutyTimeOff' : 'offDutyHours')
@@ -142,6 +144,8 @@ export type WorkErrorDetail =
   | { kind: 'notReassignable' }
   | { kind: 'notAssigned' }
   | { kind: 'concurrent' }
+  /** `ExecutorCannotRepair`: the picked member has no repair role. */
+  | { kind: 'cannotRepair' }
 
 /** Codes meaning the item changed elsewhere (another supervisor, the technician, the platform). */
 export const STALE_ITEM_CODES: Record<string, 'notReassignable' | 'notAssigned' | 'concurrent'> = {
@@ -169,6 +173,8 @@ export function workErrorDetail(error: unknown): { error: ApiError | null; detai
     detail = { kind: 'capabilities', count: d.missingCapabilityIds.length }
   } else if (e.errorCode === 'InvalidStatusTransition') {
     detail = { kind: 'transition', from: typeof d.from === 'string' ? d.from : null, to: typeof d.to === 'string' ? d.to : null }
+  } else if (e.errorCode === 'ExecutorCannotRepair') {
+    detail = { kind: 'cannotRepair' }
   } else if (e.errorCode && STALE_ITEM_CODES[e.errorCode]) {
     detail = { kind: STALE_ITEM_CODES[e.errorCode]! }
   }

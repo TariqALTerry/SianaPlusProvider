@@ -12,6 +12,7 @@ import { settlementsRoutes } from '@/features/settlements/routes'
 import { storeRoutes } from '@/features/store/routes'
 import { teamRoutes } from '@/features/team/routes'
 import { workRoutes } from '@/features/work/routes'
+import { workshopRoutes } from '@/features/workshop/routes'
 import { walletRoutes } from '@/features/wallet/routes'
 import { messagesRoutes } from '@/features/messages/routes'
 import { insightsRoutes } from '@/features/insights/routes'
@@ -30,6 +31,7 @@ const featureRoutes: RouteObject[] = [
   ...onboardingRoutes,
   ...incomingRoutes,
   ...workRoutes,
+  ...workshopRoutes,
   ...boardRoutes,
   ...insightsRoutes,
   ...teamRoutes,

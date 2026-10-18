@@ -103,6 +103,7 @@ const ar = {
     reason: 'سبب الاختيار',
     selected: 'الفني المختار',
     reasons: {
+      cannotRepair: 'ليست له صلاحية الإصلاح',
       offDutyTimeOff: 'في إجازة وقت الزيارة',
       offDutyHours: 'خارج ساعات عمله وقت الزيارة',
       capabilities: 'قدرات ناقصة',
@@ -117,6 +118,7 @@ const ar = {
     transition: 'لا يمكن الانتقال من «{{from}}» إلى «{{to}}».',
     notReassignable: 'لم تعد هذه الخدمة في مرحلة تسمح بتغيير الفني — بدأ التنفيذ أو تغيّرت حالتها. حدّثنا الصفحة لتعرض حالتها الآن.',
     notAssigned: 'لا يوجد فني مسند لهذه الخدمة الآن — ربما سحبه مشرف آخر أو اعتذر الفني. حدّثنا الصفحة؛ اختر فنيًا من جديد.',
+    cannotRepair: 'هذا العضو ليست له صلاحية الإصلاح (مندوب توصيل فقط)؛ اختر فنيًا، أو فعّل له دور الإصلاح من صفحته في الفريق.',
     concurrent: 'عدّل شخص آخر هذه الخدمة في اللحظة نفسها. حدّثنا الصفحة بآخر بياناتها — راجعها ثم أعد المحاولة.',
   },
   detail: {
@@ -166,6 +168,7 @@ const ar = {
       quotations: 'عروض الأسعار',
       assignments: 'الإسنادات',
       schedules: 'المواعيد',
+      tracking: 'التتبع',
     },
     photos: { empty: 'لا توجد صور بعد', openFile: 'فتح الملف' },
     quotation: {
@@ -298,6 +301,7 @@ const en: typeof ar = {
     reason: 'Reason',
     selected: 'Selected technician',
     reasons: {
+      cannotRepair: 'No repair role',
       offDutyTimeOff: 'On time off at the visit time',
       offDutyHours: 'Outside working hours at the visit time',
       capabilities: 'Missing skills',
@@ -312,6 +316,7 @@ const en: typeof ar = {
     transition: 'Cannot move from “{{from}}” to “{{to}}”.',
     notReassignable: 'This item is past the point where the technician can change — work has started or its status changed. We refreshed the page to show its current state.',
     notAssigned: 'No technician is assigned to this item now — another supervisor may have withdrawn them, or the technician declined. We refreshed the page; pick a technician again.',
+    cannotRepair: 'This member has no repair role (delivery only); pick a technician, or turn on their repair role on their team page.',
     concurrent: 'Someone else changed this item at the same moment. We refreshed it with the latest data — review it and try again.',
   },
   detail: {
@@ -361,6 +366,7 @@ const en: typeof ar = {
       quotations: 'Quotes',
       assignments: 'Assignments',
       schedules: 'Schedules',
+      tracking: 'Tracking',
     },
     photos: { empty: 'No photos yet', openFile: 'Open file' },
     quotation: {

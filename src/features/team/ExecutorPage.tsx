@@ -28,6 +28,8 @@ import { enumLabel } from '@/i18n/enums'
 import { formatDuration, formatNumber, formatPercent, riyadhDateToIso, riyadhInputToIso } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { teamApi, teamKeys } from './api'
+import { RoleBadges } from './components/Bits'
+import { RolesCard } from './components/RolesCard'
 import { defaultWeek, invalidDays, toEntries, toRows, type DayRow } from './schedule'
 import './i18n'
 
@@ -62,6 +64,7 @@ export function ExecutorPage() {
             <span className="flex flex-wrap items-center gap-2">
               {e.fullName}
               <StatusBadge enum="ExecutorAvailability" value={e.availability} />
+              <RoleBadges canRepair={e.canRepair} canDeliver={e.canDeliver} />
               {schedule.data?.isOffNow && <Badge tone="muted">{t('schedule.offNow')}</Badge>}
             </span>
           ) : (
@@ -72,6 +75,7 @@ export function ExecutorPage() {
       />
       {executor.isError && <ErrorState error={executor.error} onRetry={() => void executor.refetch()} />}
       <div className="space-y-4">
+        {e && <RolesCard executor={e} />}
         <PerformanceCards executorId={executorId} />
         <ScheduleSection executorId={executorId} query={schedule} />
       </div>

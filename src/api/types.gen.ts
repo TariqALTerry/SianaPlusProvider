@@ -90,6 +90,14 @@ export const EvidenceTypeValues = ['Image', 'Video', 'Document'] as const
 export type EvidenceType = (typeof EvidenceTypeValues)[number]
 export const ExecutionStepValues = ['Inspection', 'Diagnosis', 'Quotation', 'CustomerApproval', 'Repair', 'Testing', 'Documentation', 'Completion', 'Assessment', 'IdentifyIssue', 'Execution', 'ScopeReview', 'PreService', 'CustomerConfirmation', 'Survey', 'Measurements', 'Scheduling', 'Progress', 'Handover', 'Pickup', 'CustodyDocumentation', 'Transport', 'Delivery', 'Verification', 'DeviceIntake', 'Return'] as const
 export type ExecutionStep = (typeof ExecutionStepValues)[number]
+export const DeviceCustodyStageValues = ['AtCustomer', 'PickedUp', 'AtWorkshop', 'ReadyForReturn', 'OutForReturn', 'Returned'] as const
+export type DeviceCustodyStage = (typeof DeviceCustodyStageValues)[number]
+export const ProgressUpdateKindValues = ['InspectionStarted', 'DiagnosisDone', 'WaitingForParts', 'PartsArrived', 'RepairInProgress', 'Testing', 'ReadyForReturn', 'Delayed', 'Other'] as const
+export type ProgressUpdateKind = (typeof ProgressUpdateKindValues)[number]
+export const ServiceItemLegTypeValues = ['Pickup', 'Return'] as const
+export type ServiceItemLegType = (typeof ServiceItemLegTypeValues)[number]
+export const ServiceItemLegStatusValues = ['Planned', 'Done', 'Cancelled'] as const
+export type ServiceItemLegStatus = (typeof ServiceItemLegStatusValues)[number]
 export const PaymentMethodValues = ['Cash', 'Card', 'Wallet', 'BankTransfer', 'ApplePay'] as const
 export type PaymentMethod = (typeof PaymentMethodValues)[number]
 export const PaymentStatusValues = ['Pending', 'Authorized', 'Paid', 'Failed', 'Refunded', 'PartiallyRefunded'] as const
@@ -478,6 +486,8 @@ export interface ExecutorCandidateResponse {
   averageRating: number
   completedItemsCount: number
   distanceKm: number | null
+  canRepair: boolean
+  canDeliver: boolean
   isOffDuty: boolean
   offDutyReason: string | null
   isEligible: boolean
@@ -2208,6 +2218,8 @@ export interface ExecutorProfileResponse {
   phone: string | null
   organization: LookupResponse
   availability: ExecutorAvailability
+  canRepair: boolean
+  canDeliver: boolean
   maxConcurrentJobs: number
   activeJobs: number
   capabilities: LookupResponse[]
@@ -2286,6 +2298,130 @@ export interface SaveQuotationRequest {
   discountAmount: number
   expiresInHours: number
   items: QuotationLineRequest[]
+}
+
+// ── Executors/TrackingDtos.cs
+export interface ServiceTrackingResponse {
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  itemStatus: ServiceItemStatus
+  executionMode: ExecutionMode
+  expectedReadyAt: string | null
+  lastUpdateAt: string | null
+  handoverCode: string | null
+  hasCustody: boolean
+  devices: TrackedDevice[]
+  updates: ProgressUpdateResponse[]
+  legs: LegResponse[]
+}
+export interface TrackedDevice {
+  deviceId: string
+  name: string
+  brand: string | null
+  model: string | null
+  tagCode: string | null
+  stage: DeviceCustodyStage
+  holderName: string | null
+  stageAt: string | null
+  events: CustodyEventResponse[]
+}
+export interface CustodyEventResponse {
+  id: string
+  stage: DeviceCustodyStage
+  actorName: string
+  photoUrl: string | null
+  note: string | null
+  codeVerified: boolean
+  createdAt: string
+}
+export interface ProgressUpdateResponse {
+  id: string
+  kind: ProgressUpdateKind
+  note: string | null
+  photoUrl: string | null
+  expectedReadyAt: string | null
+  authorSide: ConversationSide
+  authorName: string
+  createdAt: string
+}
+export interface LegResponse {
+  id: string
+  type: ServiceItemLegType
+  status: ServiceItemLegStatus
+  executorId: string
+  executorName: string
+  scheduledStart: string | null
+  scheduledEnd: string | null
+  completedAt: string | null
+}
+export interface PostProgressUpdateRequest {
+  kind: ProgressUpdateKind
+  note?: string | null
+  expectedReadyAt?: string | null
+}
+export interface MoveDeviceRequest {
+  stage: DeviceCustodyStage
+  code?: string | null
+  note?: string | null
+  latitude?: number | null
+  longitude?: number | null
+}
+export interface PlanLegRequest {
+  type: ServiceItemLegType
+  executorId: string
+  scheduledStart?: string | null
+  scheduledEnd?: string | null
+}
+export interface MyLegResponse extends LegResponse {
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  customerFirstName: string | null
+  city: string | null
+  district: string | null
+  addressText: string | null
+  latitude: number | null
+  longitude: number | null
+  devicesCount: number
+  devices: TrackedDevice[]
+}
+export interface WorkshopBoardRequest {
+  stage?: DeviceCustodyStage | null
+}
+export interface WorkshopBoardResponse {
+  counts: WorkshopStageCount[]
+  devices: WorkshopDevice[]
+}
+export interface WorkshopStageCount {
+  stage: DeviceCustodyStage
+  count: number
+}
+export interface WorkshopDevice {
+  deviceId: string
+  name: string
+  brand: string | null
+  model: string | null
+  tagCode: string | null
+  stage: DeviceCustodyStage
+  stageAt: string | null
+  holderName: string | null
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  itemStatus: ServiceItemStatus
+  technicianName: string | null
+  expectedReadyAt: string | null
+  lastUpdateAt: string | null
+  needsUpdate: boolean
+  needsReturnTrip: boolean
+}
+export interface SetExecutorRolesRequest {
+  canRepair: boolean
+  canDeliver: boolean
 }
 
 // ── Finance/PaymentDtos.cs
@@ -3478,6 +3614,8 @@ export interface ExecutorSummaryResponse {
   phone: string | null
   specialization: string | null
   availability: ExecutorAvailability
+  canRepair: boolean
+  canDeliver: boolean
   maxConcurrentJobs: number
   activeJobs: number
   capabilities: LookupResponse[]
@@ -3905,6 +4043,8 @@ export interface ExecutorResponse {
   email: string | null
   specialization: string | null
   availability: ExecutorAvailability
+  canRepair: boolean
+  canDeliver: boolean
   maxConcurrentJobs: number
   activeJobs: number
   capabilities: LookupResponse[]

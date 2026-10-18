@@ -35,6 +35,8 @@ const executor: ExecutorResponse = {
   email: null,
   specialization: 'تكييف',
   availability: 'Available',
+  canRepair: true,
+  canDeliver: false,
   maxConcurrentJobs: 3,
   activeJobs: 1,
   capabilities: [{ id: 'c1', code: 'ac', nameAr: 'تكييف', nameEn: 'AC' }],

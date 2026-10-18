@@ -6,7 +6,7 @@ import { PageSkeleton } from '@/components/States'
 import { notificationHref, notificationsApi } from '@/features/notifications/api'
 
 /**
- * `/n/:notificationId?referenceType&referenceId` — where a click on a browser notification lands
+ * `/n/:notificationId?referenceType&referenceId&title` — where a click on a browser notification lands
  * (PHASE2 §8). Inside the auth guard, so a signed-out user logs in and comes back. Marks it read
  * (failure ignored), then replaces itself with the platform page, or the notifications list otherwise.
  */
@@ -16,7 +16,8 @@ export function NotificationRedirectPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const done = useRef(false)
-  const href = notificationHref({ referenceType: params.get('referenceType'), referenceId: params.get('referenceId') })
+  // The title tells the tracking alerts apart (they open the item's tracking tab).
+  const href = notificationHref({ referenceType: params.get('referenceType'), referenceId: params.get('referenceId'), title: params.get('title') })
 
   useEffect(() => {
     if (done.current) return

@@ -117,6 +117,8 @@ describe('candidate picker (§8.5)', () => {
     hasCapacity: true,
     isOffDuty: false,
     offDutyReason: null,
+    canRepair: true,
+    canDeliver: false,
     ...over,
   })
 
@@ -126,6 +128,8 @@ describe('candidate picker (§8.5)', () => {
     expect(ineligibleReasons(c({ isEligible: false, availability: 'Busy', hasCapacity: false }))).toEqual(['unavailable', 'maxJobs'])
     // Inactive account: the server says ineligible without a specific flag.
     expect(ineligibleReasons(c({ isEligible: false }))).toEqual(['unavailable'])
+    // Delivery only (no repair role): never a repair candidate, whatever else is true.
+    expect(ineligibleReasons(c({ isEligible: false, canRepair: false, canDeliver: true, availability: 'Busy' }))).toEqual(['cannotRepair'])
     // Off duty at the visit time (PHASE2 §5).
     expect(ineligibleReasons(c({ isEligible: false, isOffDuty: true, offDutyReason: 'TimeOff' }))).toEqual(['offDutyTimeOff'])
     expect(ineligibleReasons(c({ isEligible: false, isOffDuty: true, offDutyReason: 'OutsideWorkingHours' }))).toEqual(['offDutyHours'])
@@ -150,6 +154,7 @@ describe('structured assignment errors', () => {
     expect(workErrorDetail(err('ExecutorAtCapacity', { maxConcurrentJobs: 3, activeJobs: 3 })).detail).toEqual({ kind: 'capacity', maxConcurrentJobs: 3, activeJobs: 3 })
     expect(workErrorDetail(err('ExecutorLacksCapability', { missingCapabilityIds: ['a', 'b'] })).detail).toEqual({ kind: 'capabilities', count: 2 })
     expect(workErrorDetail(err('InvalidStatusTransition', { from: 'Accepted', to: 'Rejected' })).detail).toEqual({ kind: 'transition', from: 'Accepted', to: 'Rejected' })
+    expect(workErrorDetail(err('ExecutorCannotRepair', null)).detail).toEqual({ kind: 'cannotRepair' })
   })
 
   it('turns item-changed-elsewhere codes into their own hints', () => {

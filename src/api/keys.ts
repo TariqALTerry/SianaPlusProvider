@@ -9,6 +9,7 @@ export const qk = {
   incoming: ['incoming'],
   work: ['work'],
   board: ['board'],
+  workshop: ['workshop'],
   team: ['team'],
   marketplace: ['marketplace'],
   settlements: ['settlements'],

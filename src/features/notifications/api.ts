@@ -49,11 +49,23 @@ export function useUnreadCount() {
   return query
 }
 
-/** Deep links (§8.14); anything else is only marked read. */
-export function notificationHref(n: Pick<NotificationResponse, 'referenceId' | 'referenceType'>): string | null {
+/**
+ * The service-tracking alerts to management ("لا تحديث على {الخدمة}" after 72 h, "رتّب إرجاع {الخدمة}"). They share
+ * `referenceType = "ServiceItem"` with every other service notification and carry no key, so the localized title
+ * (`ServiceUpdateOverdueTitle`, `ReturnTripNeededTitle` in the backend resources) tells them apart.
+ */
+const TRACKING_ALERT_TITLE = /^(لا تحديث على|رتّب إرجاع|رتب إرجاع|No update on|Plan the return of)\s/i
+
+export function isTrackingAlert(title: string | null | undefined): boolean {
+  return !!title && TRACKING_ALERT_TITLE.test(title.trim())
+}
+
+/** Deep links (§8.14); anything else is only marked read. Tracking alerts open the item's "التتبع" tab. */
+export function notificationHref(n: Pick<NotificationResponse, 'referenceId' | 'referenceType'> & { title?: string | null }): string | null {
   switch (n.referenceType) {
     case 'ServiceItem':
-      return n.referenceId ? `/work/${n.referenceId}` : null
+      if (!n.referenceId) return null
+      return isTrackingAlert(n.title) ? `/work/${n.referenceId}?tab=tracking` : `/work/${n.referenceId}`
     case 'MarketplaceRequest':
       return n.referenceId ? `/marketplace/${n.referenceId}` : null
     case 'ProviderOrganization':

@@ -10,6 +10,7 @@ import { Timeline } from '@/components/Timeline'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { VisitBrief } from '@/features/insights/VisitBrief'
+import { TrackingTab } from '@/features/workshop/TrackingTab'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { detailQueryOptions } from '@/api/queryClient'
@@ -34,7 +35,8 @@ import {
 import { WorkActions } from './components/WorkActions'
 import { NetBlock } from './components/widgets'
 
-const TABS = ['timeline', 'photos', 'quotations', 'assignments', 'schedules'] as const
+// `?tab=tracking` is the deep link the 72 h no-update and "arrange the return" alerts open.
+const TABS = ['timeline', 'tracking', 'photos', 'quotations', 'assignments', 'schedules'] as const
 type Tab = (typeof TABS)[number]
 
 /** `/work/:id` (§8.4): everything about one item, polled every 30 s while it can still change. */
@@ -163,6 +165,9 @@ export function WorkItemPage() {
               <Card className="p-4">
                 <Timeline rows={timeline.map((event) => ({ event }))} />
               </Card>
+            </TabsContent>
+            <TabsContent value="tracking">
+              <TrackingTab item={item} refetchInterval={live ? interval : false} />
             </TabsContent>
             <TabsContent value="photos">
               <PhotosSection evidence={evidence} />
