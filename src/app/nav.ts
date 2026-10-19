@@ -4,6 +4,7 @@ import {
   Gavel,
   Home,
   Inbox,
+  LifeBuoy,
   BarChart3,
   LayoutDashboard,
   ListChecks,
@@ -21,7 +22,7 @@ import {
 } from 'lucide-react'
 import type { ProviderContext } from './provider'
 
-export type NavBadge = 'incoming' | 'messages'
+export type NavBadge = 'incoming' | 'messages' | 'support'
 
 export interface NavItem {
   to: string
@@ -59,6 +60,8 @@ export const NAV: readonly NavItem[] = [
   // النمو (PHASE2 §3).
   { to: '/growth/demand', label: 'growthDemand', icon: TrendingUp },
   { to: '/organization', label: 'organization', icon: Building2, always: true },
+  // Support tickets (SUPPORT-TICKETS-PROVIDER-PLATFORM-PROMPT): in every mode, with the unread count.
+  { to: '/support', label: 'support', icon: LifeBuoy, badge: 'support', always: true },
   { to: '/notifications', label: 'notifications', icon: Bell, always: true },
 ]
 

@@ -437,6 +437,67 @@ export const ServiceItemLegStatus: EnumMap<T.ServiceItemLegStatus> = {
 }
 
 
+// ── Support tickets ("الدعم الفني") ──────────────────────────────────────────
+
+export const SupportTicketKind: EnumMap<T.SupportTicketKind> = {
+  CustomerReport: e('بلاغ عميل', 'Customer report', 'info'),
+  TechnicianComplaint: e('شكوى فني', 'Technician complaint', 'attention'),
+  DashboardTicket: e('تذكرة دعم', 'Support ticket', 'active'),
+}
+
+export const SupportChannel: EnumMap<T.SupportChannel> = {
+  CustomerApp: e('تطبيق العميل', 'Customer app'),
+  ExecutorApp: e('تطبيق الفني', 'Technician app'),
+  ProviderPlatform: e('منصة المزود', 'Provider platform'),
+  AdminDashboard: e('لوحة التحكم', 'Admin dashboard'),
+}
+
+/** The platform offers only `SUPPORT_CATEGORIES` (features/support); the rest belong to the apps. */
+export const SupportTicketCategory: EnumMap<T.SupportTicketCategory> = {
+  AppTechnical: e('مشكلة تقنية في التطبيق', 'App technical issue'),
+  ServiceProblem: e('مشكلة في الخدمة', 'Service problem'),
+  Communication: e('مشكلة في التواصل', 'Communication'),
+  Payment: e('المدفوعات والمحفظة', 'Payments and wallet'),
+  Account: e('الحساب', 'Account'),
+  Bug: e('خلل في المنصة', 'Platform bug'),
+  Access: e('صلاحيات أو دخول', 'Permissions or sign-in'),
+  Data: e('بيانات غير صحيحة', 'Incorrect data'),
+  FeatureRequest: e('طلب ميزة', 'Feature request'),
+  Other: e('أخرى', 'Other'),
+}
+
+export const SupportTicketPriority: EnumMap<T.SupportTicketPriority> = {
+  Low: e('منخفضة', 'Low', 'muted'),
+  Normal: e('عادية', 'Normal', 'neutral'),
+  High: e('عالية', 'High', 'attention'),
+  Urgent: e('عاجلة', 'Urgent', 'danger'),
+}
+
+export const SupportTicketStatus: EnumMap<T.SupportTicketStatus> = {
+  New: e('جديدة', 'New', 'info'),
+  UnderReview: e('قيد المراجعة', 'Under review', 'info'),
+  Open: e('مفتوحة', 'Open', 'info'),
+  InProgress: e('قيد المعالجة', 'In progress', 'active'),
+  WaitingForReply: e('بانتظار ردك', 'Waiting for your reply', 'attention'),
+  Resolved: e('تم الحل', 'Resolved', 'success'),
+  Closed: e('مغلقة', 'Closed', 'muted'),
+}
+
+export const SupportMessageSide: EnumMap<T.SupportMessageSide> = {
+  Requester: e('أنت', 'You'),
+  Staff: e('فريق الدعم', 'Support team'),
+}
+
+export const SupportTicketEventType: EnumMap<T.SupportTicketEventType> = {
+  Created: e('أُنشئت التذكرة', 'Ticket opened', 'info'),
+  StatusChanged: e('تغيّرت الحالة', 'Status changed', 'active'),
+  Assigned: e('تغيّر المسؤول', 'Assignee changed', 'neutral'),
+  PriorityChanged: e('تغيّرت الأولوية', 'Priority changed', 'attention'),
+  RequesterReplied: e('رددت', 'You replied', 'info'),
+  StaffReplied: e('ردّ الدعم', 'Support replied', 'success'),
+  InternalNote: e('ملاحظة داخلية', 'Internal note', 'waiting'),
+}
+
 export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
@@ -447,6 +508,8 @@ export const enumMaps = {
   StoreOrderStatus, UserStatus, Role, ActiveFilter, NotificationType, ExecutionStep, CoverageShape,
   ProviderWithdrawalStatus, WalletItemsBucket, ConversationSide, ExecutorTimeOffReason, DayOfWeek, PushApp, PushPlatform,
   DeviceCustodyStage, ProgressUpdateKind, ServiceItemLegType, ServiceItemLegStatus,
+  SupportTicketKind, SupportChannel, SupportTicketCategory, SupportTicketPriority, SupportTicketStatus, SupportMessageSide,
+  SupportTicketEventType,
 } as const
 
 export type EnumName = keyof typeof enumMaps

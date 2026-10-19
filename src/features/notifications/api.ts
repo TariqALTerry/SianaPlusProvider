@@ -78,6 +78,8 @@ export function notificationHref(n: Pick<NotificationResponse, 'referenceId' | '
       return n.referenceId ? `/settlements/${n.referenceId}` : '/settlements'
     case 'Dispute':
       return n.referenceId ? `/disputes/${n.referenceId}` : '/disputes'
+    case 'SupportTicket':
+      return n.referenceId ? `/support/${n.referenceId}` : '/support'
     default:
       return null
   }

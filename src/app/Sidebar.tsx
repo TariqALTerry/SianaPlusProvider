@@ -5,6 +5,7 @@ import { Tooltip } from '@/components/ui/menu'
 import { StatusBadge } from '@/components/StatusBadge'
 import { useIncoming } from '@/features/incoming/queries'
 import { useUnreadMessages } from '@/features/messages/api'
+import { useSupportUnread } from '@/features/support/api'
 import { LogoMark } from '@/features/auth/AuthLayout'
 import { useLang } from '@/hooks/useLang'
 import { cn } from '@/lib/utils'
@@ -30,7 +31,8 @@ export function Sidebar({ collapsed, onToggle, onNavigate }: { collapsed: boolea
   const ctx = useProvider()
   const incoming = useIncoming(ctx.mode === 'full')
   const unreadMessages = useUnreadMessages(ctx.mode === 'full')
-  const badges: Record<NavBadge, number | undefined> = { incoming: incoming.data?.length, messages: unreadMessages.data }
+  const supportUnread = useSupportUnread()
+  const badges: Record<NavBadge, number | undefined> = { incoming: incoming.data?.length, messages: unreadMessages.data, support: supportUnread.data }
   const items = visibleNav(ctx)
   const CollapseIcon = collapsed !== isRtl ? ChevronsRight : ChevronsLeft
 

@@ -13,6 +13,7 @@ import { storeRoutes } from '@/features/store/routes'
 import { teamRoutes } from '@/features/team/routes'
 import { workRoutes } from '@/features/work/routes'
 import { workshopRoutes } from '@/features/workshop/routes'
+import { supportRoutes } from '@/features/support/routes'
 import { walletRoutes } from '@/features/wallet/routes'
 import { messagesRoutes } from '@/features/messages/routes'
 import { insightsRoutes } from '@/features/insights/routes'
@@ -45,6 +46,7 @@ const featureRoutes: RouteObject[] = [
   ...storeRoutes,
   ...organizationRoutes,
   ...notificationsRoutes,
+  ...supportRoutes,
 ]
 
 export const router = createBrowserRouter([

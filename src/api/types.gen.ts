@@ -36,13 +36,15 @@ export const PriceItemTypeValues = ['Labor', 'Part', 'AddOn', 'Inspection', 'Dis
 export type PriceItemType = (typeof PriceItemTypeValues)[number]
 export const HomeBannerActionTypeValues = ['Category', 'Service', 'Store', 'StoreProduct', 'Assistant', 'Url'] as const
 export type HomeBannerActionType = (typeof HomeBannerActionTypeValues)[number]
+export const ServiceImageJobStatusValues = ['Pending', 'Generated', 'Approved', 'Rejected', 'Failed'] as const
+export type ServiceImageJobStatus = (typeof ServiceImageJobStatusValues)[number]
 export const ActiveFilterValues = ['Active', 'Inactive', 'All'] as const
 export type ActiveFilter = (typeof ActiveFilterValues)[number]
 export const AuditActionValues = ['Create', 'Update', 'Delete', 'Login', 'Logout', 'PasswordChange', 'StatusChange', 'Assign', 'Approve', 'Reject', 'Refund', 'Settle', 'Cancel'] as const
 export type AuditAction = (typeof AuditActionValues)[number]
 export const NotificationTypeValues = ['Info', 'Success', 'Warning', 'Alert'] as const
 export type NotificationType = (typeof NotificationTypeValues)[number]
-export const FileCategoryValues = ['Avatar', 'Attachment', 'Document', 'Import', 'Export', 'Evidence', 'ProviderDocument', 'CatalogMedia', 'ProductImage', 'CommunityMedia', 'AssistantMedia'] as const
+export const FileCategoryValues = ['Avatar', 'Attachment', 'Document', 'Import', 'Export', 'Evidence', 'ProviderDocument', 'CatalogMedia', 'ProductImage', 'CommunityMedia', 'AssistantMedia', 'SupportAttachment'] as const
 export type FileCategory = (typeof FileCategoryValues)[number]
 export const ActorTypeValues = ['System', 'Customer', 'Admin', 'Provider', 'Executor'] as const
 export type ActorType = (typeof ActorTypeValues)[number]
@@ -166,6 +168,20 @@ export const RoleValues = ['SuperAdmin', 'TenantAdmin', 'Manager', 'Member', 'Pl
 export type Role = (typeof RoleValues)[number]
 export const StoreOrderStatusValues = ['Draft', 'PendingPayment', 'Paid', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] as const
 export type StoreOrderStatus = (typeof StoreOrderStatusValues)[number]
+export const SupportTicketKindValues = ['CustomerReport', 'TechnicianComplaint', 'DashboardTicket'] as const
+export type SupportTicketKind = (typeof SupportTicketKindValues)[number]
+export const SupportChannelValues = ['CustomerApp', 'ExecutorApp', 'ProviderPlatform', 'AdminDashboard'] as const
+export type SupportChannel = (typeof SupportChannelValues)[number]
+export const SupportTicketCategoryValues = ['AppTechnical', 'ServiceProblem', 'Communication', 'Payment', 'Account', 'Bug', 'Access', 'Data', 'FeatureRequest', 'Other'] as const
+export type SupportTicketCategory = (typeof SupportTicketCategoryValues)[number]
+export const SupportTicketPriorityValues = ['Low', 'Normal', 'High', 'Urgent'] as const
+export type SupportTicketPriority = (typeof SupportTicketPriorityValues)[number]
+export const SupportTicketStatusValues = ['New', 'UnderReview', 'Open', 'InProgress', 'WaitingForReply', 'Resolved', 'Closed'] as const
+export type SupportTicketStatus = (typeof SupportTicketStatusValues)[number]
+export const SupportMessageSideValues = ['Requester', 'Staff'] as const
+export type SupportMessageSide = (typeof SupportMessageSideValues)[number]
+export const SupportTicketEventTypeValues = ['Created', 'StatusChanged', 'Assigned', 'PriorityChanged', 'RequesterReplied', 'StaffReplied', 'InternalNote'] as const
+export type SupportTicketEventType = (typeof SupportTicketEventTypeValues)[number]
 export const UserStatusValues = ['PendingApproval', 'Active', 'Suspended'] as const
 export type UserStatus = (typeof UserStatusValues)[number]
 export const WalletItemsBucketValues = ['Available', 'OnHold'] as const
@@ -186,6 +202,8 @@ export interface AiSettingsResponse {
   outputPricePerMTok: number
   cacheReadPricePerMTok: number
   cacheWritePricePerMTok: number
+  imageModel: string
+  imagePricePerImage: number
   promptVersion: string
   fromConfiguration: boolean
   apiKeyUnreadable: boolean
@@ -206,6 +224,8 @@ export interface UpdateAiSettingsRequest {
   outputPricePerMTok: number
   cacheReadPricePerMTok: number
   cacheWritePricePerMTok: number
+  imageModel?: string | null
+  imagePricePerImage?: number | null
 }
 export interface TestAiSettingsRequest {
   provider?: AiProvider | null
@@ -512,6 +532,14 @@ export interface AssignmentResponse {
 // ── Assistant/AssistantDtos.cs
 export interface StartAssistantConversationRequest {
   addressId?: string | null
+  context?: AssistantPageContext | null
+}
+export interface AssistantPageContext {
+  page: string
+  canonicalServiceId: string | null
+  cartItemId: string | null
+  categoryId: string | null
+  subcategoryId: string | null
 }
 export interface SendAssistantMessageRequest {
   text: string
@@ -524,6 +552,10 @@ export interface AssistantConversationResponse {
   status: AssistantConversationStatus
   title: string | null
   addressId: string | null
+  contextPage: string | null
+  contextServiceId: string | null
+  contextCategoryId: string | null
+  contextSubcategoryId: string | null
   canSend: boolean
   messages: AssistantMessageResponse[]
   createdAt: string
@@ -865,6 +897,48 @@ export interface UpdateServiceRequest {
   sortOrder: number
   isInternal: boolean
 }
+export interface SetServiceCustomerInfoRequest {
+  estimatedMinPrice?: number | null
+  estimatedMaxPrice?: number | null
+  includesAr?: string[] | null
+  includesEn?: string[] | null
+  excludesAr?: string[] | null
+  excludesEn?: string[] | null
+}
+export interface SetSubcategoryCustomerInfoRequest {
+  descriptionAr?: string | null
+  descriptionEn?: string | null
+}
+export interface GenerateServiceImageRequest {
+  notes?: string | null
+}
+export interface ServiceImageJobsRequest extends PaginatedRequest {
+  status?: ServiceImageJobStatus | null
+  canonicalServiceId?: string | null
+  subcategoryId?: string | null
+  targetType?: string | null
+}
+export interface ServiceImageJobResponse {
+  id: string
+  targetType: string
+  canonicalServiceId: string | null
+  subcategoryId: string | null
+  serviceCode: string
+  serviceNameAr: string
+  serviceNameEn: string
+  currentImageUrl: string | null
+  status: ServiceImageJobStatus
+  prompt: string
+  provider: string
+  resultUrl: string | null
+  error: string | null
+  costUsd: number
+  requestedByName: string | null
+  reviewedByName: string | null
+  createdAt: string
+  generatedAt: string | null
+  reviewedAt: string | null
+}
 export interface SetServiceCapabilitiesRequest {
   capabilityIds: string[]
 }
@@ -955,6 +1029,9 @@ export interface SubcategoryAdminResponse {
   nameAr: string
   nameEn: string
   iconUrl: string | null
+  descriptionAr: string | null
+  descriptionEn: string | null
+  imageUrl: string | null
   sortOrder: number
   isActive: boolean
   serviceCount: number
@@ -993,6 +1070,12 @@ export interface ServiceAdminDetailResponse extends ServiceAdminListItemResponse
   warrantyDays: number | null
   estimatedDurationMinutes: number | null
   commissionRate: number | null
+  estimatedMinPrice: number | null
+  estimatedMaxPrice: number | null
+  includesAr: string[]
+  includesEn: string[]
+  excludesAr: string[]
+  excludesEn: string[]
   issues: ServiceIssueResponse[]
   dynamicFields: DynamicFieldAdminResponse[]
   requiredCapabilities: LookupResponse[]
@@ -1064,6 +1147,9 @@ export interface SubcategoryResponse {
   nameAr: string
   nameEn: string
   iconUrl: string | null
+  descriptionAr: string | null
+  descriptionEn: string | null
+  imageUrl: string | null
   sortOrder: number
   serviceCount: number
 }
@@ -1084,6 +1170,8 @@ export interface ServiceCardResponse {
   estimatedDurationMinutes: number | null
   warrantyDays: number | null
   sortOrder: number
+  estimatedMinPrice: number | null
+  estimatedMaxPrice: number | null
 }
 export interface DynamicFieldResponse {
   id: string
@@ -1104,6 +1192,10 @@ export interface ServiceDetailResponse extends ServiceCardResponse {
   requiresCustomerConfirmation: boolean
   issues: LookupResponse[]
   dynamicFields: DynamicFieldResponse[]
+  includesAr: string[]
+  includesEn: string[]
+  excludesAr: string[]
+  excludesEn: string[]
 }
 export interface CatalogTreeResponse {
   categories: CatalogTreeCategoryResponse[]
@@ -1125,6 +1217,9 @@ export interface CatalogTreeSubcategoryResponse {
   nameAr: string
   nameEn: string
   iconUrl: string | null
+  descriptionAr: string | null
+  descriptionEn: string | null
+  imageUrl: string | null
   sortOrder: number
   services: ServiceCardResponse[]
 }
@@ -1919,6 +2014,45 @@ export interface CheckoutSummaryItemResponse {
   deviceCount: number
 }
 
+// ── Customers/CustomerInvoiceDtos.cs
+export interface InvoiceResponse {
+  invoiceNumber: string
+  orderId: string
+  orderNumber: string | null
+  issuedAt: string
+  currency: string
+  isTaxInvoice: boolean
+  noticeAr: string
+  noticeEn: string
+  customerName: string
+  address: OrderAddressResponse
+  lines: InvoiceLineResponse[]
+  subtotal: number
+  discountTotal: number
+  total: number
+  paymentMethod: PaymentMethod | null
+  paymentStatus: PaymentStatus
+  paidAt: string | null
+  paidAmount: number
+  refundedAmount: number
+  amountDue: number
+}
+export interface InvoiceLineResponse {
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  providerNameAr: string | null
+  providerNameEn: string | null
+  status: ServiceItemStatus
+  pricingType: PricingType
+  inspectionFee: number | null
+  quotedAmount: number | null
+  amount: number
+  refundedAmount: number
+  isBilled: boolean
+}
+
 // ── Customers/CustomerOrderDtos.cs
 export interface CustomerOrderListRequest extends PaginatedRequest {
   status?: ParentOrderStatus | null
@@ -2058,6 +2192,23 @@ export interface OrderTimelineEventResponse {
   serviceNameAr: string
   serviceNameEn: string
   event: TimelineEventResponse
+}
+
+// ── Customers/CustomerScheduleDtos.cs
+export interface ScheduleSlotsRequest {
+  addressId: string
+  from?: string | null
+  days: number
+}
+export interface ScheduleDayResponse {
+  date: string
+  slots: ScheduleSlotResponse[]
+}
+export interface ScheduleSlotResponse {
+  start: string
+  end: string
+  isAvailable: boolean
+  reason: string | null
 }
 
 // ── Customers/CustomerServiceHistoryDtos.cs
@@ -4387,4 +4538,144 @@ export interface StoreFulfillmentItemResponse {
   scheduledStart: string | null
   scheduledEnd: string | null
   completedAt: string | null
+}
+
+// ── Support/SupportDtos.cs
+export interface CreateSupportTicketRequest {
+  subject: string
+  description: string
+  category: SupportTicketCategory
+  priority?: SupportTicketPriority | null
+  parentOrderId?: string | null
+  serviceItemId?: string | null
+}
+export interface SupportTicketListRequest extends PaginatedRequest {
+  status?: SupportTicketStatus | null
+  openOnly?: boolean | null
+}
+export interface SendSupportMessageRequest {
+  body?: string | null
+}
+export interface SupportTicketSummaryResponse {
+  id: string
+  ticketNumber: string
+  kind: SupportTicketKind
+  category: SupportTicketCategory
+  priority: SupportTicketPriority
+  status: SupportTicketStatus
+  subject: string
+  hasUnread: boolean
+  lastMessagePreview: string | null
+  orderNumber: string | null
+  itemNumber: string | null
+  createdAt: string
+  updatedAt: string
+}
+export interface SupportAttachmentResponse {
+  id: string
+  url: string
+  fileName: string
+  contentType: string
+  sizeBytes: number
+}
+export interface SupportMessageResponse {
+  id: string
+  authorSide: SupportMessageSide
+  authorName: string
+  isMine: boolean
+  body: string
+  isInternal: boolean
+  attachments: SupportAttachmentResponse[]
+  createdAt: string
+}
+export interface SupportEventResponse {
+  type: SupportTicketEventType
+  fromValue: string | null
+  toValue: string | null
+  note: string | null
+  actorName: string | null
+  isInternal: boolean
+  createdAt: string
+}
+export interface SupportTicketLinkResponse {
+  orderId: string | null
+  orderNumber: string | null
+  serviceItemId: string | null
+  itemNumber: string | null
+  serviceNameAr: string | null
+  serviceNameEn: string | null
+}
+export interface SupportTicketResponse extends SupportTicketSummaryResponse {
+  description: string
+  link: SupportTicketLinkResponse | null
+  attachments: SupportAttachmentResponse[]
+  messages: SupportMessageResponse[]
+  events: SupportEventResponse[]
+  canReply: boolean
+  canClose: boolean
+  resolvedAt: string | null
+  closedAt: string | null
+}
+export interface AdminSupportTicketListRequest extends PaginatedRequest {
+  kind?: SupportTicketKind | null
+  status?: SupportTicketStatus | null
+  openOnly?: boolean | null
+  priority?: SupportTicketPriority | null
+  category?: SupportTicketCategory | null
+  assignedToUserId?: string | null
+  unassigned?: boolean | null
+  mine?: boolean | null
+  requesterUserId?: string | null
+  from?: string | null
+  to?: string | null
+  search?: string | null
+}
+export interface SupportRequesterResponse {
+  userId: string
+  fullName: string
+  phone: string | null
+  role: Role
+  providerOrganizationId: string | null
+  providerOrganizationName: string | null
+}
+export interface AdminSupportTicketListItemResponse extends SupportTicketSummaryResponse {
+  channel: SupportChannel
+  requester: SupportRequesterResponse
+  assignedTo: PersonLookupResponse | null
+  messagesCount: number
+}
+export interface AdminSupportTicketResponse extends AdminSupportTicketListItemResponse {
+  description: string
+  link: SupportTicketLinkResponse | null
+  attachments: SupportAttachmentResponse[]
+  messages: SupportMessageResponse[]
+  events: SupportEventResponse[]
+  firstResponseAt: string | null
+  resolvedAt: string | null
+  closedAt: string | null
+}
+export interface AdminSupportReplyRequest {
+  body?: string | null
+  isInternal: boolean
+  status?: SupportTicketStatus | null
+}
+export interface UpdateSupportTicketStatusRequest {
+  status: SupportTicketStatus
+  note?: string | null
+}
+export interface AssignSupportTicketRequest {
+  assignedToUserId?: string | null
+}
+export interface UpdateSupportTicketPriorityRequest {
+  priority: SupportTicketPriority
+}
+export interface SupportSummaryResponse {
+  openCustomerReports: number
+  openTechnicianComplaints: number
+  openDashboardTickets: number
+  new: number
+  unassigned: number
+  assignedToMe: number
+  urgent: number
+  awaitingSupport: number
 }

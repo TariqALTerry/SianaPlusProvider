@@ -20,5 +20,6 @@ export const qk = {
   notifications: ['notifications'],
   wallet: ['wallet'],
   messages: ['messages'],
+  support: ['support'],
   insights: ['insights'],
 } as const satisfies Record<string, readonly string[]>

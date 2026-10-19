@@ -18,6 +18,8 @@ export function referenceQueryKeys(referenceType: string | null | undefined): Re
       return [qk.marketplace]
     case 'Dispute':
       return [qk.disputes]
+    case 'SupportTicket':
+      return [qk.support]
     default:
       return []
   }

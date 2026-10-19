@@ -1,5 +1,5 @@
 import { ImagePlus, X } from 'lucide-react'
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { validateUpload } from '@/api/files'
 import { Button } from '@/components/ui/button'
@@ -25,8 +25,14 @@ export function ImagePicker({
   const id = useId()
   const input = useRef<HTMLInputElement>(null)
   const [invalid, setInvalid] = useState(false)
-  const preview = useMemo(() => (file ? URL.createObjectURL(file) : null), [file])
-  useEffect(() => () => void (preview && URL.revokeObjectURL(preview)), [preview])
+  // Created and revoked in the same effect: StrictMode's mount/unmount/mount must not leave a revoked URL.
+  const [preview, setPreview] = useState<string | null>(null)
+  useEffect(() => {
+    if (!file) return setPreview(null)
+    const url = URL.createObjectURL(file)
+    setPreview(url)
+    return () => URL.revokeObjectURL(url)
+  }, [file])
 
   return (
     <Field label={label} htmlFor={id} required={required} optional={!required} hint={t('tracking.imageHint')} error={invalid ? t('tracking.imageInvalid') : undefined}>

@@ -12,7 +12,7 @@ const NOT_DISPLAYED = new Set([
   'CommunityMemberType', 'CommunityMemberStatus', 'PartCondition', 'PartPriceType', 'PartListingStatus', 'PartRequestStatus',
   'PartRequestCloseReason', 'PartOfferStatus', 'CommunityPostType', 'CommunityMediaType', 'CommunityTargetType',
   'CommunityReportReason', 'CommunityReportStatus', 'CommunityReportAction', 'CommunitySavedType', 'CommunityListingSort',
-  'CommunityPostFilter',
+  'CommunityPostFilter', 'ServiceImageJobStatus',
 ])
 
 const generatedEnums = Object.entries(generated)

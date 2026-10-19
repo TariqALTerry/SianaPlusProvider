@@ -18,11 +18,13 @@ describe('push destinations (PHASE2 §8)', () => {
     expect(notificationHref({ referenceType: 'Settlement', referenceId: 'st' })).toBe('/settlements/st')
     expect(notificationHref({ referenceType: 'MarketplaceRequest', referenceId: 'm' })).toBe('/marketplace/m')
     expect(notificationHref({ referenceType: 'Dispute', referenceId: 'd' })).toBe('/disputes/d')
+    expect(notificationHref({ referenceType: 'SupportTicket', referenceId: 't1' })).toBe('/support/t1')
     expect(notificationHref({ referenceType: 'Unknown', referenceId: 'x' })).toBeNull()
   })
 
   it('refreshes the data behind each destination', () => {
     expect(referenceQueryKeys('ServiceItemConversation')).toEqual([qk.messages])
+    expect(referenceQueryKeys('SupportTicket')).toEqual([qk.support])
     expect(referenceQueryKeys('ProviderWithdrawal')).toContain(qk.wallet)
     expect(referenceQueryKeys(null)).toEqual([])
   })

@@ -9,9 +9,9 @@ const ctx = (over: Partial<ProviderOrganizationResponse>, owner = true) =>
 const labels = (c: ReturnType<typeof ctx>) => visibleNav(c).map((i) => i.label)
 
 describe('navigation (§8)', () => {
-  it('onboarding shows only home, organization and notifications', () => {
-    expect(labels(ctx({ verificationStatus: 'Draft' }))).toEqual(['home', 'organization', 'notifications'])
-    expect(labels(ctx({ verificationStatus: 'UnderReview' }))).toEqual(['home', 'organization', 'notifications'])
+  it('onboarding shows only home, organization, support and notifications', () => {
+    expect(labels(ctx({ verificationStatus: 'Draft' }))).toEqual(['home', 'organization', 'support', 'notifications'])
+    expect(labels(ctx({ verificationStatus: 'UnderReview' }))).toEqual(['home', 'organization', 'support', 'notifications'])
   })
 
   it('tenders only for MarketplacePartner / Both, store only when enabled', () => {

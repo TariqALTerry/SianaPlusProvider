@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Gavel, MessagesSquare, RefreshCw, ShieldAlert, Sparkles } from 'lucide-react'
+import { Gavel, LifeBuoy, MessagesSquare, RefreshCw, ShieldAlert, Sparkles } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 import { HumanNumber } from '@/components/EntityLink'
@@ -10,6 +11,8 @@ import { Timeline } from '@/components/Timeline'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { VisitBrief } from '@/features/insights/VisitBrief'
+import { NewTicketDialog } from '@/features/support/components/NewTicketDialog'
+import '@/features/support/i18n'
 import { TrackingTab } from '@/features/workshop/TrackingTab'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -43,6 +46,8 @@ type Tab = (typeof TABS)[number]
 export function WorkItemPage() {
   const { id = '' } = useParams()
   const { t } = useTranslation('work')
+  const { t: ts } = useTranslation('support')
+  const [ticketOpen, setTicketOpen] = useState(false)
   const { lang, pick } = useLang()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -82,11 +87,17 @@ export function WorkItemPage() {
         back={{ to: '/work', label: t('detail.back') }}
         // The service's conversation with the customer and the technician (PHASE2 §2).
         actions={
-          <Button asChild size="sm" variant="outline">
-            <Link to={`/messages/${item.id}`}>
-              <MessagesSquare /> {t('detail.conversation')}
-            </Link>
-          </Button>
+          <>
+            <Button asChild size="sm" variant="outline">
+              <Link to={`/messages/${item.id}`}>
+                <MessagesSquare /> {t('detail.conversation')}
+              </Link>
+            </Button>
+            {/* A support ticket linked to this service (SUPPORT-TICKETS-PROVIDER-PLATFORM-PROMPT §2). */}
+            <Button size="sm" variant="ghost" onClick={() => setTicketOpen(true)}>
+              <LifeBuoy /> {ts('fromItem')}
+            </Button>
+          </>
         }
         title={
           <span className="flex flex-wrap items-center gap-x-2">
@@ -192,6 +203,11 @@ export function WorkItemPage() {
           <MilestonesCard item={item} />
         </aside>
       </div>
+      <NewTicketDialog
+        open={ticketOpen}
+        onOpenChange={setTicketOpen}
+        serviceItem={{ id: item.id, label: [item.itemNumber, pick(item.serviceNameAr, item.serviceNameEn)].filter(Boolean).join(' · ') }}
+      />
     </>
   )
 }
