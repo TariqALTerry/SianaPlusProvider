@@ -498,6 +498,20 @@ export const SupportTicketEventType: EnumMap<T.SupportTicketEventType> = {
   InternalNote: e('ملاحظة داخلية', 'Internal note', 'waiting'),
 }
 
+/** Smart-store product pictures (SMART-STORE-PROVIDER-PLATFORM-PROMPT §4.4). */
+export const StoreProductImageStatus: EnumMap<T.StoreProductImageStatus> = {
+  Pending: e('قيد التجهيز', 'Processing', 'active'),
+  Ready: e('جاهزة', 'Ready', 'success'),
+  Failed: e('فشلت', 'Failed', 'danger'),
+}
+
+/** Product option axes (§3.3). */
+export const StoreOptionKind: EnumMap<T.StoreOptionKind> = {
+  Color: e('لون', 'Colour'),
+  Size: e('مقاس', 'Size'),
+  Other: e('أخرى', 'Other'),
+}
+
 export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
@@ -509,7 +523,7 @@ export const enumMaps = {
   ProviderWithdrawalStatus, WalletItemsBucket, ConversationSide, ExecutorTimeOffReason, DayOfWeek, PushApp, PushPlatform,
   DeviceCustodyStage, ProgressUpdateKind, ServiceItemLegType, ServiceItemLegStatus,
   SupportTicketKind, SupportChannel, SupportTicketCategory, SupportTicketPriority, SupportTicketStatus, SupportMessageSide,
-  SupportTicketEventType,
+  SupportTicketEventType, StoreProductImageStatus, StoreOptionKind,
 } as const
 
 export type EnumName = keyof typeof enumMaps

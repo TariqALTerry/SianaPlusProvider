@@ -17,6 +17,12 @@
     --brand-mint: 157 62% 73%;
     --brand-yellow: 47 90% 62%;
     --brand-cream: 44 100% 96%;
+    /* The customer app's product card (store preview) is always light: these do not change with the theme. */
+    --brand-primary: 168 93% 24%;
+    --brand-ink: 171 37% 10%;
+    --brand-muted: 162 8% 43%;
+    --brand-line: 160 18% 90%;
+    --brand-wash: 155 55% 94%;
 
     --background: 150 29% 97%;
     --surface: 0 0% 100%;

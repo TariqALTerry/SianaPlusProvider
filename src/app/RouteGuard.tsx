@@ -24,7 +24,9 @@ export function RouteGuard() {
     <EmptyState
       className="mt-16"
       icon={denial === 'notApproved' ? <Hourglass className="size-5" /> : <SearchX className="size-5" />}
-      title={denial === 'notApproved' ? t('shell.workHidden') : t('notFound.title')}
+      // A store route with the module off (even switched off mid-session: SMART-STORE-PROVIDER-PLATFORM-PROMPT §2) says so plainly.
+      title={denial === 'notApproved' ? t('shell.workHidden') : rule?.store ? t('shell.storeUnavailable') : t('notFound.title')}
+      description={denial === 'notAvailable' && rule?.store ? t('shell.storeUnavailableHint') : undefined}
       action={
         <Button asChild variant="outline">
           <Link to="/">{t('notFound.back')}</Link>

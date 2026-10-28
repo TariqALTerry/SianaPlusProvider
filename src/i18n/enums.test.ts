@@ -5,6 +5,8 @@ import { enumLabel, enumMaps, enumTone, type EnumEntry } from './enums'
 /** Backend enums the provider platform never renders. */
 /** Backend enums this platform never shows (other apps' features, internal states). */
 const NOT_DISPLAYED = new Set([
+  // The customer store catalog sort (SMART-STORE-MOBILE-PROMPT).
+  'StoreProductSort',
   'AuditAction', 'FileCategory', 'OtpPurpose',
   'AiProvider', 'AiReviewRating', 'AiReviewTag', 'AppExperience', 'HomeBannerActionType', 'NotificationPushStatus',
   'AssistantConversationStatus', 'AssistantMessageRole', 'AssistantCardType', 'AssistantStage', 'AssistantOutcome',

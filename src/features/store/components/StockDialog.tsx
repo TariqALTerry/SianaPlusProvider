@@ -8,32 +8,44 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Field } from '@/components/ui/label'
 import { ApiError, toApiError } from '@/api/http'
-import type { StoreProductResponse } from '@/api/types'
+import type { StoreProductResponse, StoreProductVariantResponse } from '@/api/types'
 import { useAction } from '@/hooks/useAction'
 import { useLang } from '@/hooks/useLang'
 import { formatNumber } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import '../i18n'
-import { productActionInvalidation, storeApi } from '../api'
+import { productActionInvalidation, storeProductsApi } from '../api'
 import { checkStockDelta, insufficientStockAvailable } from '../product'
 
-/** `PATCH …/stock { delta }`: shows current → after before submitting. */
-export function StockDialog({ product, open, onClose }: { product: StoreProductResponse; open: boolean; onClose: () => void }) {
+interface StockDialogProps {
+  product: StoreProductResponse
+  /** A saved variant: moves that variant's stock (the product total follows). */
+  variant?: StoreProductVariantResponse | null
+  open: boolean
+  onClose: () => void
+}
+
+/**
+ * Relative stock movement (§3.4): `PATCH …/stock { delta }` for a simple product, or
+ * `PATCH …/variants/{id}/stock { delta }` for a variant. Shows current → after before submitting.
+ */
+export function StockDialog({ product, variant, open, onClose }: StockDialogProps) {
   const { t } = useTranslation('store')
   const { pick, lang, isRtl } = useLang()
   const [raw, setRaw] = useState('')
+  const current = variant ? variant.stockQuantity : product.stockQuantity
 
   useEffect(() => {
     if (open) setRaw('')
   }, [open])
 
-  const check = checkStockDelta(raw, product.stockQuantity)
+  const check = checkStockDelta(raw, current)
 
   const action = useAction({
     invalidate: productActionInvalidation,
     success: t('success.stock'),
     onSuccess: onClose,
-    mutationFn: (delta: number) => storeApi.adjustStock(product.id, delta),
+    mutationFn: (delta: number) => (variant ? storeProductsApi.adjustVariantStock(product.id, variant.id, delta) : storeProductsApi.adjustStock(product.id, delta)),
   })
 
   useEffect(() => {
@@ -62,12 +74,12 @@ export function StockDialog({ product, open, onClose }: { product: StoreProductR
       onOpenChange={(o) => !o && onClose()}
       size="sm"
       title={t('stock.title')}
-      target={`${product.sku} · ${pick(product.nameAr, product.nameEn)}`}
+      target={`${variant ? variant.sku : product.sku} · ${pick(product.nameAr, product.nameEn)}${variant ? ` · ${pick(variant.labelAr, variant.labelEn)}` : ''}`}
       changes={
         <span className="flex items-center gap-3 text-base">
           <span className="flex flex-col">
             <span className="text-xs text-muted-foreground">{t('stock.current')}</span>
-            <Num value={product.stockQuantity} className="font-semibold" />
+            <Num value={current} className="font-semibold" />
           </span>
           <span aria-hidden className="text-muted-foreground">
             {isRtl ? '←' : '→'}

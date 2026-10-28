@@ -49,6 +49,11 @@ export default {
           mint: 'hsl(var(--brand-mint))',
           yellow: 'hsl(var(--brand-yellow))',
           cream: 'hsl(var(--brand-cream))',
+          primary: 'hsl(var(--brand-primary))',
+          ink: 'hsl(var(--brand-ink))',
+          muted: 'hsl(var(--brand-muted))',
+          line: 'hsl(var(--brand-line))',
+          wash: 'hsl(var(--brand-wash))',
         },
         tone: {
           neutral: tone('neutral'),

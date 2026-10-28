@@ -56,6 +56,8 @@
       "openProfile": "Edit profile"
     },
     "workHidden": "This page becomes available once your organization is approved.",
+    "storeUnavailable": "The store isn’t available",
+    "storeUnavailableHint": "The store module isn’t enabled for your organization right now. Contact the platform to turn it on.",
     "support": "Contact support"
   },
   "actions": {

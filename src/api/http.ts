@@ -271,7 +271,8 @@ export function cleanParams(params: object | undefined): Record<string, unknown>
 export const http = {
   get: <T>(url: string, params?: object, signal?: AbortSignal) =>
     send<T>({ method: 'GET', url, params: cleanParams(params), signal }),
-  post: <T = string>(url: string, body?: unknown) => send<T>({ method: 'POST', url, data: body ?? {} }),
+  /** `timeout` overrides the 30 s default for the few slow calls (the store's AI draft). */
+  post: <T = string>(url: string, body?: unknown, options?: { timeout?: number }) => send<T>({ method: 'POST', url, data: body ?? {}, timeout: options?.timeout }),
   put: <T = string>(url: string, body?: unknown) => send<T>({ method: 'PUT', url, data: body ?? {} }),
   patch: <T = string>(url: string, body?: unknown) => send<T>({ method: 'PATCH', url, data: body ?? {} }),
   delete: <T = string>(url: string) => send<T>({ method: 'DELETE', url }),

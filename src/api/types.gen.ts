@@ -128,7 +128,7 @@ export const AssignmentStatusValues = ['Pending', 'Accepted', 'Rejected', 'Reass
 export type AssignmentStatus = (typeof AssignmentStatusValues)[number]
 export const OrderSourceValues = ['CustomerApp', 'SmartRequest', 'Admin', 'Store'] as const
 export type OrderSource = (typeof OrderSourceValues)[number]
-export const OtpPurposeValues = ['CustomerLogin', 'ProviderLogin', 'ProviderRegistration', 'AppLogin'] as const
+export const OtpPurposeValues = ['CustomerLogin', 'ProviderLogin', 'ProviderRegistration', 'AppLogin', 'ChangePhone'] as const
 export type OtpPurpose = (typeof OtpPurposeValues)[number]
 export const ProviderTypeValues = ['IndependentTechnician', 'Company'] as const
 export type ProviderType = (typeof ProviderTypeValues)[number]
@@ -168,6 +168,12 @@ export const RoleValues = ['SuperAdmin', 'TenantAdmin', 'Manager', 'Member', 'Pl
 export type Role = (typeof RoleValues)[number]
 export const StoreOrderStatusValues = ['Draft', 'PendingPayment', 'Paid', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] as const
 export type StoreOrderStatus = (typeof StoreOrderStatusValues)[number]
+export const StoreProductImageStatusValues = ['Pending', 'Ready', 'Failed'] as const
+export type StoreProductImageStatus = (typeof StoreProductImageStatusValues)[number]
+export const StoreOptionKindValues = ['Color', 'Size', 'Other'] as const
+export type StoreOptionKind = (typeof StoreOptionKindValues)[number]
+export const StoreProductSortValues = ['Recommended', 'BestSelling', 'PriceLowToHigh', 'PriceHighToLow', 'Newest'] as const
+export type StoreProductSort = (typeof StoreProductSortValues)[number]
 export const SupportTicketKindValues = ['CustomerReport', 'TechnicianComplaint', 'DashboardTicket'] as const
 export type SupportTicketKind = (typeof SupportTicketKindValues)[number]
 export const SupportChannelValues = ['CustomerApp', 'ExecutorApp', 'ProviderPlatform', 'AdminDashboard'] as const
@@ -540,6 +546,18 @@ export interface AssistantPageContext {
   cartItemId: string | null
   categoryId: string | null
   subcategoryId: string | null
+  orderId: string | null
+  serviceItemId: string | null
+  draft: AssistantFormDraft | null
+  from: string | null
+  searchQuery: string | null
+}
+export interface AssistantFormDraft {
+  issueId: string | null
+  description: string | null
+  fieldValues: Record<string, unknown> | null
+  missingRequired: string[] | null
+  deviceCount: number | null
 }
 export interface SendAssistantMessageRequest {
   text: string
@@ -556,6 +574,8 @@ export interface AssistantConversationResponse {
   contextServiceId: string | null
   contextCategoryId: string | null
   contextSubcategoryId: string | null
+  contextOrderId: string | null
+  contextServiceItemId: string | null
   canSend: boolean
   messages: AssistantMessageResponse[]
   createdAt: string
@@ -619,11 +639,20 @@ export interface AssistantServiceCard {
   imageUrl: string | null
   pricingType: PricingType
   basePrice: number | null
+  priceUnitAr: string | null
+  priceUnitEn: string | null
   currency: string
   estimatedDurationMinutes: number | null
   warrantyDays: number | null
   isAvailable: boolean
   address: AssistantAddressOption | null
+  prefill: AssistantServicePrefill | null
+}
+export interface AssistantServicePrefill {
+  description: string | null
+  issueId: string | null
+  fieldValues: Record<string, unknown>
+  mediaIds: string[]
 }
 export interface AssistantUnavailableCard {
   serviceId: string
@@ -909,6 +938,11 @@ export interface SetSubcategoryCustomerInfoRequest {
   descriptionAr?: string | null
   descriptionEn?: string | null
 }
+export interface SetServiceUnitPricingRequest {
+  quantityFieldKey?: string | null
+  unitAr?: string | null
+  unitEn?: string | null
+}
 export interface GenerateServiceImageRequest {
   notes?: string | null
 }
@@ -959,6 +993,8 @@ export interface CreateDynamicFieldRequest {
   key: string
   labelAr: string
   labelEn: string
+  helpAr?: string | null
+  helpEn?: string | null
   fieldType: DynamicFieldType
   isRequired: boolean
   optionsJson?: string | null
@@ -967,6 +1003,8 @@ export interface CreateDynamicFieldRequest {
 export interface UpdateDynamicFieldRequest {
   labelAr: string
   labelEn: string
+  helpAr?: string | null
+  helpEn?: string | null
   fieldType: DynamicFieldType
   isRequired: boolean
   optionsJson?: string | null
@@ -1072,6 +1110,9 @@ export interface ServiceAdminDetailResponse extends ServiceAdminListItemResponse
   commissionRate: number | null
   estimatedMinPrice: number | null
   estimatedMaxPrice: number | null
+  priceQuantityFieldKey: string | null
+  priceUnitAr: string | null
+  priceUnitEn: string | null
   includesAr: string[]
   includesEn: string[]
   excludesAr: string[]
@@ -1097,6 +1138,8 @@ export interface DynamicFieldAdminResponse {
   key: string
   labelAr: string
   labelEn: string
+  helpAr: string | null
+  helpEn: string | null
   fieldType: DynamicFieldType
   isRequired: boolean
   optionsJson: string | null
@@ -1123,6 +1166,37 @@ export interface PriceItemResponse {
   maxUnitPrice: number | null
   isActive: boolean
   createdAt: string
+}
+export interface CreateSymptomRequest {
+  code: string
+  nameAr: string
+  nameEn: string
+  canonicalServiceId: string
+  serviceIssueId?: string | null
+  sortOrder: number
+}
+export interface UpdateSymptomRequest {
+  nameAr: string
+  nameEn: string
+  canonicalServiceId: string
+  serviceIssueId?: string | null
+  sortOrder: number
+}
+export interface SymptomResponse {
+  id: string
+  subcategoryId: string
+  code: string
+  nameAr: string
+  nameEn: string
+  canonicalServiceId: string
+  serviceCode: string
+  serviceNameAr: string
+  serviceNameEn: string
+  serviceIssueId: string | null
+  issueNameAr: string | null
+  issueNameEn: string | null
+  sortOrder: number
+  isActive: boolean
 }
 
 // ── Catalog/CatalogDtos.cs
@@ -1165,6 +1239,9 @@ export interface ServiceCardResponse {
   executionMode: ExecutionMode
   pricingType: PricingType
   basePrice: number | null
+  priceQuantityFieldKey: string | null
+  priceUnitAr: string | null
+  priceUnitEn: string | null
   requiresDevice: boolean
   supportsMultiDevice: boolean
   estimatedDurationMinutes: number | null
@@ -1178,6 +1255,8 @@ export interface DynamicFieldResponse {
   key: string
   labelAr: string
   labelEn: string
+  helpAr: string | null
+  helpEn: string | null
   fieldType: DynamicFieldType
   isRequired: boolean
   options: string[]
@@ -1909,7 +1988,13 @@ export interface CustomerProfileResponse {
   preferredCulture: string
   defaultAddressId: string | null
   completedOrdersCount: number
+  avatarUrl: string | null
+  canChangePhone: boolean
   createdAt: string
+}
+export interface ConfirmPhoneChangeRequest {
+  phoneNumber: string
+  code: string
 }
 export interface CustomerAddressResponse {
   id: string
@@ -1934,6 +2019,7 @@ export interface AddCartItemRequest {
   dynamicFields?: Record<string, unknown> | null
   devices?: DeviceRequest[] | null
   smartRequestId?: string | null
+  assistantMediaIds?: string[] | null
 }
 export interface BulkAddCartItemsRequest {
   items: AddCartItemRequest[]
@@ -1972,6 +2058,10 @@ export interface CartItemResponse {
   executionMode: ExecutionMode
   pricingType: PricingType
   baseAmount: number
+  unitPrice: number | null
+  pricedQuantity: number | null
+  priceUnitAr: string | null
+  priceUnitEn: string | null
   priceOnQuote: boolean
   customerDescription: string | null
   dynamicFields: Record<string, unknown>
@@ -2010,6 +2100,8 @@ export interface CheckoutSummaryItemResponse {
   serviceNameEn: string
   pricingType: PricingType
   baseAmount: number
+  unitPrice: number | null
+  pricedQuantity: number | null
   priceOnQuote: boolean
   deviceCount: number
 }
@@ -2090,6 +2182,9 @@ export interface OrderItemBriefResponse {
   itemNumber: string | null
   serviceNameAr: string
   serviceNameEn: string
+  serviceId: string | null
+  serviceCode: string | null
+  serviceImageUrl: string | null
   status: ServiceItemStatus
 }
 export interface OrderPaymentSummaryResponse {
@@ -2128,6 +2223,9 @@ export interface ServiceItemCustomerView {
   sequence: number
   serviceNameAr: string
   serviceNameEn: string
+  serviceId: string | null
+  serviceCode: string | null
+  serviceImageUrl: string | null
   issueNameAr: string | null
   issueNameEn: string | null
   executionMode: ExecutionMode
@@ -2136,6 +2234,8 @@ export interface ServiceItemCustomerView {
   scheduledStart: string | null
   scheduledEnd: string | null
   baseAmount: number
+  unitPrice: number | null
+  pricedQuantity: number | null
   quotedAmount: number | null
   finalAmount: number
   refundedAmount: number
@@ -3420,6 +3520,19 @@ export interface DemoReactivateResponse {
   activatedUsers: number
 }
 
+// ── Operations/DemoStoreDtos.cs
+export interface DemoStoreProductsResponse {
+  created: number
+  restored: number
+  productsCount: number
+  activeCount: number
+  products: StoreProductResponse[]
+}
+export interface DemoStoreRetireResponse {
+  deleted: number
+  deactivated: number
+}
+
 // ── Operations/ProviderWorkDtos.cs
 export interface ProviderWorkListRequest extends PaginatedRequest {
   status?: ServiceItemStatus[] | null
@@ -3542,6 +3655,36 @@ export interface ProviderWorkBoardResponse {
   itemsByStatus: StatusCountResponse[]
   todaySchedule: ScheduledItemResponse[]
   executors: ExecutorLoadResponse[]
+}
+
+// ── Operations/TestCustomerDtos.cs
+export interface TestCustomerDataRequest {
+  phoneNumber: string
+  allowExistingOrders: boolean
+}
+export interface TestCustomerDataResponse {
+  customerId: string
+  phoneNumber: string
+  customerCreated: boolean
+  replaced: boolean
+  orders: TestCustomerOrderResponse[]
+  storeOrderNumber: string | null
+  addressesCount: number
+  favoritesCount: number
+}
+export interface TestCustomerOrderResponse {
+  orderId: string
+  orderNumber: string
+  orderStatus: ParentOrderStatus
+  itemStatus: ServiceItemStatus
+  serviceNameAr: string
+  providerName: string | null
+}
+export interface TestCustomerRemoveResponse {
+  ordersRemoved: number
+  storeOrdersRemoved: number
+  addressesRemoved: number
+  favoritesRemoved: number
 }
 
 // ── Orders/SharedOrderDtos.cs
@@ -4368,11 +4511,159 @@ export interface StaffRoleResponse {
   updatedAt: string | null
 }
 
+// ── Store/StoreCatalogDtos.cs
+export interface StoreProductSpecDto {
+  labelAr: string
+  labelEn: string
+  valueAr: string
+  valueEn: string
+}
+export interface StoreProductOptionDto {
+  kind: StoreOptionKind
+  nameAr: string
+  nameEn: string
+  values: StoreProductOptionValueDto[]
+}
+export interface StoreProductOptionValueDto {
+  key: string
+  valueAr: string
+  valueEn: string
+  colorHex: string | null
+}
+export interface StoreProductVariantRequest {
+  id?: string | null
+  sku?: string | null
+  optionValues: string[]
+  price: number
+  compareAtPrice?: number | null
+  stockQuantity: number
+  imageId?: string | null
+  isActive: boolean
+}
+export interface UploadStoreImageRequest {
+  cleanWithAi: boolean
+}
+export interface ReprocessStoreImageRequest {
+  cleanWithAi: boolean
+}
+export interface StoreProductImageResponse {
+  id: string
+  productId: string | null
+  status: StoreProductImageStatus
+  imageUrl: string | null
+  sourceUrl: string | null
+  cleanWithAi: boolean
+  aiCleaned: boolean
+  error: string | null
+  sortOrder: number
+  createdAt: string
+  processedAt: string | null
+}
+export interface StoreProductVariantResponse {
+  id: string
+  sku: string
+  optionValues: string[]
+  labelAr: string
+  labelEn: string
+  price: number
+  compareAtPrice: number | null
+  stockQuantity: number
+  imageId: string | null
+  imageUrl: string | null
+  isActive: boolean
+}
+export interface StoreCategoryListRequest {
+  status?: ActiveFilter | null
+}
+export interface CreateStoreCategoryRequest {
+  code: string
+  parentId?: string | null
+  nameAr: string
+  nameEn: string
+  iconKey?: string | null
+  sortOrder: number
+}
+export interface UpdateStoreCategoryRequest {
+  nameAr: string
+  nameEn: string
+  iconKey?: string | null
+  sortOrder: number
+}
+export interface SetStoreCategoryActiveRequest {
+  isActive: boolean
+}
+export interface StoreCategoryResponse {
+  id: string
+  code: string
+  parentId: string | null
+  nameAr: string
+  nameEn: string
+  iconKey: string | null
+  imageUrl: string | null
+  sortOrder: number
+  isActive: boolean
+  productsCount: number
+  children: StoreCategoryResponse[]
+}
+export interface StoreProductAiDraftRequest {
+  imageIds: string[]
+  hint?: string | null
+  categoryId?: string | null
+}
+export interface StoreProductDraftResponse {
+  product: CreateStoreProductRequest
+  categoryNameAr: string | null
+  categoryNameEn: string | null
+  notes: string[]
+}
+export interface StoreGalleryImageResponse {
+  id: string
+  imageUrl: string
+}
+export interface StoreCustomerVariantResponse {
+  id: string
+  optionValues: string[]
+  labelAr: string
+  labelEn: string
+  price: number
+  compareAtPrice: number | null
+  discountPercent: number | null
+  inStock: boolean
+  availableStock: number
+  imageId: string | null
+}
+export interface StoreProductDetailResponse extends StoreProductCardResponse {
+  sectionId: string | null
+  sectionNameAr: string | null
+  sectionNameEn: string | null
+  categoryNameAr: string | null
+  categoryNameEn: string | null
+  images: StoreGalleryImageResponse[]
+  highlightsAr: string[]
+  highlightsEn: string[]
+  specs: StoreProductSpecDto[]
+  options: StoreProductOptionDto[]
+  variants: StoreCustomerVariantResponse[]
+  related: StoreProductCardResponse[]
+}
+export interface StoreHomeRailResponse {
+  key: string
+  titleAr: string
+  titleEn: string
+  categoryId: string | null
+  products: StoreProductCardResponse[]
+}
+export interface StoreHomeResponse {
+  sections: StoreCategoryResponse[]
+  rails: StoreHomeRailResponse[]
+}
+
 // ── Store/StoreDtos.cs
 export interface StoreProductListRequest extends PaginatedRequest {
   status?: ActiveFilter | null
   providerOrganizationId?: string | null
   search?: string | null
+  categoryId?: string | null
 }
 export interface UpdateStoreProductRequest {
   sku: string
@@ -4385,9 +4676,20 @@ export interface UpdateStoreProductRequest {
   requiresInstallation: boolean
   installationServiceId?: string | null
   deliveryServiceId?: string | null
+  categoryId?: string | null
+  brand?: string | null
+  compareAtPrice?: number | null
+  highlightsAr?: string[] | null
+  highlightsEn?: string[] | null
+  specs?: StoreProductSpecDto[] | null
+  keywords?: string | null
+  imageIds?: string[] | null
+  options?: StoreProductOptionDto[] | null
+  variants?: StoreProductVariantRequest[] | null
 }
 export interface CreateStoreProductRequest extends UpdateStoreProductRequest {
   stockQuantity: number
+  fromAiDraft: boolean
 }
 export interface SetStoreProductActiveRequest {
   isActive: boolean
@@ -4407,9 +4709,13 @@ export interface UpdateStoreOrderStatusRequest {
 export interface StoreCatalogRequest extends PaginatedRequest {
   search?: string | null
   includeOutOfStock?: boolean
+  categoryId?: string | null
+  onSale?: boolean
+  sort?: StoreProductSort | null
 }
 export interface AddStoreCartItemRequest {
   productId: string
+  variantId?: string | null
   quantity: number
 }
 export interface UpdateStoreCartItemRequest {
@@ -4434,6 +4740,7 @@ export interface StoreProductResponse {
   descriptionAr: string | null
   descriptionEn: string | null
   price: number
+  compareAtPrice: number | null
   stockQuantity: number
   imageUrl: string | null
   providerOrganizationId: string | null
@@ -4445,6 +4752,24 @@ export interface StoreProductResponse {
   isActive: boolean
   createdAt: string
   updatedAt: string | null
+  categoryId: string | null
+  categoryNameAr: string | null
+  categoryNameEn: string | null
+  sectionId: string | null
+  sectionNameAr: string | null
+  sectionNameEn: string | null
+  brand: string | null
+  highlightsAr: string[]
+  highlightsEn: string[]
+  specs: StoreProductSpecDto[]
+  keywords: string | null
+  images: StoreProductImageResponse[]
+  options: StoreProductOptionDto[]
+  variants: StoreProductVariantResponse[]
+  hasVariants: boolean
+  soldCount: number
+  isAiGenerated: boolean
+  missingForSale: string[]
 }
 export interface StoreProductCardResponse {
   id: string
@@ -4453,8 +4778,15 @@ export interface StoreProductCardResponse {
   descriptionAr: string | null
   descriptionEn: string | null
   price: number
+  compareAtPrice: number | null
+  discountPercent: number | null
   currency: string
   imageUrl: string | null
+  brand: string | null
+  categoryId: string | null
+  hasVariants: boolean
+  colorSwatches: string[]
+  isNew: boolean
   inStock: boolean
   availableStock: number
   requiresDelivery: boolean
@@ -4464,8 +4796,11 @@ export interface StoreProductCardResponse {
 export interface StoreCartItemResponse {
   id: string
   productId: string
+  variantId: string | null
   productNameAr: string
   productNameEn: string
+  variantLabelAr: string | null
+  variantLabelEn: string | null
   imageUrl: string | null
   quantity: number
   unitPrice: number
@@ -4486,8 +4821,12 @@ export interface StoreCartResponse {
 export interface StoreOrderItemResponse {
   id: string
   productId: string
+  variantId: string | null
   productNameAr: string
   productNameEn: string
+  variantLabelAr: string | null
+  variantLabelEn: string | null
+  imageUrl: string | null
   quantity: number
   unitPrice: number
   total: number
