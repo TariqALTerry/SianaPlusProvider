@@ -1,5 +1,5 @@
 import { toApiError, ApiError } from '@/api/http'
-import type { ExecutorCandidateResponse, ServiceItemProviderView, ServiceItemStatus } from '@/api/types'
+import type { ExecutorCandidateResponse, HomeInspectionCheckResponse, HomeInspectionStatus, ServiceItemProviderView, ServiceItemStatus } from '@/api/types'
 import { isoToRiyadhInput, nowRiyadh, parseUtc } from '@/lib/format'
 
 /** Quick tabs above the work list (§8.4), in the brief's order. */
@@ -192,4 +192,41 @@ export function defaultScheduleWindow(start: string | null, end: string | null, 
   }
   const base = now.add(1, 'hour').startOf('hour')
   return { start: base.format(SCHEDULE_INPUT_FORMAT), end: base.add(2, 'hour').format(SCHEDULE_INPUT_FORMAT) }
+}
+
+// ── «صحة بيتك» (HOME-SUBSCRIPTIONS-PROVIDER-PLATFORM-PHASE2-PROMPT §2) ──
+
+/** `GET …/home-inspection` answers this for a covered visit that is not a health check: hide the report. */
+export function isInspectionNotRequired(error: unknown): boolean {
+  return !!error && toApiError(error).errorCode === 'HomeInspectionNotRequired'
+}
+
+/** A draft's progress bar: checks the technician has answered, out of the whole list. */
+export function inspectionProgress(checks: readonly Pick<HomeInspectionCheckResponse, 'result'>[]): { done: number; total: number } {
+  return { done: checks.filter((c) => c.result !== null).length, total: checks.length }
+}
+
+/** Score colour: green from 80, yellow from 50, red below. The score itself comes from the server. */
+export function inspectionScoreTone(score: number): 'success' | 'waiting' | 'danger' {
+  if (score >= 80) return 'success'
+  if (score >= 50) return 'waiting'
+  return 'danger'
+}
+
+/**
+ * Where the technician can still finish the visit, so an unsent report will block it
+ * (`HomeInspectionRequired`). From `WaitingCustomerConfirmation` on, they already have.
+ */
+export const INSPECTION_GATE_STATUSES: readonly ServiceItemStatus[] = [
+  'AssignedToExecutor', 'Accepted', 'Scheduled', 'EnRoute', 'Arrived', 'Assessment', 'WaitingCustomerApproval', 'InProgress', 'Paused',
+]
+
+export function showsInspectionWarning(itemStatus: ServiceItemStatus, inspectionStatus: HomeInspectionStatus | null): boolean {
+  return inspectionStatus !== 'Submitted' && INSPECTION_GATE_STATUSES.includes(itemStatus)
+}
+
+/** "مقترحات للعميل": what needs work, urgent first. Read only — the customer orders it from the report. */
+export function inspectionSuggestions<C extends Pick<HomeInspectionCheckResponse, 'result'>>(checks: readonly C[]): C[] {
+  const rank = (c: C) => (c.result === 'Urgent' ? 0 : 1)
+  return checks.filter((c) => c.result === 'Urgent' || c.result === 'NeedsAttention').sort((a, b) => rank(a) - rank(b))
 }

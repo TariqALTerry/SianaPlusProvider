@@ -22,6 +22,7 @@ import { usePollingInterval } from '@/hooks/usePageVisible'
 import { enumLabel } from '@/i18n/enums'
 import './i18n'
 import { workApi, workKeys } from './api'
+import { useHomeInspection } from './hooks'
 import { isLiveStatus } from './logic'
 import {
   AssignmentsSection,
@@ -35,8 +36,9 @@ import {
   TechnicianCard,
   WorkflowCard,
 } from './components/ItemSections'
+import { HomeInspectionButton, HomeInspectionSheet, InspectionWarning } from './components/HomeInspection'
 import { WorkActions } from './components/WorkActions'
-import { NetBlock } from './components/widgets'
+import { CoverageBadge, NetBlock } from './components/widgets'
 
 // `?tab=tracking` is the deep link the 72 h no-update and "arrange the return" alerts open.
 const TABS = ['timeline', 'tracking', 'photos', 'quotations', 'assignments', 'schedules'] as const
@@ -48,6 +50,7 @@ export function WorkItemPage() {
   const { t } = useTranslation('work')
   const { t: ts } = useTranslation('support')
   const [ticketOpen, setTicketOpen] = useState(false)
+  const [inspectionOpen, setInspectionOpen] = useState(false)
   const { lang, pick } = useLang()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -61,6 +64,7 @@ export function WorkItemPage() {
     ...detailQueryOptions,
     refetchInterval: (q) => (q.state.data && isLiveStatus(q.state.data.item.status) ? interval : false),
   })
+  const inspection = useHomeInspection(query.data?.item, interval)
 
   if (query.isPending) return <PageSkeleton />
   if (query.isError) return <ErrorState error={query.error} onRetry={() => void query.refetch()} />
@@ -93,6 +97,8 @@ export function WorkItemPage() {
                 <MessagesSquare /> {t('detail.conversation')}
               </Link>
             </Button>
+            {/* «صحة بيتك» of a covered health-check visit (HOME-SUBSCRIPTIONS PHASE2 §2). */}
+            <HomeInspectionButton query={inspection} onOpen={() => setInspectionOpen(true)} />
             {/* A support ticket linked to this service (SUPPORT-TICKETS-PROVIDER-PLATFORM-PROMPT §2). */}
             <Button size="sm" variant="ghost" onClick={() => setTicketOpen(true)}>
               <LifeBuoy /> {ts('fromItem')}
@@ -124,6 +130,7 @@ export function WorkItemPage() {
                 <Sparkles className="size-3" /> {t('icons.delegated')}
               </Badge>
             )}
+            {item.isSubscriptionCovered && <CoverageBadge />}
           </>
         }
         description={
@@ -144,6 +151,8 @@ export function WorkItemPage() {
       />
 
       <WorkActions item={item} onRejected={onRejected} />
+
+      <InspectionWarning item={item} query={inspection} onOpen={() => setInspectionOpen(true)} />
 
       {item.pendingQuotation && (
         <p className="mb-4 rounded-lg border border-tone-attention/30 bg-tone-attention-soft px-3 py-2 text-sm text-tone-attention" role="status">
@@ -203,6 +212,7 @@ export function WorkItemPage() {
           <MilestonesCard item={item} />
         </aside>
       </div>
+      <HomeInspectionSheet query={inspection} open={inspectionOpen} onOpenChange={setInspectionOpen} />
       <NewTicketDialog
         open={ticketOpen}
         onOpenChange={setTicketOpen}

@@ -1,12 +1,13 @@
+import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useProvider } from '@/app/provider'
 import { useAction } from '@/hooks/useAction'
 import { useLang } from '@/hooks/useLang'
 import { i18next } from '@/i18n'
-import type { ServiceItemProviderView } from '@/api/types'
-import { WORK_INVALIDATION, workApi } from './api'
-import { delegateSkipped } from './logic'
+import type { HomeInspectionResponse, ServiceItemProviderView } from '@/api/types'
+import { WORK_INVALIDATION, workApi, workKeys } from './api'
+import { delegateSkipped, isLiveStatus } from './logic'
 import './i18n'
 
 /** The minimum a dialog needs about the item — fits both Incoming cards and the item page. */
@@ -56,5 +57,20 @@ export function useDelegateAction(options: { errorToast?: boolean; onDone?: () =
       announceDelegate(view, vars.previousExecutorId)
       options.onDone?.()
     },
+  })
+}
+
+/**
+ * «صحة بيتك» of a covered item (HOME-SUBSCRIPTIONS-PROVIDER-PLATFORM-PHASE2-PROMPT §2). Read for
+ * every covered item, so the page can warn before the technician hits `HomeInspectionRequired`;
+ * a covered visit that is not a health check answers `HomeInspectionNotRequired` and shows nothing.
+ * Polled with the item until the report is sent.
+ */
+export function useHomeInspection(item: ServiceItemProviderView | undefined, interval: number | false): UseQueryResult<HomeInspectionResponse> {
+  return useQuery({
+    queryKey: workKeys.homeInspection(item?.id ?? ''),
+    queryFn: ({ signal }) => workApi.homeInspection(item!.id, signal),
+    enabled: !!item?.isSubscriptionCovered,
+    refetchInterval: (q) => (item && isLiveStatus(item.status) && q.state.data && q.state.data.status !== 'Submitted' ? interval : false),
   })
 }

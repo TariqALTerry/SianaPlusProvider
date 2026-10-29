@@ -4,6 +4,7 @@ import { qk } from '@/api/keys'
 import type {
   AssignExecutorRequest,
   ExecutorCandidateResponse,
+  HomeInspectionResponse,
   ListParams,
   PaginatedResponse,
   ProviderRejectRequest,
@@ -34,6 +35,8 @@ export const workApi = {
   delegate: (id: string) => http.post<ServiceItemProviderView>(`${base}/items/${id}/delegate`),
   reject: (id: string, body: ProviderRejectRequest) => http.post<string>(`${base}/items/${id}/reject`, body),
   schedule: (id: string, body: ScheduleItemRequest) => http.post<ServiceItemProviderView>(`${base}/items/${id}/schedule`, body),
+  /** «صحة بيتك» of a covered visit (HOME-SUBSCRIPTIONS PHASE2 §1); `HomeInspectionNotRequired` when it is not a health check. */
+  homeInspection: (id: string, signal?: AbortSignal) => http.get<HomeInspectionResponse>(`${base}/items/${id}/home-inspection`, undefined, signal),
 }
 
 export const workKeys = {
@@ -41,6 +44,7 @@ export const workKeys = {
   list: (params: WorkListParams) => [...qk.work, 'list', params] as const,
   detail: (id: string) => [...qk.work, 'detail', id] as const,
   candidates: (id: string) => [...qk.work, 'candidates', id] as const,
+  homeInspection: (id: string) => [...qk.work, 'home-inspection', id] as const,
   executorItems: (executorId: string, params: WorkListParams) => [...qk.work, 'list', 'executor', executorId, params] as const,
   board: () => [...qk.board, 'summary'] as const,
 }

@@ -11,10 +11,15 @@ import {
   delegateSkipped,
   ineligibleReasons,
   initials,
+  inspectionProgress,
+  inspectionScoreTone,
+  inspectionSuggestions,
+  isInspectionNotRequired,
   isContactHidden,
   isLiveStatus,
   isStaleItemDetail,
   loadRatio,
+  showsInspectionWarning,
   statusesFor,
   TAB_STATUSES,
   workErrorDetail,
@@ -186,5 +191,46 @@ describe('schedule dialog defaults', () => {
   it('proposes the next full hour when there is no window or it is past', () => {
     expect(defaultScheduleWindow(null, null, now)).toEqual({ start: '2026-10-05T11:00', end: '2026-10-05T13:00' })
     expect(defaultScheduleWindow('2026-10-01T06:00:00Z', null, now)).toEqual({ start: '2026-10-05T11:00', end: '2026-10-05T13:00' })
+  })
+})
+
+describe('home inspection report (HOME-SUBSCRIPTIONS PHASE2 §2)', () => {
+  it('recognises a visit that is not a health check', () => {
+    expect(isInspectionNotRequired(new ApiError({ status: 400, errorCode: 'HomeInspectionNotRequired', message: 'x', details: undefined }))).toBe(true)
+    expect(isInspectionNotRequired(new ApiError({ status: 404, errorCode: 'ServiceItemNotFound', message: 'x', details: undefined }))).toBe(false)
+    expect(isInspectionNotRequired(null)).toBe(false)
+  })
+
+  it('counts answered checks for the draft progress', () => {
+    expect(inspectionProgress([{ result: 'Good' }, { result: null }, { result: 'NotApplicable' }])).toEqual({ done: 2, total: 3 })
+    expect(inspectionProgress([])).toEqual({ done: 0, total: 0 })
+  })
+
+  it('colours the score green from 80, yellow from 50, red below', () => {
+    expect(inspectionScoreTone(100)).toBe('success')
+    expect(inspectionScoreTone(80)).toBe('success')
+    expect(inspectionScoreTone(79)).toBe('waiting')
+    expect(inspectionScoreTone(50)).toBe('waiting')
+    expect(inspectionScoreTone(49)).toBe('danger')
+  })
+
+  it('warns while the technician can still finish and the report is not sent', () => {
+    expect(showsInspectionWarning('InProgress', null)).toBe(true)
+    expect(showsInspectionWarning('Arrived', 'Draft')).toBe(true)
+    expect(showsInspectionWarning('InProgress', 'Submitted')).toBe(false)
+    expect(showsInspectionWarning('WaitingCustomerConfirmation', 'Draft')).toBe(false)
+    expect(showsInspectionWarning('Completed', null)).toBe(false)
+    expect(showsInspectionWarning('AssignedToProvider', null)).toBe(false)
+  })
+
+  it('lists only flagged checks as suggestions, urgent first', () => {
+    const checks = [
+      { key: 'a', result: 'NeedsAttention' as const },
+      { key: 'b', result: 'Good' as const },
+      { key: 'c', result: 'Urgent' as const },
+      { key: 'd', result: null },
+      { key: 'e', result: 'NotApplicable' as const },
+    ]
+    expect(inspectionSuggestions(checks).map((c) => c.key)).toEqual(['c', 'a'])
   })
 })

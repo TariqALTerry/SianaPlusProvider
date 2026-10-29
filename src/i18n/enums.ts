@@ -512,6 +512,20 @@ export const StoreOptionKind: EnumMap<T.StoreOptionKind> = {
   Other: e('أخرى', 'Other'),
 }
 
+/** «صحة بيتك» report of a subscription health-check visit (HOME-SUBSCRIPTIONS PHASE2 §2). */
+export const HomeInspectionStatus: EnumMap<T.HomeInspectionStatus> = {
+  Draft: e('الفني يعبّئ الفحص', 'Technician filling it in', 'active'),
+  Submitted: e('أُرسل التقرير', 'Report sent', 'success'),
+}
+
+/** One check's finding. */
+export const HomeInspectionResult: EnumMap<T.HomeInspectionResult> = {
+  Good: e('سليم', 'Good', 'success'),
+  NeedsAttention: e('يحتاج اهتمامًا', 'Needs attention', 'waiting'),
+  Urgent: e('عاجل', 'Urgent', 'danger'),
+  NotApplicable: e('لا ينطبق', 'Not applicable', 'muted'),
+}
+
 export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
@@ -523,7 +537,7 @@ export const enumMaps = {
   ProviderWithdrawalStatus, WalletItemsBucket, ConversationSide, ExecutorTimeOffReason, DayOfWeek, PushApp, PushPlatform,
   DeviceCustodyStage, ProgressUpdateKind, ServiceItemLegType, ServiceItemLegStatus,
   SupportTicketKind, SupportChannel, SupportTicketCategory, SupportTicketPriority, SupportTicketStatus, SupportMessageSide,
-  SupportTicketEventType, StoreProductImageStatus, StoreOptionKind,
+  SupportTicketEventType, StoreProductImageStatus, StoreOptionKind, HomeInspectionStatus, HomeInspectionResult,
 } as const
 
 export type EnumName = keyof typeof enumMaps

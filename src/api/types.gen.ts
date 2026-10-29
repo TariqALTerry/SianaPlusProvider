@@ -174,6 +174,14 @@ export const StoreOptionKindValues = ['Color', 'Size', 'Other'] as const
 export type StoreOptionKind = (typeof StoreOptionKindValues)[number]
 export const StoreProductSortValues = ['Recommended', 'BestSelling', 'PriceLowToHigh', 'PriceHighToLow', 'Newest'] as const
 export type StoreProductSort = (typeof StoreProductSortValues)[number]
+export const HomeSubscriptionStatusValues = ['PendingActivation', 'Active', 'Expired', 'Cancelled'] as const
+export type HomeSubscriptionStatus = (typeof HomeSubscriptionStatusValues)[number]
+export const SubscriptionEntitlementKindValues = ['Preventive', 'Repair'] as const
+export type SubscriptionEntitlementKind = (typeof SubscriptionEntitlementKindValues)[number]
+export const HomeInspectionStatusValues = ['Draft', 'Submitted'] as const
+export type HomeInspectionStatus = (typeof HomeInspectionStatusValues)[number]
+export const HomeInspectionResultValues = ['Good', 'NeedsAttention', 'Urgent', 'NotApplicable'] as const
+export type HomeInspectionResult = (typeof HomeInspectionResultValues)[number]
 export const SupportTicketKindValues = ['CustomerReport', 'TechnicianComplaint', 'DashboardTicket'] as const
 export type SupportTicketKind = (typeof SupportTicketKindValues)[number]
 export const SupportChannelValues = ['CustomerApp', 'ExecutorApp', 'ProviderPlatform', 'AdminDashboard'] as const
@@ -681,6 +689,10 @@ export interface AssistantSummaryCard {
   address: AssistantAddressOption | null
   slot: AssistantSlotOption | null
   paymentMethods: PaymentMethod[]
+  coveredTotal: number
+  customerPays: number
+  subscriptionNameAr: string | null
+  subscriptionNameEn: string | null
   checkout: AssistantCheckoutPayload
 }
 export interface AssistantSummaryLine {
@@ -690,6 +702,8 @@ export interface AssistantSummaryLine {
   baseAmount: number
   priceOnQuote: boolean
   deviceCount: number
+  coveredAmount: number
+  coveredOnQuote: boolean
 }
 export interface AssistantCheckoutPayload {
   addressId: string | null
@@ -2141,6 +2155,7 @@ export interface InvoiceLineResponse {
   inspectionFee: number | null
   quotedAmount: number | null
   amount: number
+  coveredAmount: number
   refundedAmount: number
   isBilled: boolean
 }
@@ -2239,6 +2254,12 @@ export interface ServiceItemCustomerView {
   quotedAmount: number | null
   finalAmount: number
   refundedAmount: number
+  coveredAmount: number
+  customerPays: number
+  subscriptionId: string | null
+  subscriptionVisitIncluded: boolean
+  pendingQuotationCoveredAmount: number | null
+  homeInspectionId: string | null
   provider: LookupResponse | null
   executor: PersonLookupResponse | null
   devices: DeviceResponse[]
@@ -2495,6 +2516,8 @@ export interface JobSummaryResponse {
   customerFirstName: string | null
   deviceCount: number
   amount: number
+  coveredAmount: number
+  customerPays: number
   assignedAt: string | null
   requiresQuotation: boolean
   hasPendingQuotation: boolean
@@ -2519,6 +2542,7 @@ export interface EvidenceGroupResponse {
   items: EvidenceResponse[]
 }
 export interface JobDetailResponse extends JobSummaryResponse {
+  requiresHomeInspection: boolean
   customer: JobCustomerResponse
   dynamicFields: Record<string, unknown> | null
   customerDescription: string | null
@@ -3260,6 +3284,8 @@ export interface ServiceItemAdminView {
   quotedAmount: number | null
   finalAmount: number
   refundedAmount: number
+  coveredAmount: number
+  subscriptionId: string | null
   commissionRate: number | null
   commissionAmount: number
   providerNetAmount: number
@@ -3559,6 +3585,9 @@ export interface IncomingWorkItemResponse {
   scheduledStart: string | null
   scheduledEnd: string | null
   finalAmount: number
+  coveredAmount: number
+  customerPays: number
+  isSubscriptionCovered: boolean
   commissionRate: number | null
   netAmount: number
   isMarketplace: boolean
@@ -3592,6 +3621,9 @@ export interface ServiceItemProviderView {
   baseAmount: number
   quotedAmount: number | null
   finalAmount: number
+  coveredAmount: number
+  customerPays: number
+  isSubscriptionCovered: boolean
   refundedAmount: number
   commissionRate: number | null
   netAmount: number
@@ -4877,6 +4909,282 @@ export interface StoreFulfillmentItemResponse {
   scheduledStart: string | null
   scheduledEnd: string | null
   completedAt: string | null
+}
+
+// ── Subscriptions/HomeInspectionDtos.cs
+export interface HomeInspectionResponse {
+  id: string | null
+  serviceItemId: string
+  orderId: string
+  orderNumber: string | null
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  subscriptionId: string | null
+  addressLabel: string | null
+  district: string | null
+  inspectorName: string | null
+  status: HomeInspectionStatus | null
+  score: number | null
+  goodCount: number
+  needsAttentionCount: number
+  urgentCount: number
+  summary: string | null
+  submittedAt: string | null
+  updatedAt: string | null
+  canEdit: boolean
+  areas: HomeInspectionAreaResponse[]
+  checks: HomeInspectionCheckResponse[]
+}
+export interface HomeInspectionAreaResponse {
+  key: string
+  nameAr: string
+  nameEn: string
+}
+export interface HomeInspectionCheckResponse {
+  key: string
+  areaKey: string
+  labelAr: string
+  labelEn: string
+  result: HomeInspectionResult | null
+  note: string | null
+  recommendedServiceId: string | null
+  recommendedServiceNameAr: string | null
+  recommendedServiceNameEn: string | null
+}
+export interface HomeInspectionSummaryResponse {
+  id: string
+  serviceItemId: string
+  itemNumber: string | null
+  status: HomeInspectionStatus
+  score: number
+  needsAttentionCount: number
+  urgentCount: number
+  submittedAt: string | null
+}
+export interface SaveHomeInspectionRequest {
+  summary?: string | null
+  checks: SaveHomeInspectionCheckRequest[]
+  submit: boolean
+}
+export interface SaveHomeInspectionCheckRequest {
+  key: string
+  result?: HomeInspectionResult | null
+  note?: string | null
+}
+
+// ── Subscriptions/HomeSubscriptionDtos.cs
+export interface SubscriptionPlanResponse {
+  id: string
+  code: string
+  nameAr: string
+  nameEn: string
+  descriptionAr: string | null
+  descriptionEn: string | null
+  price: number
+  currency: string
+  termMonths: number
+  unitNameAr: string | null
+  unitNameEn: string | null
+  includedUnits: number
+  extraUnitPrice: number
+  maxUnits: number
+  waitingDays: number
+  memberDiscountPercent: number
+  entitlements: PlanEntitlementResponse[]
+}
+export interface PlanEntitlementResponse {
+  id: string
+  kind: SubscriptionEntitlementKind
+  canonicalServiceId: string | null
+  subcategoryId: string | null
+  nameAr: string
+  nameEn: string
+  visitsPerTerm: number
+  coverageCapPerUnit: number | null
+  includesHomeInspection: boolean
+}
+export interface SubscriptionPlanAdminResponse extends SubscriptionPlanResponse {
+  reminderMonths: number[]
+  isActive: boolean
+  sortOrder: number
+  activeSubscriptions: number
+  pendingSubscriptions: number
+  createdAt: string
+  updatedAt: string | null
+}
+export interface SaveSubscriptionPlanRequest {
+  code: string
+  nameAr: string
+  nameEn: string
+  descriptionAr?: string | null
+  descriptionEn?: string | null
+  price: number
+  termMonths: number
+  unitNameAr?: string | null
+  unitNameEn?: string | null
+  includedUnits: number
+  extraUnitPrice: number
+  maxUnits: number
+  waitingDays: number
+  memberDiscountPercent: number
+  reminderMonths: number[]
+  sortOrder: number
+  isActive: boolean
+  entitlements: SavePlanEntitlementRequest[]
+}
+export interface SavePlanEntitlementRequest {
+  kind: SubscriptionEntitlementKind
+  canonicalServiceId?: string | null
+  subcategoryId?: string | null
+  visitsPerTerm: number
+  coverageCapPerUnit?: number | null
+  includesHomeInspection: boolean
+}
+export interface SubscribeRequest {
+  planId: string
+  addressId: string
+  unitCount: number
+  paymentMethod: PaymentMethod
+}
+export interface CancelSubscriptionRequest {
+  reason: string
+}
+export interface AdminCancelSubscriptionRequest extends CancelSubscriptionRequest {
+  refundAmount?: number | null
+  refundReference?: string | null
+}
+export interface RenewSubscriptionRequest {
+  paymentMethod: PaymentMethod
+}
+export interface PaySubscriptionRequest {
+  paymentMethod: PaymentMethod
+}
+export interface SetAutoRenewRequest {
+  enabled: boolean
+}
+export interface ActivateSubscriptionRequest {
+  paymentReference?: string | null
+  paymentMethod?: PaymentMethod | null
+}
+export interface HomeSubscriptionListRequest extends PaginatedRequest {
+  status?: HomeSubscriptionStatus | null
+  planId?: string | null
+  search?: string | null
+}
+export interface CustomerHomeSubscriptionListRequest extends PaginatedRequest {
+  status?: HomeSubscriptionStatus | null
+}
+export interface HomeSubscriptionResponse {
+  id: string
+  subscriptionNumber: string
+  planId: string
+  planNameAr: string
+  planNameEn: string
+  status: HomeSubscriptionStatus
+  addressId: string
+  addressLabel: string | null
+  city: string | null
+  district: string | null
+  unitCount: number
+  unitNameAr: string | null
+  unitNameEn: string | null
+  termMonths: number
+  price: number
+  currency: string
+  paymentMethod: PaymentMethod
+  paidAt: string | null
+  memberDiscountPercent: number
+  startsAt: string | null
+  endsAt: string | null
+  waitingEndsAt: string | null
+  cancelledAt: string | null
+  cancellationReason: string | null
+  createdAt: string
+  refundedAmount: number
+  refundedAt: string | null
+  autoRenew: boolean
+  renewalOfId: string | null
+  renewedById: string | null
+  canRenew: boolean
+  canPay: boolean
+  suggestedRefund: number | null
+  coveredTotal: number
+  entitlements: SubscriptionEntitlementUsageResponse[]
+  customer: PersonLookupResponse | null
+}
+export interface SubscriptionEntitlementUsageResponse {
+  id: string
+  kind: SubscriptionEntitlementKind
+  canonicalServiceId: string | null
+  subcategoryId: string | null
+  nameAr: string
+  nameEn: string
+  visitsPerTerm: number
+  usedVisits: number
+  remainingVisits: number
+  coverageCap: number | null
+  availableFrom: string | null
+  includesHomeInspection: boolean
+}
+export interface HomeSubscriptionDetailResponse extends HomeSubscriptionResponse {
+  usage: SubscriptionUsageResponse[]
+}
+export interface SubscriptionUsageResponse {
+  serviceItemId: string
+  orderId: string
+  orderNumber: string | null
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  status: ServiceItemStatus
+  entitlementId: string | null
+  finalAmount: number
+  coveredAmount: number
+  checkedOutAt: string | null
+}
+export interface HomeSubscriptionSummaryResponse {
+  pendingActivation: number
+  active: number
+  expired: number
+  cancelled: number
+  revenue: number
+  refunded: number
+  coveredTotal: number
+  costRatio: number | null
+  currency: string
+  plans: HomeSubscriptionPlanSummary[]
+}
+export interface HomeSubscriptionPlanSummary {
+  planId: string
+  nameAr: string
+  nameEn: string
+  active: number
+  pendingActivation: number
+  revenue: number
+  coveredTotal: number
+}
+export interface CartCoverageResponse {
+  addressId: string
+  subscriptions: LookupResponse[]
+  currency: string
+  subtotal: number
+  coveredTotal: number
+  total: number
+  items: CartCoverageItemResponse[]
+}
+export interface CartCoverageItemResponse {
+  serviceItemId: string
+  serviceNameAr: string
+  serviceNameEn: string
+  amount: number
+  coveredAmount: number
+  customerPays: number
+  entitlementId: string | null
+  entitlementNameAr: string | null
+  entitlementNameEn: string | null
+  coveredOnQuote: boolean
+  waitingUntil: string | null
 }
 
 // ── Support/SupportDtos.cs

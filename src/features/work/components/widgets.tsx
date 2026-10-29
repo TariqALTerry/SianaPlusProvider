@@ -1,12 +1,13 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { Lock } from 'lucide-react'
+import { HandCoins, Lock, ShieldCheck } from 'lucide-react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Money } from '@/components/Format'
+import { Badge } from '@/components/ui/badge'
 import { Tooltip } from '@/components/ui/menu'
 import { useLang } from '@/hooks/useLang'
 import { enumLabel } from '@/i18n/enums'
-import { formatPercent } from '@/lib/format'
+import { formatMoney, formatPercent } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { useWriteGate } from '../hooks'
 import { WORK_INVALIDATION } from '../api'
@@ -28,12 +29,15 @@ export function NetInline({
   netAmount,
   finalAmount,
   commissionRate,
+  coverage,
   hideLabel,
   className,
 }: {
   netAmount: number
   finalAmount: number
   commissionRate: number | null
+  /** «أمان بيتك»: the customer's share, given only when `isSubscriptionCovered`. */
+  coverage?: Coverage | null
   /** In a column already titled "صافي لك". */
   hideLabel?: boolean
   className?: string
@@ -51,6 +55,20 @@ export function NetInline({
         <span>{commissionRate !== null ? t('net.commissionWithRate', { rate: formatPercent(commissionRate, lang) }) : t('net.commission')}</span>
         <Money value={-commission} />
       </span>
+      {coverage && (
+        <span className="mt-1 block space-y-0.5 border-t border-background/20 pt-1">
+          {coverage.coveredAmount > 0 && (
+            <span className="flex justify-between gap-4">
+              <span>{t('coverage.covered')}</span>
+              <Money value={-coverage.coveredAmount} />
+            </span>
+          )}
+          <span className="flex justify-between gap-4 font-semibold">
+            <span>{t('coverage.collect')}</span>
+            <Money value={coverage.customerPays} />
+          </span>
+        </span>
+      )}
     </span>
   )
   return (
@@ -63,11 +81,44 @@ export function NetInline({
   )
 }
 
-/** The item page's money block: net first, then how it was computed. */
+/** What the server says the subscription pays and the customer pays. Never computed here. */
+export interface Coverage {
+  coveredAmount: number
+  customerPays: number
+}
+
+/** «أمان بيتك» tag on a covered item (HOME-SUBSCRIPTIONS-PROVIDER-PLATFORM-PROMPT §2). */
+export function CoverageBadge({ className }: { className?: string }) {
+  const { t } = useTranslation('work')
+  return (
+    <Tooltip content={t('coverage.tooltip')}>
+      <span tabIndex={0} className={cn('inline-flex shrink-0 cursor-help rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring', className)}>
+        <Badge tone="info">
+          <ShieldCheck className="size-3" aria-hidden /> {t('coverage.badge')}
+        </Badge>
+      </span>
+    </Tooltip>
+  )
+}
+
+/**
+ * The item page's money block: net first, then how it was computed. On a covered item, what
+ * the technician collects (`customerPays`) follows: the commission and net stay on `finalAmount`.
+ */
 export function NetBlock({
   item,
 }: {
-  item: { netAmount: number; finalAmount: number; commissionRate: number | null; baseAmount: number; quotedAmount: number | null; refundedAmount: number }
+  item: {
+    netAmount: number
+    finalAmount: number
+    commissionRate: number | null
+    baseAmount: number
+    quotedAmount: number | null
+    refundedAmount: number
+    coveredAmount: number
+    customerPays: number
+    isSubscriptionCovered: boolean
+  }
 }) {
   const { t } = useTranslation('work')
   const { lang } = useLang()
@@ -93,7 +144,50 @@ export function NetBlock({
           </div>
         ))}
       </dl>
+      {item.isSubscriptionCovered && <CustomerShare item={item} />}
     </div>
+  )
+}
+
+function CustomerShare({ item }: { item: Coverage & { finalAmount: number } }) {
+  const { t } = useTranslation('work')
+  const { lang } = useLang()
+  return (
+    <section className="mt-3 border-t border-primary/15 pt-3" aria-labelledby="customer-share">
+      <h3 id="customer-share" className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+        <ShieldCheck className="size-3.5 text-tone-info" aria-hidden /> {t('coverage.title')}
+      </h3>
+      <dl className="mt-2 space-y-1 text-sm">
+        <div className="flex items-center justify-between gap-3">
+          <dt className="text-muted-foreground">{t('coverage.price')}</dt>
+          <dd>
+            <Money value={item.finalAmount} className="text-[0.8125rem]" />
+          </dd>
+        </div>
+        {item.coveredAmount > 0 && (
+          <div className="flex items-center justify-between gap-3">
+            <dt className="text-muted-foreground">{t('coverage.covered')}</dt>
+            <dd>
+              <Money value={-item.coveredAmount} signed className="text-[0.8125rem]" />
+            </dd>
+          </div>
+        )}
+        <div className="flex items-center justify-between gap-3 rounded-md bg-surface px-2 py-1.5">
+          <dt className="flex items-center gap-1.5 font-semibold">
+            <HandCoins className="size-4 text-primary" aria-hidden /> {t('coverage.collect')}
+          </dt>
+          <dd>
+            <Money value={item.customerPays} className="text-base font-bold" />
+          </dd>
+        </div>
+      </dl>
+      {item.coveredAmount > 0 && (
+        <p className="mt-2 rounded-md bg-tone-info-soft px-2.5 py-1.5 text-xs text-tone-info" role="note">
+          {t('coverage.cashNote', { amount: formatMoney(item.customerPays, lang) })}
+        </p>
+      )}
+      <p className="mt-2 text-xs text-muted-foreground">{t('coverage.earnings')}</p>
+    </section>
   )
 }
 

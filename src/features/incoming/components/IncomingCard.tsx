@@ -13,7 +13,7 @@ import { useLang } from '@/hooks/useLang'
 import { formatDateTime, formatDuration, formatTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { prefetchWorkItem } from '@/features/work/api'
-import { NetInline } from '@/features/work/components/widgets'
+import { CoverageBadge, NetInline } from '@/features/work/components/widgets'
 import { useDelegateAction, useWriteGate } from '@/features/work/hooks'
 import { canRejectIncoming } from '@/features/work/logic'
 import { ageTone, waitingMinutes } from '../logic'
@@ -74,7 +74,7 @@ export function IncomingCard({
           </Badge>
         </div>
 
-        {(declined || item.isMarketplace || item.executorAssignmentDelegated) && (
+        {(declined || item.isMarketplace || item.executorAssignmentDelegated || item.isSubscriptionCovered) && (
           <div className="flex flex-wrap gap-1.5">
             {declined && (
               <Badge tone="danger">
@@ -91,6 +91,7 @@ export function IncomingCard({
                 <Sparkles className="size-3" aria-hidden /> {t('delegated')}
               </Badge>
             )}
+            {item.isSubscriptionCovered && <CoverageBadge />}
           </div>
         )}
 
@@ -120,7 +121,13 @@ export function IncomingCard({
         {item.customerDescription && <p className="line-clamp-2 rounded-md bg-muted/60 px-2.5 py-1.5 text-sm text-muted-foreground">{item.customerDescription}</p>}
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-          <NetInline netAmount={item.netAmount} finalAmount={item.finalAmount} commissionRate={item.commissionRate} className="text-base" />
+          <NetInline
+            netAmount={item.netAmount}
+            finalAmount={item.finalAmount}
+            commissionRate={item.commissionRate}
+            coverage={item.isSubscriptionCovered ? item : null}
+            className="text-base"
+          />
           <Link to={`/work/${item.id}`} onMouseEnter={prefetch} onFocus={prefetch} className="text-xs font-medium text-primary hover:underline">
             {t('details')}
           </Link>

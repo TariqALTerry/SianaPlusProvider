@@ -15,6 +15,8 @@ const NOT_DISPLAYED = new Set([
   'PartRequestCloseReason', 'PartOfferStatus', 'CommunityPostType', 'CommunityMediaType', 'CommunityTargetType',
   'CommunityReportReason', 'CommunityReportStatus', 'CommunityReportAction', 'CommunitySavedType', 'CommunityListingSort',
   'CommunityPostFilter', 'ServiceImageJobStatus',
+  // «أمان بيتك» plans and subscriptions are the platform's; the provider only sees covered items.
+  'HomeSubscriptionStatus', 'SubscriptionEntitlementKind',
 ])
 
 const generatedEnums = Object.entries(generated)

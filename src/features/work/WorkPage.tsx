@@ -19,7 +19,7 @@ import { formatDateTime, formatTime, riyadhDateToIso } from '@/lib/format'
 import './i18n'
 import { boardQueryOptions, prefetchWorkItem, workApi, workKeys, type WorkListParams } from './api'
 import { statusesFor, WORK_TABS } from './logic'
-import { NetInline } from './components/widgets'
+import { CoverageBadge, NetInline } from './components/widgets'
 
 /**
  * URL schema of the work list. Other pages link into it:
@@ -94,6 +94,7 @@ export function WorkPage() {
                   <Sparkles className="size-3.5 shrink-0 text-tone-active" aria-label={t('icons.delegated')} />
                 </Tooltip>
               )}
+              {r.isSubscriptionCovered && <CoverageBadge />}
             </div>
             <div className="flex flex-wrap items-center gap-x-2 text-xs font-normal text-muted-foreground">
               {r.itemNumber && <span className="ltr-nums font-mono">{r.itemNumber}</span>}
@@ -130,7 +131,9 @@ export function WorkPage() {
         id: 'net',
         header: t('columns.net'),
         meta: { align: 'end' },
-        cell: ({ row: { original: r } }) => <NetInline netAmount={r.netAmount} finalAmount={r.finalAmount} commissionRate={r.commissionRate} hideLabel />,
+        cell: ({ row: { original: r } }) => (
+          <NetInline netAmount={r.netAmount} finalAmount={r.finalAmount} commissionRate={r.commissionRate} coverage={r.isSubscriptionCovered ? r : null} hideLabel />
+        ),
       },
       {
         id: 'updated',
