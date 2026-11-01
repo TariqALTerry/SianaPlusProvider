@@ -25,7 +25,7 @@ function authResponse(token: string): AuthResponse {
     user: {
       id: 'u1', username: 'owner', fullName: 'Owner', email: null, phoneNumber: '+966500000001', role: 'ProviderOwner',
       status: 'Active', tenantId: null, tenantName: null, lastLoginAt: null, isProfileComplete: true,
-      permissions: [], staffRoleNameAr: null, staffRoleNameEn: null,
+      permissions: [], staffRoleNameAr: null, staffRoleNameEn: null, preferredCulture: null,
     },
   }
 }

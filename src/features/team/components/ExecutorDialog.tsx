@@ -201,6 +201,33 @@ export function ExecutorDialog({
             aria-invalid={!!show('maxJobs') || undefined}
           />
         </Field>
+        <Field label={t('form.maxQuote')} htmlFor={`${uid}-quote`} hint={t('form.maxQuoteHint')} error={show('maxQuote')}>
+          <Input
+            id={`${uid}-quote`}
+            type="number"
+            inputMode="decimal"
+            min={1}
+            dir="ltr"
+            className="tabular"
+            value={draft.maxQuote}
+            onChange={(e) => patch({ maxQuote: e.target.value })}
+            aria-invalid={!!show('maxQuote') || undefined}
+          />
+        </Field>
+        <Field label={t('form.maxDiscount')} htmlFor={`${uid}-discount`} hint={t('form.maxDiscountHint')} error={show('maxDiscount')}>
+          <Input
+            id={`${uid}-discount`}
+            type="number"
+            inputMode="decimal"
+            min={0}
+            max={100}
+            dir="ltr"
+            className="tabular"
+            value={draft.maxDiscount}
+            onChange={(e) => patch({ maxDiscount: e.target.value })}
+            aria-invalid={!!show('maxDiscount') || undefined}
+          />
+        </Field>
       </div>
 
       {phoneWillChange && <Hint tone="attention">{t('edit.phoneWarning')}</Hint>}

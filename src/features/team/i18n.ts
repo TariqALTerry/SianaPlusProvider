@@ -14,6 +14,10 @@ registerTranslations('team', {
       specialization: 'التخصص',
       availability: 'التوافر',
       load: 'الأعمال الجارية',
+      maxQuote: 'أعلى مبلغ لعرض السعر',
+      maxQuoteHint: 'بالريال. اتركه فارغًا إذا لا يوجد حد.',
+      maxDiscount: 'أعلى خصم مسموح (٪)',
+      maxDiscountHint: 'اتركه فارغًا إذا لا يُسمح له بالخصم.',
       skills: 'المهارات',
       rating: 'التقييم',
       completed: 'المنجزة',
@@ -76,6 +80,8 @@ registerTranslations('team', {
     validation: {
       phone: 'أدخل رقم جوال سعودي صحيح: 9 أرقام تبدأ بـ 5',
       maxJobs: 'أدخل رقمًا صحيحًا من 1 إلى 50',
+      maxQuote: 'أدخل مبلغًا أكبر من صفر، أو اتركه فارغًا',
+      maxDiscount: 'أدخل نسبة من 0 إلى 100، أو اتركها فارغة',
     },
     add: {
       executorTitle: 'إضافة فني',
@@ -182,6 +188,10 @@ registerTranslations('team', {
       specialization: 'Specialization',
       availability: 'Availability',
       load: 'Active jobs',
+      maxQuote: 'Highest quotation total',
+      maxQuoteHint: 'In SAR. Leave blank for no limit.',
+      maxDiscount: 'Highest allowed discount (%)',
+      maxDiscountHint: 'Leave blank if they may not give a discount.',
       skills: 'Skills',
       rating: 'Rating',
       completed: 'Completed',
@@ -244,6 +254,8 @@ registerTranslations('team', {
     validation: {
       phone: 'Enter a valid Saudi mobile: 9 digits starting with 5',
       maxJobs: 'Enter a whole number from 1 to 50',
+      maxQuote: 'Enter an amount above zero, or leave it blank',
+      maxDiscount: 'Enter a percentage from 0 to 100, or leave it blank',
     },
     add: {
       executorTitle: 'Add technician',

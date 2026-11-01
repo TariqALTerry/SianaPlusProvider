@@ -15,6 +15,10 @@ export function useDraftErrorText() {
         return t('common:validation.email')
       case 'range':
         return t('validation.maxJobs')
+      case 'quote':
+        return t('validation.maxQuote')
+      case 'discount':
+        return t('validation.maxDiscount')
       default:
         return undefined
     }

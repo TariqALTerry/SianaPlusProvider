@@ -156,6 +156,24 @@ export const AssignmentStatus: EnumMap<T.AssignmentStatus> = {
   Rejected: e('مرفوض', 'Rejected', 'danger'),
   Reassigned: e('أعيد إسناده', 'Reassigned', 'muted'),
   Cancelled: e('ملغى', 'Cancelled', 'muted'),
+  TimedOut: e('انتهت المهلة', 'Timed out', 'danger'),
+}
+
+export const CustomerPaymentStage: EnumMap<T.CustomerPaymentStage> = {
+  NothingDue: e('لا يوجد مبلغ مستحق', 'Nothing due', 'muted'),
+  AwaitingQuote: e('بانتظار عرض السعر', 'Awaiting quote', 'waiting'),
+  AwaitingApproval: e('بانتظار موافقة العميل', 'Awaiting approval', 'waiting'),
+  PaymentRequired: e('مطلوب الدفع', 'Payment required', 'danger'),
+  PayOnCompletion: e('الدفع عند الانتهاء', 'Pay on completion', 'waiting'),
+  Paid: e('مدفوع', 'Paid', 'success'),
+  PartiallyRefunded: e('مسترد جزئيًا', 'Partially refunded', 'muted'),
+  Refunded: e('مسترد', 'Refunded', 'muted'),
+}
+
+export const FinancialRecordKind: EnumMap<T.FinancialRecordKind> = {
+  Service: e('خدمة', 'Service', 'neutral'),
+  Store: e('متجر', 'Store', 'neutral'),
+  Subscription: e('اشتراك', 'Subscription', 'neutral'),
 }
 
 export const ActorType: EnumMap<T.ActorType> = {
@@ -530,7 +548,7 @@ export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
   ProviderDocumentStatus, ProviderMemberRole, ExecutorAvailability, ExecutionMode, PricingType,
-  AssignmentType, AssignmentStatus, ActorType, CancellationInitiator, QuotationStatus, PriceItemType,
+  AssignmentType, AssignmentStatus, CustomerPaymentStage, FinancialRecordKind, ActorType, CancellationInitiator, QuotationStatus, PriceItemType,
   EvidenceStage, EvidenceType, DynamicFieldType, RefundStatus, SettlementStatus, SettlementPartyType,
   DisputeStatus, DisputeResolutionType, WarrantyStatus, MarketplaceRequestStatus, MarketplaceOfferStatus,
   StoreOrderStatus, UserStatus, Role, ActiveFilter, NotificationType, ExecutionStep, CoverageShape,

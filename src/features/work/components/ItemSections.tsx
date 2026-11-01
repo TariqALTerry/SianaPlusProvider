@@ -390,6 +390,7 @@ export function QuotationsSection({ quotations }: { quotations: QuotationRespons
                 { label: t('detail.quotation.expiresAt'), value: q.expiresAt ? <DateTime value={q.expiresAt} mode="absolute" /> : null },
                 { label: t('detail.quotation.respondedAt'), value: q.respondedAt ? <DateTime value={q.respondedAt} mode="absolute" /> : null },
                 { label: t('detail.quotation.notes'), value: q.notes, wide: true, hidden: !q.notes },
+                { label: t('detail.quotation.increaseReason'), value: q.increaseReason, wide: true, hidden: !q.increaseReason },
                 { label: t('detail.quotation.customerNote'), value: q.customerResponseNote, wide: true, hidden: !q.customerResponseNote },
               ]}
             />

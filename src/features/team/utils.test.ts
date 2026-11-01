@@ -38,6 +38,8 @@ const executor: ExecutorResponse = {
   canRepair: true,
   canDeliver: false,
   maxConcurrentJobs: 3,
+  maxQuoteTotal: 500,
+  maxDiscountPercent: null,
   activeJobs: 1,
   capabilities: [{ id: 'c1', code: 'ac', nameAr: 'تكييف', nameEn: 'AC' }],
   averageRating: 4.5,
@@ -120,8 +122,21 @@ describe('validation', () => {
 
 describe('executor bodies', () => {
   it('builds the create body with trimmed optionals and unique skills', () => {
-    const body = createExecutorBody({ fullName: 'a', phone: '0501234567', email: ' ', specialization: '', maxJobs: '2', capabilityIds: ['c1', 'c1', 'c2'] })
-    expect(body).toEqual({ fullName: 'a', phone: '+966501234567', email: null, specialization: null, maxConcurrentJobs: 2, capabilityIds: ['c1', 'c2'] })
+    const body = createExecutorBody({ fullName: 'a', phone: '0501234567', email: ' ', specialization: '', maxJobs: '2', maxQuote: '800', maxDiscount: '', capabilityIds: ['c1', 'c1', 'c2'] })
+    expect(body).toEqual({ fullName: 'a', phone: '+966501234567', email: null, specialization: null, maxConcurrentJobs: 2, maxQuoteTotal: 800, maxDiscountPercent: null, capabilityIds: ['c1', 'c2'] })
+  })
+
+  it('takes blank limits as a choice and refuses out-of-range ones', () => {
+    const ready = { ...EMPTY_EXECUTOR, fullName: 'a', phone: '501234567' }
+    expect(validateExecutor(ready).maxQuote).toBeUndefined()
+    expect(validateExecutor({ ...ready, maxQuote: '0' }).maxQuote).toBe('quote')
+    expect(validateExecutor({ ...ready, maxDiscount: '120' }).maxDiscount).toBe('discount')
+    expect(validateExecutor({ ...ready, maxDiscount: '15' }).maxDiscount).toBeUndefined()
+  })
+
+  it('counts a changed limit as a profile change', () => {
+    const draft = { ...draftFromExecutor(executor), maxQuote: '900' }
+    expect(profileChanged(executor, executorProfileBody(draft))).toBe(true)
   })
 
   it('round-trips an executor without counting as a change', () => {

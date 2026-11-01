@@ -104,6 +104,10 @@ export const PaymentMethodValues = ['Cash', 'Card', 'Wallet', 'BankTransfer', 'A
 export type PaymentMethod = (typeof PaymentMethodValues)[number]
 export const PaymentStatusValues = ['Pending', 'Authorized', 'Paid', 'Failed', 'Refunded', 'PartiallyRefunded'] as const
 export type PaymentStatus = (typeof PaymentStatusValues)[number]
+export const CustomerPaymentStageValues = ['NothingDue', 'AwaitingQuote', 'AwaitingApproval', 'PaymentRequired', 'PayOnCompletion', 'Paid', 'PartiallyRefunded', 'Refunded'] as const
+export type CustomerPaymentStage = (typeof CustomerPaymentStageValues)[number]
+export const FinancialRecordKindValues = ['Service', 'Store', 'Subscription'] as const
+export type FinancialRecordKind = (typeof FinancialRecordKindValues)[number]
 export const RefundStatusValues = ['Requested', 'Approved', 'Rejected', 'Processed'] as const
 export type RefundStatus = (typeof RefundStatusValues)[number]
 export const SettlementPartyTypeValues = ['Provider', 'Executor'] as const
@@ -124,7 +128,7 @@ export const CancellationInitiatorValues = ['Customer', 'Admin', 'Provider', 'Ex
 export type CancellationInitiator = (typeof CancellationInitiatorValues)[number]
 export const AssignmentTypeValues = ['ProviderAssignment', 'ExecutorAssignment'] as const
 export type AssignmentType = (typeof AssignmentTypeValues)[number]
-export const AssignmentStatusValues = ['Pending', 'Accepted', 'Rejected', 'Reassigned', 'Cancelled'] as const
+export const AssignmentStatusValues = ['Pending', 'Accepted', 'Rejected', 'Reassigned', 'Cancelled', 'TimedOut'] as const
 export type AssignmentStatus = (typeof AssignmentStatusValues)[number]
 export const OrderSourceValues = ['CustomerApp', 'SmartRequest', 'Admin', 'Store'] as const
 export type OrderSource = (typeof OrderSourceValues)[number]
@@ -782,6 +786,9 @@ export interface AppSwitchRequest {
   experience: AppExperience
   deviceId?: string | null
 }
+export interface UpdateLanguageRequest {
+  preferredCulture: string
+}
 export interface AppAuthResponse extends AuthResponse {
   experience: AppExperience
   availableExperiences: AppExperience[]
@@ -836,6 +843,7 @@ export interface CurrentUserResponse {
   tenantId: string | null
   tenantName: string | null
   lastLoginAt: string | null
+  preferredCulture: string | null
   isProfileComplete: boolean
   permissions: string[]
   staffRoleNameAr: string | null
@@ -2086,7 +2094,7 @@ export interface CartItemResponse {
 // ── Customers/CustomerCheckoutDtos.cs
 export interface CheckoutRequest {
   addressId: string
-  paymentMethod: PaymentMethod
+  paymentMethod?: PaymentMethod | null
   preferredStart?: string | null
   preferredEnd?: string | null
   customerNotes?: string | null
@@ -2118,6 +2126,53 @@ export interface CheckoutSummaryItemResponse {
   pricedQuantity: number | null
   priceOnQuote: boolean
   deviceCount: number
+}
+
+// ── Customers/CustomerFinancialRecordDtos.cs
+export interface FinancialRecordRequest extends PaginatedRequest {
+}
+export interface FinancialRecordResponse {
+  currency: string
+  totalPaid: number
+  totalRefunded: number
+  totalDiscounts: number
+  totalExtraCosts: number
+  totalDue: number
+  entries: PaginatedResponse<FinancialRecordEntryResponse>
+}
+export interface FinancialRecordEntryResponse {
+  kind: FinancialRecordKind
+  id: string
+  number: string | null
+  titleAr: string
+  titleEn: string
+  otherServicesCount: number
+  date: string
+  currency: string
+  total: number
+  paidAmount: number
+  refundedAmount: number
+  dueAmount: number
+  discountAmount: number
+  coveredAmount: number
+  extraCosts: number
+  extraReasons: string[]
+  method: PaymentMethod | null
+  stage: CustomerPaymentStage
+  payments: FinancialPaymentResponse[]
+}
+export interface FinancialPaymentResponse {
+  number: string | null
+  method: PaymentMethod
+  status: PaymentStatus
+  amount: number
+  date: string
+  paidAt: string | null
+}
+export interface PostServiceOfferResponse {
+  serviceNameAr: string
+  serviceNameEn: string
+  plan: SubscriptionPlanResponse
 }
 
 // ── Customers/CustomerInvoiceDtos.cs
@@ -2166,6 +2221,7 @@ export interface CustomerOrderListRequest extends PaginatedRequest {
 }
 export interface QuotationDecisionRequest {
   note?: string | null
+  paymentMethod?: PaymentMethod | null
 }
 export interface RejectQuotationRequest {
   note: string
@@ -2208,6 +2264,8 @@ export interface OrderPaymentSummaryResponse {
   paidAmount: number
   refundedAmount: number
   paidAt: string | null
+  stage: CustomerPaymentStage
+  dueAmount: number
 }
 export interface OrderDetailResponse {
   id: string
@@ -2519,6 +2577,9 @@ export interface JobSummaryResponse {
   coveredAmount: number
   customerPays: number
   assignedAt: string | null
+  responseDueAt: string | null
+  maxQuoteTotal: number | null
+  maxDiscountPercent: number
   requiresQuotation: boolean
   hasPendingQuotation: boolean
 }
@@ -2570,6 +2631,7 @@ export interface QuotationLineRequest {
 }
 export interface SaveQuotationRequest {
   notes?: string | null
+  increaseReason?: string | null
   discountAmount: number
   expiresInHours: number
   items: QuotationLineRequest[]
@@ -3559,6 +3621,28 @@ export interface DemoStoreRetireResponse {
   deactivated: number
 }
 
+// ── Operations/DemoSubscriptionDtos.cs
+export interface DemoSubscriptionPlansResponse {
+  created: number
+  restored: number
+  plansCount: number
+  activeCount: number
+  plans: DemoSubscriptionPlanResponse[]
+}
+export interface DemoSubscriptionPlanResponse {
+  id: string
+  code: string
+  nameAr: string
+  nameEn: string
+  price: number
+  isActive: boolean
+  subscriptionsCount: number
+}
+export interface DemoSubscriptionRetireResponse {
+  deleted: number
+  deactivated: number
+}
+
 // ── Operations/ProviderWorkDtos.cs
 export interface ProviderWorkListRequest extends PaginatedRequest {
   status?: ServiceItemStatus[] | null
@@ -3701,6 +3785,7 @@ export interface TestCustomerDataResponse {
   replaced: boolean
   orders: TestCustomerOrderResponse[]
   storeOrderNumber: string | null
+  subscriptions: TestCustomerSubscriptionResponse[]
   addressesCount: number
   favoritesCount: number
 }
@@ -3712,11 +3797,19 @@ export interface TestCustomerOrderResponse {
   serviceNameAr: string
   providerName: string | null
 }
+export interface TestCustomerSubscriptionResponse {
+  subscriptionId: string
+  subscriptionNumber: string
+  status: HomeSubscriptionStatus
+  planNameAr: string
+  addressLabel: string | null
+}
 export interface TestCustomerRemoveResponse {
   ordersRemoved: number
   storeOrdersRemoved: number
   addressesRemoved: number
   favoritesRemoved: number
+  subscriptionsRemoved: number
 }
 
 // ── Orders/SharedOrderDtos.cs
@@ -3776,6 +3869,7 @@ export interface QuotationResponse {
   discountAmount: number
   total: number
   notes: string | null
+  increaseReason: string | null
   sentAt: string | null
   expiresAt: string | null
   respondedAt: string | null
@@ -4325,6 +4419,8 @@ export interface CreateExecutorRequest {
   email?: string | null
   specialization?: string | null
   maxConcurrentJobs: number
+  maxQuoteTotal?: number | null
+  maxDiscountPercent?: number | null
   capabilityIds: string[]
 }
 export interface ExecutorListRequest extends PaginatedRequest {
@@ -4338,6 +4434,8 @@ export interface UpdateExecutorRequest {
   email?: string | null
   specialization?: string | null
   maxConcurrentJobs: number
+  maxQuoteTotal?: number | null
+  maxDiscountPercent?: number | null
 }
 export interface UpdateExecutorCapabilitiesRequest {
   capabilityIds: string[]
@@ -4372,6 +4470,8 @@ export interface ExecutorResponse {
   canRepair: boolean
   canDeliver: boolean
   maxConcurrentJobs: number
+  maxQuoteTotal: number | null
+  maxDiscountPercent: number | null
   activeJobs: number
   capabilities: LookupResponse[]
   averageRating: number

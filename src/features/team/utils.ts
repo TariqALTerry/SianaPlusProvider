@@ -70,13 +70,17 @@ export interface PersonDraft {
 export interface ExecutorDraft extends PersonDraft {
   specialization: string
   maxJobs: string
+  /** Blank: no limit on the quotation total. */
+  maxQuote: string
+  /** Blank: no discount allowed. */
+  maxDiscount: string
   capabilityIds: string[]
 }
 
 export const EMPTY_PERSON: PersonDraft = { fullName: '', phone: '', email: '' }
-export const EMPTY_EXECUTOR: ExecutorDraft = { ...EMPTY_PERSON, specialization: '', maxJobs: '1', capabilityIds: [] }
+export const EMPTY_EXECUTOR: ExecutorDraft = { ...EMPTY_PERSON, specialization: '', maxJobs: '1', maxQuote: '', maxDiscount: '', capabilityIds: [] }
 
-export type DraftError = 'required' | 'phone' | 'email' | 'range'
+export type DraftError = 'required' | 'phone' | 'email' | 'range' | 'quote' | 'discount'
 export type PersonErrors = Partial<Record<keyof PersonDraft, DraftError>>
 export type ExecutorErrors = Partial<Record<keyof ExecutorDraft, DraftError>>
 
@@ -96,6 +100,16 @@ export function parseMaxJobs(raw: string): number | null {
   return n >= LIMITS.minJobs && n <= LIMITS.maxJobs ? n : null
 }
 
+/** Blank is a valid choice for both limits; anything else must be a number in range. */
+export function parseLimit(raw: string, max: number): number | null | undefined {
+  const value = raw.trim()
+  if (!value) return null
+  const n = Number(value)
+  return Number.isFinite(n) && n >= 0 && n <= max ? n : undefined
+}
+
+const MAX_QUOTE = 9_999_999
+
 export function validatePerson(d: PersonDraft): PersonErrors {
   const errors: PersonErrors = {}
   if (!d.fullName.trim()) errors.fullName = 'required'
@@ -108,6 +122,9 @@ export function validatePerson(d: PersonDraft): PersonErrors {
 export function validateExecutor(d: ExecutorDraft): ExecutorErrors {
   const errors: ExecutorErrors = validatePerson(d)
   if (parseMaxJobs(d.maxJobs) === null) errors.maxJobs = 'range'
+  const maxQuote = parseLimit(d.maxQuote, MAX_QUOTE)
+  if (maxQuote === undefined || maxQuote === 0) errors.maxQuote = 'quote'
+  if (parseLimit(d.maxDiscount, 100) === undefined) errors.maxDiscount = 'discount'
   return errors
 }
 
@@ -128,6 +145,8 @@ export function executorProfileBody(d: ExecutorDraft): UpdateExecutorRequest {
     email: optional(d.email),
     specialization: optional(d.specialization),
     maxConcurrentJobs: parseMaxJobs(d.maxJobs) ?? 0,
+    maxQuoteTotal: parseLimit(d.maxQuote, MAX_QUOTE) ?? null,
+    maxDiscountPercent: parseLimit(d.maxDiscount, 100) ?? null,
   }
 }
 
@@ -142,6 +161,8 @@ export function draftFromExecutor(e: ExecutorResponse): ExecutorDraft {
     email: e.email ?? '',
     specialization: e.specialization ?? '',
     maxJobs: String(e.maxConcurrentJobs),
+    maxQuote: e.maxQuoteTotal?.toString() ?? '',
+    maxDiscount: e.maxDiscountPercent?.toString() ?? '',
     capabilityIds: e.capabilities.map((c) => c.id),
   }
 }
@@ -160,7 +181,9 @@ export function profileChanged(original: ExecutorResponse, body: UpdateExecutorR
     body.phone !== originalPhone ||
     (body.email ?? '') !== (original.email ?? '') ||
     (body.specialization ?? '') !== (original.specialization ?? '') ||
-    body.maxConcurrentJobs !== original.maxConcurrentJobs
+    body.maxConcurrentJobs !== original.maxConcurrentJobs ||
+    (body.maxQuoteTotal ?? null) !== (original.maxQuoteTotal ?? null) ||
+    (body.maxDiscountPercent ?? null) !== (original.maxDiscountPercent ?? null)
   )
 }
 
@@ -199,6 +222,8 @@ const FIELD_BY_CODE: Record<string, keyof ExecutorDraft> = {
   EmailTooLong: 'email',
   SpecializationTooLong: 'specialization',
   MaxConcurrentJobsOutOfRange: 'maxJobs',
+  MaxQuoteTotalInvalid: 'maxQuote',
+  MaxDiscountPercentInvalid: 'maxDiscount',
   ExecutorCapabilityNotInOrganization: 'capabilityIds',
   CapabilityIdsRequired: 'capabilityIds',
   CapabilityIdRequired: 'capabilityIds',
