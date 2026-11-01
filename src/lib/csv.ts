@@ -1,3 +1,5 @@
+import { saveBlob } from './download'
+
 export interface CsvColumn<T> {
   header: string
   value: (row: T) => string | number | boolean | null | undefined
@@ -20,12 +22,5 @@ export function toCsv<T>(rows: readonly T[], columns: readonly CsvColumn<T>[]): 
 /** Triggers a browser download. The BOM makes Excel open Arabic text as UTF-8. */
 export function downloadCsv(filename: string, csv: string): void {
   const blob = new Blob(['﻿', csv], { type: 'text/csv;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename.endsWith('.csv') ? filename : `${filename}.csv`
-  document.body.appendChild(a)
-  a.click()
-  a.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 1000)
+  saveBlob(blob, filename.endsWith('.csv') ? filename : `${filename}.csv`)
 }

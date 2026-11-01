@@ -36,7 +36,7 @@ export function AppShell() {
   useEffect(() => writeItem('sidebarCollapsed', collapsed), [collapsed])
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen" data-print="shell">
       {/* The document scrolls (not an inner container) so ScrollRestoration restores lists on Back. */}
       <ScrollRestoration getKey={(loc) => loc.pathname + loc.search} />
       <aside className={cn('sticky top-0 hidden h-screen shrink-0 transition-[width] duration-200 lg:block', collapsed ? 'w-[4.5rem]' : 'w-64')}>
@@ -49,7 +49,7 @@ export function AppShell() {
         </SheetContent>
       </Dialog>
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col" data-print="column">
         <Topbar onOpenMenu={() => setMobileOpen(true)} />
         <StatusBanner />
         <EnablePrompt />

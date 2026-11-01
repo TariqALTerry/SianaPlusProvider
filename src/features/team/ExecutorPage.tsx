@@ -117,7 +117,7 @@ function PerformanceCards({ executorId }: { executorId: string }) {
               [t('perf.completed'), formatNumber(p.completed, lang), undefined],
               [t('perf.rating'), p.averageRating === null ? '—' : formatNumber(p.averageRating, lang, 1), p.ratingsCount ? t('perf.ratings', { count: p.ratingsCount }) : undefined, !!f.rating],
               [t('perf.onTime'), pct(p.onTimeRate), p.scheduledArrivals ? t('perf.arrivals', { count: p.scheduledArrivals }) : undefined, !!f.onTime],
-              [t('perf.acceptance'), pct(p.acceptanceRate), p.assignmentsOffered ? t('perf.offered', { rejected: p.assignmentsRejected, offered: p.assignmentsOffered }) : undefined],
+              [t('perf.acceptance'), pct(p.acceptanceRate), p.assignmentsOffered ? t('perf.offered', { rejected: p.assignmentsRejected, timedOut: p.assignmentsTimedOut, offered: p.assignmentsOffered }) : undefined],
               [t('perf.workTime'), p.averageWorkMinutes === null ? '—' : formatDuration(p.averageWorkMinutes, lang), undefined],
               [t('perf.warranty'), formatNumber(p.warrantyClaims, lang), undefined, !!f.warranty],
               [t('perf.disputes'), formatNumber(p.disputes, lang), undefined],

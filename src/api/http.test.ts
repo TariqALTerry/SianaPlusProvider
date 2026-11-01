@@ -83,6 +83,43 @@ describe('envelope unwrapping', () => {
   })
 })
 
+describe('blob downloads', () => {
+  const blobError = (body: string, type = 'application/json') => new Blob([body], { type })
+
+  it('returns the file on success', async () => {
+    client.defaults.adapter = (async (config) => {
+      expect(config.responseType).toBe('blob')
+      return respond(config, 200, new Blob(['%PDF'], { type: 'application/pdf' }))
+    }) as AxiosAdapter
+    const file = await http.blob('/api/report.pdf', { from: '2026-10-01', to: '' })
+    expect(file.type).toBe('application/pdf')
+  })
+
+  it('reads the error code and server message out of a blob error body', async () => {
+    client.defaults.adapter = (async (config) =>
+      respond(config, 400, blobError(JSON.stringify({ success: false, message: 'الفترة طويلة', errorCode: 'ReportRangeTooLong', data: null })))) as AxiosAdapter
+    const error = await http.blob('/api/report.pdf').catch((e: unknown) => e)
+    expect(error).toBeInstanceOf(ApiError)
+    expect(error).toMatchObject({ status: 400, errorCode: 'ReportRangeTooLong', message: 'الفترة طويلة' })
+  })
+
+  it('still ends the session on a blob error carrying a session-end code', async () => {
+    session.save(authResponse('a'))
+    const ended: string[] = []
+    setSessionEndHandler((reason) => ended.push(reason))
+    client.defaults.adapter = (async (config) =>
+      respond(config, 403, blobError(JSON.stringify({ success: false, message: 'موقوف', errorCode: 'AccountSuspended', data: null })))) as AxiosAdapter
+    await expect(http.blob('/api/report.pdf')).rejects.toMatchObject({ errorCode: 'AccountSuspended' })
+    expect(ended).toEqual(['blocked'])
+    setSessionEndHandler(() => {})
+  })
+
+  it('falls back to the status when the error body is not the envelope', async () => {
+    client.defaults.adapter = (async (config) => respond(config, 502, blobError('<html>bad gateway</html>', 'text/html'))) as AxiosAdapter
+    await expect(http.blob('/api/report.pdf')).rejects.toMatchObject({ status: 502, errorCode: null })
+  })
+})
+
 describe('token refresh', () => {
   it('refreshes once for concurrent 401s and replays every request', async () => {
     session.save(authResponse('old'))

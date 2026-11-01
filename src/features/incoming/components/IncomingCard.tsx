@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { CalendarClock, Clock, Cpu, Gavel, MapPin, Sparkles, UserPlus, UserX, XCircle } from 'lucide-react'
+import { CalendarClock, Clock, Cpu, Gavel, MapPin, Sparkles, TimerOff, UserPlus, UserX, XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
@@ -55,7 +55,7 @@ export function IncomingCard({
   const prefetch = () => canPrefetch() && void prefetchWorkItem(queryClient, item.id)
 
   return (
-    <Card className={cn('flex w-full flex-col', declined && 'border-tone-danger/40')}>
+    <Card className={cn('flex w-full flex-col', (declined || item.returnedByTimeout) && 'border-tone-danger/40')}>
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -74,11 +74,16 @@ export function IncomingCard({
           </Badge>
         </div>
 
-        {(declined || item.isMarketplace || item.executorAssignmentDelegated || item.isSubscriptionCovered) && (
+        {(declined || item.returnedByTimeout || item.isMarketplace || item.executorAssignmentDelegated || item.isSubscriptionCovered) && (
           <div className="flex flex-wrap gap-1.5">
             {declined && (
               <Badge tone="danger">
                 <UserX className="size-3" aria-hidden /> {t('declinedTag')}
+              </Badge>
+            )}
+            {item.returnedByTimeout && (
+              <Badge tone="danger">
+                <TimerOff className="size-3" aria-hidden /> {t('timedOutTag')}
               </Badge>
             )}
             {item.isMarketplace && (

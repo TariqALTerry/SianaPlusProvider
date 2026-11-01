@@ -14,6 +14,7 @@ import { WriteGateNote } from '@/features/work/components/widgets'
 import './i18n'
 import { AlertsToggle } from './components/AlertsToggle'
 import { IncomingCard } from './components/IncomingCard'
+import { QuotationReviews } from './components/QuotationReviews'
 import { useIncoming } from './queries'
 
 type Open = { kind: 'pick' | 'reject'; item: IncomingWorkItemResponse } | null
@@ -57,6 +58,8 @@ export function IncomingPage() {
       />
 
       <WriteGateNote className="mb-3" />
+
+      <QuotationReviews />
 
       {query.isPending ? (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" aria-busy>

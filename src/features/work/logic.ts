@@ -1,5 +1,5 @@
 import { toApiError, ApiError } from '@/api/http'
-import type { ExecutorCandidateResponse, HomeInspectionCheckResponse, HomeInspectionStatus, ServiceItemProviderView, ServiceItemStatus } from '@/api/types'
+import type { AssignmentResponse, ExecutorCandidateResponse, HomeInspectionCheckResponse, HomeInspectionStatus, ServiceItemProviderView, ServiceItemStatus } from '@/api/types'
 import { isoToRiyadhInput, nowRiyadh, parseUtc } from '@/lib/format'
 
 /** Quick tabs above the work list (§8.4), in the brief's order. */
@@ -108,6 +108,11 @@ export function ineligibleReasons(c: ExecutorCandidateResponse): IneligibleReaso
   if (!c.hasCapacity) r.push('maxJobs')
   if (r.length === 0) r.push('unavailable')
   return r
+}
+
+/** When the technician must answer by: only a technician assignment still waiting for them has a deadline. */
+export function assignmentResponseDue(a: Pick<AssignmentResponse, 'type' | 'status' | 'responseDueAt'>): string | null {
+  return a.type === 'ExecutorAssignment' && a.status === 'Pending' ? a.responseDueAt : null
 }
 
 /** "الأنسب" goes on the first eligible row; the server already sorted the list. */

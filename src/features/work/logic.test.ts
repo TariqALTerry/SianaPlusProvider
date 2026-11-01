@@ -3,6 +3,7 @@ import { ApiError } from '@/api/http'
 import type { ExecutorCandidateResponse, ServiceItemStatus } from '@/api/types'
 import { dayjs, DISPLAY_TZ } from '@/lib/format'
 import {
+  assignmentResponseDue,
   availableWorkActions,
   bestCandidateId,
   canRejectIncoming,
@@ -26,6 +27,17 @@ import {
 } from './logic'
 
 const person = { id: 'e1', fullName: 'فهد', phoneNumber: null }
+
+describe('assignment response deadline', () => {
+  const due = '2026-11-01T10:00:00Z'
+
+  it('applies to a pending technician assignment only', () => {
+    expect(assignmentResponseDue({ type: 'ExecutorAssignment', status: 'Pending', responseDueAt: due })).toBe(due)
+    expect(assignmentResponseDue({ type: 'ExecutorAssignment', status: 'Accepted', responseDueAt: due })).toBeNull()
+    expect(assignmentResponseDue({ type: 'ProviderAssignment', status: 'Pending', responseDueAt: due })).toBeNull()
+    expect(assignmentResponseDue({ type: 'ExecutorAssignment', status: 'Pending', responseDueAt: null })).toBeNull()
+  })
+})
 
 describe('work list quick tabs (§8.4)', () => {
   it('maps every tab to the brief’s statuses', () => {

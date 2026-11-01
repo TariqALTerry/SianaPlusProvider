@@ -239,7 +239,17 @@
     "WarrantyClaimAccepted": "قبول مطالبة الضمان",
     "WarrantyClaimDeclined": "رفض مطالبة الضمان",
     "WarrantyClaimed": "مطالبة بالضمان",
-    "WarrantyVoided": "إلغاء الضمان"
+    "WarrantyVoided": "إلغاء الضمان",
+    "ExecutorResponseTimedOut": "انتهت مهلة رد الفني",
+    "ProviderAssignmentOverdue": "تأخرت الشركة في اختيار فني",
+    "WarrantyIssued": "إصدار الضمان",
+    "ProgressUpdate": "تحديث على سير العمل",
+    "DeviceCustody": "تغيّر مكان الجهاز",
+    "DeviceTripPlanned": "جدولة رحلة الجهاز",
+    "QuotationSentForReview": "أُرسل عرض السعر لموافقة الشركة",
+    "QuotationReviewApproved": "وافقت الشركة على عرض السعر",
+    "QuotationReviewRejected": "رفضت الشركة عرض السعر",
+    "PaymentRecorded": "تسجيل دفعة"
   },
   "auth": {
     "title": "تسجيل الدخول",

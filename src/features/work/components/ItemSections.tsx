@@ -26,7 +26,9 @@ import { useLang } from '@/hooks/useLang'
 import { enumLabel, EvidenceStage as EvidenceStageMap } from '@/i18n/enums'
 import { formatDateTime, formatTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { isContactHidden } from '../logic'
+import type { WorkTarget } from '../hooks'
+import { assignmentResponseDue, isContactHidden } from '../logic'
+import { QuotationReviewActions } from './QuotationReview'
 import { Avatar } from './widgets'
 import '../i18n'
 
@@ -365,7 +367,7 @@ export function PhotosSection({ evidence }: { evidence: EvidenceResponse[] }) {
   )
 }
 
-export function QuotationsSection({ quotations }: { quotations: QuotationResponse[] }) {
+export function QuotationsSection({ quotations, item }: { quotations: QuotationResponse[]; item: WorkTarget }) {
   const { t } = useTranslation('work')
   if (!quotations.length) return <EmptyState title={t('common:common.noData')} />
   const rows = [...quotations].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
@@ -383,15 +385,24 @@ export function QuotationsSection({ quotations }: { quotations: QuotationRespons
             actions={<Money value={q.total} className="text-base font-semibold" />}
           />
           <CardBody className="space-y-4">
+            {q.status === 'PendingReview' && (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-tone-attention-soft px-3 py-2" role="note">
+                <p className="min-w-0 text-sm text-tone-attention">{t('review.notice')}</p>
+                <QuotationReviewActions item={item} quotation={q} />
+              </div>
+            )}
             <KeyValue
               columns={3}
               items={[
                 { label: t('detail.quotation.sentAt'), value: q.sentAt ? <DateTime value={q.sentAt} mode="absolute" /> : null },
-                { label: t('detail.quotation.expiresAt'), value: q.expiresAt ? <DateTime value={q.expiresAt} mode="absolute" /> : null },
+                // The customer's clock starts when the company approves; until then this date means nothing.
+                { label: t('detail.quotation.expiresAt'), value: q.expiresAt ? <DateTime value={q.expiresAt} mode="absolute" /> : null, hidden: q.status === 'PendingReview' },
                 { label: t('detail.quotation.respondedAt'), value: q.respondedAt ? <DateTime value={q.respondedAt} mode="absolute" /> : null },
                 { label: t('detail.quotation.notes'), value: q.notes, wide: true, hidden: !q.notes },
                 { label: t('detail.quotation.increaseReason'), value: q.increaseReason, wide: true, hidden: !q.increaseReason },
                 { label: t('detail.quotation.customerNote'), value: q.customerResponseNote, wide: true, hidden: !q.customerResponseNote },
+                { label: t('detail.quotation.reviewedAt'), value: <DateTime value={q.reviewedAt} mode="absolute" />, hidden: !q.reviewedAt },
+                { label: t('detail.quotation.reviewNote'), value: q.reviewNote, wide: true, hidden: !q.reviewNote },
               ]}
             />
             <div className="overflow-x-auto rounded-md border">
@@ -472,32 +483,40 @@ export function AssignmentsSection({ assignments }: { assignments: AssignmentRes
           </Tr>
         </THead>
         <TBody>
-          {rows.map((a) => (
-            <Tr key={a.id}>
-              <Td>
-                <DateTime value={a.createdAt} mode="absolute" className="text-xs" />
-              </Td>
-              <Td>
-                <StatusBadge enum="AssignmentType" value={a.type} dot={false} />
-              </Td>
-              <Td>
-                <StatusBadge enum="AssignmentStatus" value={a.status} />
-              </Td>
-              <Td className="text-xs">{a.executorName ?? '—'}</Td>
-              <Td className="text-xs">
-                <EnumText enum="ActorType" value={a.assignedByType} />
-              </Td>
-              <Td className="max-w-[12rem] text-xs">{a.reason ?? '—'}</Td>
-              <Td className="max-w-[14rem] text-xs">
-                {a.responseNote ?? '—'}
-                {a.respondedAt && (
-                  <div className="text-muted-foreground">
-                    <DateTime value={a.respondedAt} />
-                  </div>
-                )}
-              </Td>
-            </Tr>
-          ))}
+          {rows.map((a) => {
+            const due = assignmentResponseDue(a)
+            return (
+              <Tr key={a.id}>
+                <Td>
+                  <DateTime value={a.createdAt} mode="absolute" className="text-xs" />
+                </Td>
+                <Td>
+                  <StatusBadge enum="AssignmentType" value={a.type} dot={false} />
+                </Td>
+                <Td>
+                  <StatusBadge enum="AssignmentStatus" value={a.status} />
+                  {due && (
+                    <div className="mt-1 whitespace-nowrap text-xs text-muted-foreground">
+                      {t('detail.respondBy')} <DateTime value={due} mode="absolute" />
+                    </div>
+                  )}
+                </Td>
+                <Td className="text-xs">{a.executorName ?? '—'}</Td>
+                <Td className="text-xs">
+                  <EnumText enum="ActorType" value={a.assignedByType} />
+                </Td>
+                <Td className="max-w-[12rem] text-xs">{a.reason ?? '—'}</Td>
+                <Td className="max-w-[14rem] text-xs">
+                  {a.responseNote ?? '—'}
+                  {a.respondedAt && (
+                    <div className="text-muted-foreground">
+                      <DateTime value={a.respondedAt} />
+                    </div>
+                  )}
+                </Td>
+              </Tr>
+            )
+          })}
         </TBody>
       </Table>
     </Card>

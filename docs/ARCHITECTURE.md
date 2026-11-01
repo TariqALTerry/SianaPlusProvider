@@ -22,7 +22,7 @@ copied from there and then adapted.
 - dayjs, converting UTC to Asia/Riyadh.
 - sonner for toasts, zustand for the auth and theme stores.
 - Leaflet + leaflet-geoman + individual `@turf/*` modules, for coverage only.
-- Recharts is allowed only on the home page.
+- Recharts is allowed only on the home page. Other small charts are plain bars (the technician report).
 
 ## Brand (§3 of the brief)
 
@@ -163,7 +163,7 @@ dashboard uses.
     - business errors inside dialogs show `InlineError` (automatic in `ActionDialog`).
 12. **Polling only where §10 says**, always with `usePollingInterval(ms)`:
     - Incoming: 30 s (shared `useIncoming()` from `features/incoming/queries.ts`);
-    - dashboard and board: 60 s;
+    - dashboard, board and the work list: 60 s;
     - bell: 60 s;
     - an open work item in an active status: 30 s.
 13. **Heavy libraries load only on their pages.** Maps load only on the coverage tab

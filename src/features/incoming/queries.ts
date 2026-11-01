@@ -3,6 +3,7 @@ import { http } from '@/api/http'
 import { qk } from '@/api/keys'
 import type { IncomingWorkItemResponse } from '@/api/types'
 import { usePollingInterval } from '@/hooks/usePageVisible'
+import { workApi, workKeys } from '@/features/work/api'
 
 export const incomingApi = {
   list: (signal?: AbortSignal) => http.get<IncomingWorkItemResponse[]>('/api/provider/work/incoming', undefined, signal),
@@ -20,6 +21,17 @@ export function useIncoming(enabled = true) {
     queryFn: ({ signal }) => incomingApi.list(signal),
     enabled,
     refetchInterval: enabled ? interval : false,
+    staleTime: 15_000,
+  })
+}
+
+/** Quotations above a technician's limit (they wait for the company), polled with the Incoming page. */
+export function useQuotationReviews() {
+  const interval = usePollingInterval(30_000)
+  return useQuery({
+    queryKey: workKeys.quotationReviews(),
+    queryFn: ({ signal }) => workApi.quotationReviews(signal),
+    refetchInterval: interval,
     staleTime: 15_000,
   })
 }

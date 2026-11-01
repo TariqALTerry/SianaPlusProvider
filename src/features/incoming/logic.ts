@@ -13,3 +13,10 @@ export function ageTone(minutes: number): Tone {
   if (minutes < 60) return 'waiting'
   return 'danger'
 }
+
+/** How far a quotation passes the technician's limit; nothing to say without a limit or at or under it. */
+export function overLimitBy(total: number, limit: number | null): number | null {
+  if (limit === null) return null
+  const over = Math.round((total - limit) * 100) / 100
+  return over > 0 ? over : null
+}

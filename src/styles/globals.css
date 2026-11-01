@@ -171,3 +171,22 @@
   font-family: inherit;
   background: hsl(var(--muted));
 }
+
+/* Printing a page (the technician report): only `#main` prints, in the light palette. */
+@media print {
+  :root,
+  .dark {
+    --background: 0 0% 100%;
+    --surface: 0 0% 100%;
+    --foreground: 170 37% 10%;
+    --muted-foreground: 162 8% 40%;
+    --border: 160 18% 90%;
+    --primary: 168 93% 24%;
+  }
+
+  [data-print='shell'] > :not([data-print='column']),
+  [data-print='column'] > :not(main),
+  [data-sonner-toaster] {
+    display: none !important;
+  }
+}

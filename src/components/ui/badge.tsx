@@ -40,7 +40,8 @@ export function Badge({ tone = 'neutral', dot, className, children, ...props }: 
       {...props}
     >
       {dot && <span className={cn('size-1.5 shrink-0 rounded-full', toneDot[tone])} aria-hidden />}
-      <span className="truncate">{children}</span>
+      {/* The truncating span is a block, so an icon must flow inline or it stacks above the text. */}
+      <span className="truncate [&_svg]:inline [&_svg]:align-[-0.125em]">{children}</span>
     </span>
   )
 }

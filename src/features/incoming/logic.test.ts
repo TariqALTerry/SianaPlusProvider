@@ -1,5 +1,18 @@
 import { describe, expect, it } from 'vitest'
-import { ageTone, waitingMinutes } from './logic'
+import { ageTone, overLimitBy, waitingMinutes } from './logic'
+
+describe('quotation review', () => {
+  it('says how far a quotation passes the limit', () => {
+    expect(overLimitBy(1200.5, 1000)).toBe(200.5)
+    expect(overLimitBy(1000.1, 1000)).toBe(0.1)
+  })
+
+  it('stays quiet without a limit, or at or under it', () => {
+    expect(overLimitBy(1200, null)).toBeNull()
+    expect(overLimitBy(1000, 1000)).toBeNull()
+    expect(overLimitBy(900, 1000)).toBeNull()
+  })
+})
 
 describe('incoming age badge (§8.3)', () => {
   const now = Date.parse('2026-10-05T10:00:00Z')

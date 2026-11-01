@@ -239,7 +239,17 @@
     "WarrantyClaimAccepted": "Warranty claim accepted",
     "WarrantyClaimDeclined": "Warranty claim declined",
     "WarrantyClaimed": "Warranty claimed",
-    "WarrantyVoided": "Warranty voided"
+    "WarrantyVoided": "Warranty voided",
+    "ExecutorResponseTimedOut": "Technician did not answer in time",
+    "ProviderAssignmentOverdue": "Company is late picking a technician",
+    "WarrantyIssued": "Warranty issued",
+    "ProgressUpdate": "Progress update",
+    "DeviceCustody": "Device moved",
+    "DeviceTripPlanned": "Device trip planned",
+    "QuotationSentForReview": "Quote sent to the company for approval",
+    "QuotationReviewApproved": "Company approved the quote",
+    "QuotationReviewRejected": "Company rejected the quote",
+    "PaymentRecorded": "Payment recorded"
   },
   "auth": {
     "title": "Sign in",

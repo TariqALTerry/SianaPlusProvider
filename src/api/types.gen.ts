@@ -84,8 +84,10 @@ export const CommunityListingSortValues = ['Newest', 'PriceLowToHigh', 'PriceHig
 export type CommunityListingSort = (typeof CommunityListingSortValues)[number]
 export const CommunityPostFilterValues = ['Unanswered', 'Popular', 'Videos'] as const
 export type CommunityPostFilter = (typeof CommunityPostFilterValues)[number]
-export const QuotationStatusValues = ['Draft', 'Sent', 'Approved', 'Rejected', 'Expired', 'Cancelled'] as const
+export const QuotationStatusValues = ['Draft', 'Sent', 'Approved', 'Rejected', 'Expired', 'Cancelled', 'PendingReview'] as const
 export type QuotationStatus = (typeof QuotationStatusValues)[number]
+export const TechnicianJobOutcomeValues = ['Completed', 'InProgress', 'WaitingResponse', 'Cancelled', 'Rejected', 'TimedOut', 'Reassigned'] as const
+export type TechnicianJobOutcome = (typeof TechnicianJobOutcomeValues)[number]
 export const EvidenceStageValues = ['CustomerRequest', 'Before', 'During', 'After', 'Custody', 'Handover'] as const
 export type EvidenceStage = (typeof EvidenceStageValues)[number]
 export const EvidenceTypeValues = ['Image', 'Video', 'Document'] as const
@@ -545,6 +547,7 @@ export interface AssignmentResponse {
   respondedAt: string | null
   responseNote: string | null
   createdAt: string
+  responseDueAt: string | null
 }
 
 // ── Assistant/AssistantDtos.cs
@@ -3202,6 +3205,7 @@ export interface AdminOrderListRequest extends PaginatedRequest {
   includeDrafts?: boolean
 }
 export interface AdminServiceItemListRequest extends PaginatedRequest {
+  timedOut?: boolean | null
   status?: ServiceItemStatus[] | null
   providerOrganizationId?: string | null
   executorId?: string | null
@@ -3645,6 +3649,7 @@ export interface DemoSubscriptionRetireResponse {
 
 // ── Operations/ProviderWorkDtos.cs
 export interface ProviderWorkListRequest extends PaginatedRequest {
+  timedOut?: boolean | null
   status?: ServiceItemStatus[] | null
   executorId?: string | null
   scheduledFrom?: string | null
@@ -3656,6 +3661,7 @@ export interface ProviderRejectRequest {
 }
 export interface IncomingWorkItemResponse {
   id: string
+  returnedByTimeout: boolean
   itemNumber: string | null
   orderNumber: string | null
   serviceNameAr: string
@@ -3874,8 +3880,22 @@ export interface QuotationResponse {
   expiresAt: string | null
   respondedAt: string | null
   customerResponseNote: string | null
+  reviewedAt: string | null
+  reviewNote: string | null
   createdAt: string
   items: QuotationItemResponse[]
+}
+export interface ReviewQuotationRequest {
+  note?: string | null
+}
+export interface QuotationReviewResponse {
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  executorName: string | null
+  executorLimit: number | null
+  quotation: QuotationResponse
 }
 export interface ScheduleResponse {
   id: string
@@ -3989,6 +4009,7 @@ export interface AdminCreateProviderRequest {
 }
 export interface UpdateProviderSettingsRequest {
   commissionRate?: number | null
+  maxDiscountPercent?: number | null
   capacity?: number | null
   delegateExecutorAssignmentToPlatform?: boolean | null
   storeModuleEnabled?: boolean | null
@@ -4165,6 +4186,7 @@ export interface ProviderDemandRow {
 export interface TeamPerformanceRequest {
   from?: string | null
   to?: string | null
+  executorId?: string | null
 }
 export interface TeamPerformanceResponse {
   from: string
@@ -4183,6 +4205,7 @@ export interface ExecutorPerformance {
   acceptanceRate: number | null
   assignmentsOffered: number
   assignmentsRejected: number
+  assignmentsTimedOut: number
   averageWorkMinutes: number | null
   warrantyClaims: number
   disputes: number
@@ -4327,6 +4350,7 @@ export interface ProviderOrganizationResponse {
   capacity: number
   delegateExecutorAssignmentToPlatform: boolean
   commissionRate: number
+  maxDiscountPercent: number | null
   storeModuleEnabled: boolean
   baseLatitude: number | null
   baseLongitude: number | null
@@ -4609,6 +4633,151 @@ export interface ReviewSummaryResponse {
   ratingsCount: number
   distribution: number[]
   executors: ExecutorReviewSummaryResponse[]
+}
+
+// ── Reports/TechnicianReportDtos.cs
+export interface TechnicianReportRequest {
+  from?: string | null
+  to?: string | null
+}
+export interface TechnicianReportResponse {
+  executorId: string
+  executorName: string
+  organizationName: string
+  from: string
+  to: string
+  generatedAt: string
+  currency: string
+  totals: TechnicianReportTotals
+  previous: TechnicianReportTotals
+  indicators: TechnicianReportIndicators
+  daily: TechnicianDayCount[]
+  weekly: TechnicianDayCount[]
+  services: TechnicianServiceCount[]
+  areas: TechnicianAreaCount[]
+  items: TechnicianReportItem[]
+  itemsTotal: number
+}
+export interface TechnicianReportTotals {
+  received: number
+  completed: number
+  inProgress: number
+  cancelled: number
+  rejected: number
+  timedOut: number
+  totalValue: number | null
+  notCompleted: number
+}
+export interface TechnicianReportIndicators {
+  completionRate: number | null
+  acceptanceRate: number | null
+  onTimeRate: number | null
+  averageRating: number | null
+  ratingsCount: number
+  averageWorkMinutes: number | null
+}
+export interface TechnicianDayCount {
+  date: string
+  completed: number
+  received: number
+}
+export interface TechnicianServiceCount {
+  serviceNameAr: string
+  serviceNameEn: string
+  count: number
+}
+export interface TechnicianAreaCount {
+  city: string | null
+  district: string | null
+  count: number
+}
+export interface TechnicianReportItem {
+  id: string
+  itemNumber: string | null
+  orderNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  issueNameAr: string | null
+  issueNameEn: string | null
+  city: string | null
+  district: string | null
+  status: ServiceItemStatus
+  outcome: TechnicianJobOutcome
+  assignedAt: string | null
+  acceptedAt: string | null
+  startedAt: string | null
+  completedAt: string | null
+  cancelledAt: string | null
+  completionNotes: string | null
+  amount: number | null
+}
+export interface TechnicianHomeSummaryResponse {
+  completedToday: number
+  inProgress: number
+  waitingResponse: number
+  completedThisWeek: number
+  completedLastWeek: number
+  lastSevenDays: TechnicianDayCount[]
+}
+export interface AdminReportRequest extends TechnicianReportRequest {
+  providerOrganizationId?: string | null
+  executorId?: string | null
+}
+export interface AdminTechnicianReportRequest extends PaginatedRequest {
+  from?: string | null
+  to?: string | null
+  providerOrganizationId?: string | null
+  executorId?: string | null
+}
+export interface AdminTechnicianReportRow {
+  executorId: string
+  executorName: string
+  providerOrganizationId: string
+  providerName: string
+  received: number
+  completed: number
+  inProgress: number
+  cancelled: number
+  rejected: number
+  timedOut: number
+  totalValue: number
+  averageRating: number | null
+}
+export interface FinanceReportResponse {
+  from: string
+  to: string
+  currency: string
+  totals: FinanceReportRow
+  providers: FinanceReportRow[]
+}
+export interface FinanceReportRow {
+  providerOrganizationId: string | null
+  providerName: string
+  completedItems: number
+  grossAmount: number
+  commissionAmount: number
+  coveredAmount: number
+  collectedInCash: number
+  collectedByPlatform: number
+  refundedAmount: number
+  settledAmount: number
+}
+export interface OperationsReportResponse {
+  from: string
+  to: string
+  totals: OperationsReportRow
+  providers: OperationsReportRow[]
+}
+export interface OperationsReportRow {
+  providerOrganizationId: string | null
+  providerName: string
+  received: number
+  completed: number
+  cancelled: number
+  open: number
+  waitingTechnician: number
+  timedOut: number
+  averageHoursToComplete: number | null
 }
 
 // ── Staff/StaffDtos.cs
@@ -5107,6 +5276,7 @@ export interface PlanEntitlementResponse {
 export interface SubscriptionPlanAdminResponse extends SubscriptionPlanResponse {
   reminderMonths: number[]
   isActive: boolean
+  showAfterService: boolean
   sortOrder: number
   activeSubscriptions: number
   pendingSubscriptions: number
@@ -5131,6 +5301,7 @@ export interface SaveSubscriptionPlanRequest {
   reminderMonths: number[]
   sortOrder: number
   isActive: boolean
+  showAfterService: boolean
   entitlements: SavePlanEntitlementRequest[]
 }
 export interface SavePlanEntitlementRequest {
@@ -5143,6 +5314,7 @@ export interface SavePlanEntitlementRequest {
 }
 export interface SubscribeRequest {
   planId: string
+  sourceOrderId?: string | null
   addressId: string
   unitCount: number
   paymentMethod: PaymentMethod
@@ -5177,6 +5349,8 @@ export interface CustomerHomeSubscriptionListRequest extends PaginatedRequest {
 }
 export interface HomeSubscriptionResponse {
   id: string
+  consentedAt: string | null
+  sourceOrderId: string | null
   subscriptionNumber: string
   planId: string
   planNameAr: string

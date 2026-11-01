@@ -1,15 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
-import { ArrowDown, ArrowUp, Info } from 'lucide-react'
+import { ArrowDown, ArrowUp, FileText, Info } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
+import { LOOKUP_STALE_TIME } from '@/api/queryClient'
 import type { ExecutorPerformance } from '@/api/types'
-import { DateRangeFilter } from '@/components/Filters'
 import { Money } from '@/components/Format'
 import { PageHeader } from '@/components/PageHeader'
 import { EmptyState, ErrorState } from '@/components/States'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
+import { Select } from '@/components/ui/input'
 import { Tooltip } from '@/components/ui/menu'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TBody, Td, Th, THead, Tr } from '@/components/ui/table'
@@ -17,43 +18,41 @@ import { useLang } from '@/hooks/useLang'
 import { useUrlState } from '@/hooks/useUrlState'
 import { formatDuration, formatNumber, formatPercent, riyadhDateToIso } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { boardQueryOptions } from '@/features/work/api'
 import { insightKeys, insightsApi } from './api'
-import { perfFlags, PERF_PERIODS, presetRange, sortPerformance, type Flag, type PerfPeriod, type PerfSortKey } from './logic'
+import { perfFlags, reportHref, resolvePeriod, sortPerformance, type Flag, type PerfPeriod, type PerfSortKey } from './logic'
+import { PeriodFilter } from './PeriodFilter'
 import './i18n'
 
-const schema = { period: '30', from: '', to: '' }
+const schema = { period: '30', from: '', to: '', executorId: '' }
 
 /** `/team/performance` (PROVIDER-PLATFORM-PHASE2-PROMPT §4): who to reward and who needs training. */
 export function TeamPerformancePage() {
   const { t } = useTranslation('insights')
   const { state, set } = useUrlState(schema)
-  const period: PerfPeriod = (PERF_PERIODS as readonly string[]).includes(state.period) ? (state.period as PerfPeriod) : '30'
-  const range = useMemo(() => (period === 'custom' ? { from: state.from, to: state.to } : presetRange(Number(period))), [period, state.from, state.to])
-  const params = { from: riyadhDateToIso(range.from, 'start') ?? undefined, to: riyadhDateToIso(range.to, 'end') ?? undefined }
-  const ready = period !== 'custom' || (!!range.from && !!range.to)
+  const { period, range, ready } = resolvePeriod(state)
+  const params = { from: riyadhDateToIso(range.from, 'start') ?? undefined, to: riyadhDateToIso(range.to, 'end') ?? undefined, executorId: state.executorId || undefined }
   const query = useQuery({ queryKey: insightKeys.performance(params), queryFn: ({ signal }) => insightsApi.teamPerformance(params, signal), enabled: ready })
+
+  // The filter lists the whole team, so it keeps its options while the table shows one technician.
+  const board = useQuery({ ...boardQueryOptions, staleTime: LOOKUP_STALE_TIME })
+  const executors = useMemo(() => [...(board.data?.executors ?? [])].sort((a, b) => Number(b.isActive) - Number(a.isActive) || a.fullName.localeCompare(b.fullName)), [board.data])
 
   return (
     <>
       <PageHeader title={t('perf.title')} description={t('perf.subtitle')} />
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <div role="tablist" className="flex flex-wrap gap-1">
-          {PERF_PERIODS.map((p) => (
-            <button
-              key={p}
-              type="button"
-              role="tab"
-              aria-selected={period === p}
-              onClick={() => set(p === 'custom' ? { period: p, from: range.from, to: range.to } : { period: p, from: '', to: '' })}
-              className={cn('rounded-full border px-3 py-1 text-xs', period === p ? 'border-primary bg-primary text-primary-foreground' : 'bg-surface hover:bg-muted')}
-            >
-              {t(`perf.period.${p}`)}
-            </button>
+      <PeriodFilter period={period} range={range} custom={{ from: state.from, to: state.to }} onChange={set}>
+        <Select value={state.executorId} onChange={(e) => set({ executorId: e.target.value })} className="h-8 w-auto min-w-[10rem] text-xs" aria-label={t('perf.filterTechnician')}>
+          <option value="">{t('perf.allTechnicians')}</option>
+          {executors.map((e) => (
+            <option key={e.executorId} value={e.executorId}>
+              {e.fullName}
+              {e.isActive ? '' : ` (${t('perf.inactive')})`}
+            </option>
           ))}
-        </div>
-        {period === 'custom' && <DateRangeFilter from={state.from} to={state.to} onChange={(r) => set(r)} />}
-        {range.from && range.to && <span className="tabular text-xs text-muted-foreground">{t('perf.range', { from: range.from, to: range.to })}</span>}
-      </div>
+          {state.executorId && !executors.some((e) => e.executorId === state.executorId) && <option value={state.executorId}>…</option>}
+        </Select>
+      </PeriodFilter>
 
       {!ready ? null : query.isPending ? (
         <Skeleton className="h-72" />
@@ -66,7 +65,7 @@ export function TeamPerformancePage() {
           <EmptyState title={t('perf.empty')} />
         </Card>
       ) : (
-        <PerformanceTable rows={query.data.executors} />
+        <PerformanceTable rows={query.data.executors} period={period} range={range} />
       )}
     </>
   )
@@ -78,6 +77,7 @@ const COLUMNS: Array<{ key: PerfSortKey; label: string; hint?: string; numeric: 
   { key: 'averageRating', label: 'perf.rating', numeric: true },
   { key: 'onTimeRate', label: 'perf.onTime', hint: 'perf.onTimeHint', numeric: true },
   { key: 'acceptanceRate', label: 'perf.acceptance', hint: 'perf.acceptanceHint', numeric: true },
+  { key: 'assignmentsTimedOut', label: 'perf.timedOut', hint: 'perf.timedOutHint', numeric: true },
   { key: 'averageWorkMinutes', label: 'perf.workTime', hint: 'perf.workTimeHint', numeric: true },
   { key: 'warrantyClaims', label: 'perf.warranty', numeric: true },
   { key: 'disputes', label: 'perf.disputes', numeric: true },
@@ -87,7 +87,7 @@ const COLUMNS: Array<{ key: PerfSortKey; label: string; hint?: string; numeric: 
 
 const flagClass = (f: Flag) => (f === 'danger' ? 'font-semibold text-tone-danger' : f === 'attention' ? 'font-semibold text-tone-attention' : undefined)
 
-function PerformanceTable({ rows }: { rows: ExecutorPerformance[] }) {
+function PerformanceTable({ rows, period, range }: { rows: ExecutorPerformance[]; period: PerfPeriod; range: { from: string; to: string } }) {
   const { t } = useTranslation('insights')
   const { lang } = useLang()
   const navigate = useNavigate()
@@ -138,6 +138,16 @@ function PerformanceTable({ rows }: { rows: ExecutorPerformance[] }) {
                       {t('perf.inactive')}
                     </Badge>
                   )}
+                  {/* Here, not in a last column: the wide table scrolls that one out of view. */}
+                  <div>
+                    <Link
+                      to={reportHref(p.executorId, period, range)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-1 whitespace-nowrap text-xs text-primary hover:underline"
+                    >
+                      <FileText className="size-3" aria-hidden /> {t('perf.report')}
+                    </Link>
+                  </div>
                 </Td>
                 <Td className="tabular text-end">{formatNumber(p.completed, lang)}</Td>
                 <Td className="text-end">
@@ -151,9 +161,12 @@ function PerformanceTable({ rows }: { rows: ExecutorPerformance[] }) {
                 <Td className="text-end">
                   <span className="tabular">{pct(p.acceptanceRate)}</span>
                   {p.assignmentsOffered > 0 && (
-                    <div className="text-[0.6875rem] text-muted-foreground">{t('perf.offered', { rejected: p.assignmentsRejected, offered: p.assignmentsOffered })}</div>
+                    <div className="text-[0.6875rem] text-muted-foreground">
+                      {t('perf.offered', { rejected: p.assignmentsRejected, timedOut: p.assignmentsTimedOut, offered: p.assignmentsOffered })}
+                    </div>
                   )}
                 </Td>
+                <Td className={cn('tabular text-end', flagClass(f.timedOut))}>{formatNumber(p.assignmentsTimedOut, lang)}</Td>
                 <Td className="tabular text-end text-xs">{p.averageWorkMinutes === null ? '—' : formatDuration(p.averageWorkMinutes, lang)}</Td>
                 <Td className={cn('tabular text-end', flagClass(f.warranty))}>{formatNumber(p.warrantyClaims, lang)}</Td>
                 <Td className="tabular text-end">{formatNumber(p.disputes, lang)}</Td>

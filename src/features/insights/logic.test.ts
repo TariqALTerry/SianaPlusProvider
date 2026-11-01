@@ -1,7 +1,21 @@
 import { describe, expect, it } from 'vitest'
 import type { ExecutorPerformance } from '@/api/types'
 import { dayjs } from '@/lib/format'
-import { addCapabilityHref, addCoverageHref, initialOf, jobColor, JOB_COLORS, parseRadius, perfFlags, presetRange, sortPerformance } from './logic'
+import {
+  addCapabilityHref,
+  addCoverageHref,
+  dailyBars,
+  initialOf,
+  jobColor,
+  JOB_COLORS,
+  parseRadius,
+  perfFlags,
+  presetRange,
+  reportHref,
+  reportPdfName,
+  resolvePeriod,
+  sortPerformance,
+} from './logic'
 
 const row = (over: Partial<ExecutorPerformance>): ExecutorPerformance => ({
   executorId: 'e',
@@ -15,6 +29,7 @@ const row = (over: Partial<ExecutorPerformance>): ExecutorPerformance => ({
   acceptanceRate: null,
   assignmentsOffered: 0,
   assignmentsRejected: 0,
+  assignmentsTimedOut: 0,
   averageWorkMinutes: null,
   warrantyClaims: 0,
   disputes: 0,
@@ -39,9 +54,9 @@ describe('demand helpers', () => {
 
 describe('performance', () => {
   it('flags late arrivals, low ratings and warranty claims', () => {
-    expect(perfFlags(row({ onTimeRate: 0.79, averageRating: 3.9, warrantyClaims: 1 }))).toEqual({ onTime: 'danger', rating: 'danger', warranty: 'attention' })
-    expect(perfFlags(row({ onTimeRate: 0.8, averageRating: 4, warrantyClaims: 0 }))).toEqual({ onTime: null, rating: null, warranty: null })
-    expect(perfFlags(row({}))).toEqual({ onTime: null, rating: null, warranty: null })
+    expect(perfFlags(row({ onTimeRate: 0.79, averageRating: 3.9, warrantyClaims: 1, assignmentsTimedOut: 1 }))).toEqual({ onTime: 'danger', rating: 'danger', warranty: 'attention', timedOut: 'attention' })
+    expect(perfFlags(row({ onTimeRate: 0.8, averageRating: 4, warrantyClaims: 0 }))).toEqual({ onTime: null, rating: null, warranty: null, timedOut: null })
+    expect(perfFlags(row({}))).toEqual({ onTime: null, rating: null, warranty: null, timedOut: null })
   })
 
   it('sorts with nulls last in both directions', () => {
@@ -52,6 +67,41 @@ describe('performance', () => {
 
   it('builds inclusive Riyadh ranges', () => {
     expect(presetRange(7, dayjs.tz('2026-10-15 10:00', 'Asia/Riyadh'))).toEqual({ from: '2026-10-09', to: '2026-10-15' })
+  })
+
+  it('resolves the URL period: unknown falls back to 30 days, custom waits for both days', () => {
+    const now = dayjs.tz('2026-10-15 10:00', 'Asia/Riyadh')
+    expect(resolvePeriod({ period: '7', from: '', to: '' }, now)).toEqual({ period: '7', range: { from: '2026-10-09', to: '2026-10-15' }, ready: true })
+    expect(resolvePeriod({ period: 'nonsense', from: '', to: '' }, now).period).toBe('30')
+    expect(resolvePeriod({ period: 'custom', from: '2026-10-01', to: '' }, now).ready).toBe(false)
+    expect(resolvePeriod({ period: 'custom', from: '2026-10-01', to: '2026-10-02' }, now)).toEqual({ period: 'custom', range: { from: '2026-10-01', to: '2026-10-02' }, ready: true })
+  })
+})
+
+describe('technician report', () => {
+  const day = (date: string, completed: number) => ({ date, completed, received: 0 })
+
+  it('carries the period to the report', () => {
+    expect(reportHref('e1', '30', { from: '2026-10-01', to: '2026-10-30' })).toBe('/team/e1/report')
+    expect(reportHref('e1', '7', { from: '2026-10-24', to: '2026-10-30' })).toBe('/team/e1/report?period=7')
+    expect(reportHref('e1', 'custom', { from: '2026-10-01', to: '2026-10-05' })).toBe('/team/e1/report?period=custom&from=2026-10-01&to=2026-10-05')
+  })
+
+  it('scales bars to the busiest day and keeps a small day visible', () => {
+    const { max, bars } = dailyBars([day('2026-10-01', 0), day('2026-10-02', 1), day('2026-10-03', 100)])
+    expect(max).toBe(100)
+    expect(bars.map((b) => b.height)).toEqual([0, 4, 100])
+  })
+
+  it('has nothing to scale in an empty period', () => {
+    expect(dailyBars([day('2026-10-01', 0)])).toEqual({ max: 0, bars: [{ date: '2026-10-01', completed: 0, height: 0 }] })
+    expect(dailyBars([]).max).toBe(0)
+  })
+
+  it('names the PDF after the technician and the days, without path characters', () => {
+    expect(reportPdfName('سالم العتيبي', '2026-10-01', '2026-10-30')).toBe('technician-report-سالم-العتيبي-2026-10-01-2026-10-30.pdf')
+    expect(reportPdfName(' a/b:c ', '2026-10-01', '2026-10-30')).toBe('technician-report-a-b-c-2026-10-01-2026-10-30.pdf')
+    expect(reportPdfName('', '2026-10-01', '2026-10-30')).toBe('technician-report-2026-10-01-2026-10-30.pdf')
   })
 })
 

@@ -71,6 +71,7 @@ export function WorkItemPage() {
 
   const { item, timeline, evidence, quotations, assignments, schedules, workflow } = query.data
   const live = isLiveStatus(item.status)
+  const inReview = quotations.find((q) => q.status === 'PendingReview')
   const counts: Partial<Record<Tab, number>> = {
     timeline: timeline.length,
     photos: evidence.length,
@@ -160,6 +161,17 @@ export function WorkItemPage() {
         </p>
       )}
 
+      {inReview && (
+        <p className="mb-4 flex flex-wrap items-center gap-x-2 rounded-lg border border-tone-attention/30 bg-tone-attention-soft px-3 py-2 text-sm text-tone-attention" role="status">
+          <span>
+            {t('detail.pendingReview')} — <span className="ltr-nums font-mono">{inReview.quotationNumber}</span>
+          </span>
+          <Link to={{ search: '?tab=quotations' }} className="font-medium underline">
+            {t('detail.openReview')}
+          </Link>
+        </p>
+      )}
+
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="min-w-0 space-y-4 lg:col-span-2">
           <CustomerCard item={item} />
@@ -193,7 +205,7 @@ export function WorkItemPage() {
               <PhotosSection evidence={evidence} />
             </TabsContent>
             <TabsContent value="quotations">
-              <QuotationsSection quotations={quotations} />
+              <QuotationsSection quotations={quotations} item={item} />
             </TabsContent>
             <TabsContent value="assignments">
               <AssignmentsSection assignments={assignments} />

@@ -1,6 +1,6 @@
 import { http } from '@/api/http'
 import { qk } from '@/api/keys'
-import type { JobBriefResponse, ProviderDemandResponse, TeamMapResponse, TeamPerformanceRequest, TeamPerformanceResponse } from '@/api/types'
+import type { JobBriefResponse, ProviderDemandResponse, TeamMapResponse, TeamPerformanceRequest, TeamPerformanceResponse, TechnicianReportRequest, TechnicianReportResponse } from '@/api/types'
 
 /** `api/provider/insights` (PROVIDER-PLATFORM-PHASE2-PROMPT §3, §4, §6, §7). */
 const base = '/api/provider/insights'
@@ -10,6 +10,10 @@ export const insightsApi = {
   demand: (radiusKm: number, signal?: AbortSignal) => http.get<ProviderDemandResponse>(`${base}/demand`, { radiusKm }, signal),
   /** UTC; default the last 30 days, up to a year. */
   teamPerformance: (params: TeamPerformanceRequest, signal?: AbortSignal) => http.get<TeamPerformanceResponse>(`${base}/team-performance`, params, signal),
+  /** Whole Riyadh days as `yyyy-MM-dd`, both included, up to a year. */
+  technicianReport: (executorId: string, params: TechnicianReportRequest, signal?: AbortSignal) =>
+    http.get<TechnicianReportResponse>(`${base}/technicians/${executorId}/report`, params, signal),
+  technicianReportPdf: (executorId: string, params: TechnicianReportRequest) => http.blob(`${base}/technicians/${executorId}/report.pdf`, params, { timeout: 60_000 }),
   teamMap: (signal?: AbortSignal) => http.get<TeamMapResponse>(`${base}/team-map`, undefined, signal),
   /** Cached 12 h on the server; the same text the technician reads. */
   jobBrief: (serviceItemId: string, signal?: AbortSignal) => http.get<JobBriefResponse>(`${base}/jobs/${serviceItemId}/brief`, undefined, signal),
@@ -18,6 +22,7 @@ export const insightsApi = {
 export const insightKeys = {
   demand: (radiusKm: number) => [...qk.insights, 'demand', radiusKm] as const,
   performance: (params: object) => [...qk.insights, 'performance', params] as const,
+  report: (executorId: string, params: object) => [...qk.insights, 'report', executorId, params] as const,
   map: [...qk.insights, 'team-map'] as const,
   brief: (serviceItemId: string) => [...qk.insights, 'brief', serviceItemId] as const,
 }

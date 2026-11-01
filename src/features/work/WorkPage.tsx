@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Gavel, ShieldAlert, Sparkles } from 'lucide-react'
+import { Gavel, ShieldAlert, Sparkles, TimerOff } from 'lucide-react'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DataTable } from '@/components/DataTable'
@@ -8,11 +8,13 @@ import { DateRangeFilter, FilterChips, QuickTabs, SearchInput, type FilterChip }
 import { DateTime } from '@/components/Format'
 import { PageHeader } from '@/components/PageHeader'
 import { StatusBadge } from '@/components/StatusBadge'
+import { Button } from '@/components/ui/button'
 import { Select } from '@/components/ui/input'
 import { Tooltip } from '@/components/ui/menu'
 import { LOOKUP_STALE_TIME, listQueryOptions } from '@/api/queryClient'
 import type { ServiceItemProviderView } from '@/api/types'
 import { useLang } from '@/hooks/useLang'
+import { usePollingInterval } from '@/hooks/usePageVisible'
 import { paginationDefaults, useUrlState } from '@/hooks/useUrlState'
 import { enumLabel } from '@/i18n/enums'
 import { formatDateTime, formatTime, riyadhDateToIso } from '@/lib/format'
@@ -23,13 +25,15 @@ import { CoverageBadge, NetInline } from './components/widgets'
 
 /**
  * URL schema of the work list. Other pages link into it:
- * `/work?status=Scheduled` (home distribution bar), `/work?executorId=…` (board), `/work?tab=…`.
+ * `/work?status=Scheduled` (home distribution bar), `/work?executorId=…` (board), `/work?tab=…`,
+ * `/work?timedOut=true` (items a technician lost by not answering; it narrows any tab).
  */
 const schema = {
   ...paginationDefaults,
   tab: 'all',
   status: [] as string[],
   executorId: '',
+  timedOut: false,
   from: '',
   to: '',
   search: '',
@@ -37,16 +41,18 @@ const schema = {
 
 const SEARCH_MAX = 200
 
-/** `/work` (§8.4): the organization's items, server-paged, filtered in the URL. */
+/** `/work` (§8.4): the organization's items, server-paged, filtered in the URL, refreshed every 60 s. */
 export function WorkPage() {
   const { t } = useTranslation('work')
   const { lang, pick } = useLang()
   const queryClient = useQueryClient()
   const { state, set, reset, active } = useUrlState(schema)
+  const interval = usePollingInterval(60_000)
 
   const filters: WorkListParams = {
     status: statusesFor(state.tab, state.status),
     executorId: state.executorId || undefined,
+    timedOut: state.timedOut || undefined,
     scheduledFrom: riyadhDateToIso(state.from, 'start'),
     scheduledTo: riyadhDateToIso(state.to, 'end'),
     search: state.search.slice(0, SEARCH_MAX),
@@ -57,6 +63,7 @@ export function WorkPage() {
     queryKey: workKeys.list(params),
     queryFn: ({ signal }) => workApi.list(params, signal),
     ...listQueryOptions,
+    refetchInterval: interval,
   })
 
   // The technician filter reads the board's executor list (every executor of the organization).
@@ -150,6 +157,7 @@ export function WorkPage() {
       ? [{ key: 'status', label: `${t('filters.status')}: ${state.status.map((s) => enumLabel('ServiceItemStatus', s, lang)).join('، ')}`, onRemove: () => set({ status: [] }) }]
       : []),
     ...(state.executorId ? [{ key: 'executor', label: `${t('filters.technician')}: ${executorName ?? '…'}`, onRemove: () => set({ executorId: '' }) }] : []),
+    ...(state.timedOut ? [{ key: 'timedOut', label: t('filters.timedOut'), onRemove: () => set({ timedOut: false }) }] : []),
     ...(state.from || state.to ? [{ key: 'scheduled', label: `${t('filters.scheduled')}: ${state.from || '…'} – ${state.to || '…'}`, onRemove: () => set({ from: '', to: '' }) }] : []),
     ...(state.search ? [{ key: 'search', label: `“${state.search}”`, onRemove: () => set({ search: '' }) }] : []),
   ]
@@ -202,6 +210,15 @@ export function WorkPage() {
               ))}
               {state.executorId && !executorName && <option value={state.executorId}>…</option>}
             </Select>
+            <Button
+              variant={state.timedOut ? 'default' : 'outline'}
+              size="sm"
+              className="h-8 text-xs font-normal"
+              aria-pressed={state.timedOut}
+              onClick={() => set({ timedOut: !state.timedOut })}
+            >
+              <TimerOff /> {t('filters.timedOut')}
+            </Button>
             <DateRangeFilter from={state.from} to={state.to} onChange={(r) => set(r)} label={t('filters.scheduled')} />
           </>
         }

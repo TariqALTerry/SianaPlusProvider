@@ -199,6 +199,18 @@ export const QuotationStatus: EnumMap<T.QuotationStatus> = {
   Rejected: e('مرفوض', 'Rejected', 'danger'),
   Expired: e('منتهي', 'Expired', 'muted'),
   Cancelled: e('ملغى', 'Cancelled', 'muted'),
+  PendingReview: e('بانتظار موافقة الشركة', 'Waiting for the company', 'attention'),
+}
+
+/** Where one job ended up for the technician, in their report. */
+export const TechnicianJobOutcome: EnumMap<T.TechnicianJobOutcome> = {
+  Completed: e('مكتملة', 'Completed', 'success'),
+  InProgress: e('قيد التنفيذ', 'In progress', 'active'),
+  WaitingResponse: e('بانتظار رد الفني', 'Waiting for the technician', 'waiting'),
+  Cancelled: e('ملغاة', 'Cancelled', 'muted'),
+  Rejected: e('اعتذر الفني', 'Technician declined', 'danger'),
+  TimedOut: e('لم يرد في المهلة', 'Did not answer in time', 'danger'),
+  Reassigned: e('أُسندت لغيره', 'Reassigned', 'muted'),
 }
 
 export const PriceItemType: EnumMap<T.PriceItemType> = {
@@ -548,7 +560,7 @@ export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
   ProviderDocumentStatus, ProviderMemberRole, ExecutorAvailability, ExecutionMode, PricingType,
-  AssignmentType, AssignmentStatus, CustomerPaymentStage, FinancialRecordKind, ActorType, CancellationInitiator, QuotationStatus, PriceItemType,
+  AssignmentType, AssignmentStatus, CustomerPaymentStage, FinancialRecordKind, ActorType, CancellationInitiator, QuotationStatus, TechnicianJobOutcome, PriceItemType,
   EvidenceStage, EvidenceType, DynamicFieldType, RefundStatus, SettlementStatus, SettlementPartyType,
   DisputeStatus, DisputeResolutionType, WarrantyStatus, MarketplaceRequestStatus, MarketplaceOfferStatus,
   StoreOrderStatus, UserStatus, Role, ActiveFilter, NotificationType, ExecutionStep, CoverageShape,

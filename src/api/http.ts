@@ -188,9 +188,26 @@ interface RetriableConfig extends InternalAxiosRequestConfig {
 
 let backoffTimer: ReturnType<typeof setTimeout> | undefined
 
+/**
+ * A `responseType: 'blob'` call gets its error body as a Blob. Read it back into the envelope so
+ * the code and the localized message work as on any other call; anything else is left out.
+ */
+async function readBlobEnvelope(error: AxiosError<ApiResponse<unknown>>): Promise<void> {
+  const body: unknown = error.response?.data
+  if (!error.response || !(body instanceof Blob)) return
+  let parsed: ApiResponse<unknown> | undefined
+  try {
+    parsed = JSON.parse(await body.text()) as ApiResponse<unknown>
+  } catch {
+    parsed = undefined
+  }
+  error.response.data = parsed as ApiResponse<unknown>
+}
+
 client.interceptors.response.use(
   (response) => response,
   async (error: AxiosError<ApiResponse<unknown>>) => {
+    await readBlobEnvelope(error)
     const status = error.response?.status
     const config = error.config as RetriableConfig | undefined
     const code = error.response?.data?.errorCode
@@ -280,6 +297,11 @@ export const http = {
     const form = new FormData()
     form.append('file', file)
     return send<T>({ method: 'POST', url, data: form })
+  },
+  /** A file behind the session (a PDF report): no envelope on success, the usual `ApiError` on failure. */
+  blob: async (url: string, params?: object, options?: { timeout?: number }) => {
+    const response = await client.request<Blob>({ method: 'GET', url, params: cleanParams(params), responseType: 'blob', timeout: options?.timeout })
+    return response.data
   },
   /** multipart/form-data with text fields and an optional file (e.g. a service message). */
   form: <T>(url: string, fields: Record<string, string | null | undefined>, file?: File | null) => {

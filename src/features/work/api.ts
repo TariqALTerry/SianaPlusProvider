@@ -10,6 +10,8 @@ import type {
   ProviderRejectRequest,
   ProviderWorkBoardResponse,
   ProviderWorkListRequest,
+  QuotationReviewResponse,
+  ReviewQuotationRequest,
   ScheduleItemRequest,
   ServiceItemProviderDetailResponse,
   ServiceItemProviderView,
@@ -37,6 +39,12 @@ export const workApi = {
   schedule: (id: string, body: ScheduleItemRequest) => http.post<ServiceItemProviderView>(`${base}/items/${id}/schedule`, body),
   /** «صحة بيتك» of a covered visit (HOME-SUBSCRIPTIONS PHASE2 §1); `HomeInspectionNotRequired` when it is not a health check. */
   homeInspection: (id: string, signal?: AbortSignal) => http.get<HomeInspectionResponse>(`${base}/items/${id}/home-inspection`, undefined, signal),
+  /** Quotations above the technician's limit, oldest first, waiting for the company's answer. */
+  quotationReviews: (signal?: AbortSignal) => http.get<QuotationReviewResponse[]>(`${base}/quotation-reviews`, undefined, signal),
+  /** The quotation goes to the customer. */
+  approveQuotationReview: (id: string, quotationId: string, body: ReviewQuotationRequest) => http.post<string>(`${base}/items/${id}/quotations/${quotationId}/approve-review`, body),
+  /** The quotation goes back to the technician as a draft; `note` is required (`QuotationReviewNoteRequired`). */
+  rejectQuotationReview: (id: string, quotationId: string, body: ReviewQuotationRequest) => http.post<string>(`${base}/items/${id}/quotations/${quotationId}/reject-review`, body),
 }
 
 export const workKeys = {
@@ -45,6 +53,7 @@ export const workKeys = {
   detail: (id: string) => [...qk.work, 'detail', id] as const,
   candidates: (id: string) => [...qk.work, 'candidates', id] as const,
   homeInspection: (id: string) => [...qk.work, 'home-inspection', id] as const,
+  quotationReviews: () => [...qk.work, 'quotation-reviews'] as const,
   executorItems: (executorId: string, params: WorkListParams) => [...qk.work, 'list', 'executor', executorId, params] as const,
   board: () => [...qk.board, 'summary'] as const,
 }
