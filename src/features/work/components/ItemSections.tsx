@@ -367,12 +367,17 @@ export function PhotosSection({ evidence }: { evidence: EvidenceResponse[] }) {
   )
 }
 
-export function QuotationsSection({ quotations, item }: { quotations: QuotationResponse[]; item: WorkTarget }) {
+export function QuotationsSection({ quotations, item, covered }: { quotations: QuotationResponse[]; item: WorkTarget; covered?: boolean }) {
   const { t } = useTranslation('work')
   if (!quotations.length) return <EmptyState title={t('common:common.noData')} />
   const rows = [...quotations].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
   return (
     <div className="space-y-4">
+      {covered && (
+        <p className="rounded-md bg-tone-info-soft px-3 py-2 text-sm text-tone-info" role="note">
+          {t('coverage.quoteNote')}
+        </p>
+      )}
       {rows.map((q) => (
         <Card key={q.id}>
           <CardHeader

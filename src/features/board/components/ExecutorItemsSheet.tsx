@@ -13,7 +13,7 @@ import type { ExecutorLoadResponse } from '@/api/types'
 import { useLang } from '@/hooks/useLang'
 import { formatDateTime } from '@/lib/format'
 import { workApi, workKeys, type WorkListParams } from '@/features/work/api'
-import { LoadBar } from '@/features/work/components/widgets'
+import { CoverageBadge, LoadBar } from '@/features/work/components/widgets'
 import { PROVIDER_ACTIVE_STATUSES } from '@/features/work/logic'
 import '@/features/work/i18n'
 import '../i18n'
@@ -92,7 +92,10 @@ export function ExecutorItemsSheet({ executor, onClose }: { executor: ExecutorLo
                         {(r.address.district || r.address.city) && <span> · {r.address.district ?? r.address.city}</span>}
                       </span>
                     </span>
-                    <StatusBadge enum="ServiceItemStatus" value={r.status} className="shrink-0" />
+                    <span className="flex shrink-0 items-center gap-1.5">
+                      {r.isSubscriptionCovered && <CoverageBadge />}
+                      <StatusBadge enum="ServiceItemStatus" value={r.status} />
+                    </span>
                   </Link>
                 </li>
               ))}

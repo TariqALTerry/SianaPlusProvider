@@ -205,7 +205,7 @@ export function WorkItemPage() {
               <PhotosSection evidence={evidence} />
             </TabsContent>
             <TabsContent value="quotations">
-              <QuotationsSection quotations={quotations} item={item} />
+              <QuotationsSection quotations={quotations} item={item} covered={item.isSubscriptionCovered} />
             </TabsContent>
             <TabsContent value="assignments">
               <AssignmentsSection assignments={assignments} />

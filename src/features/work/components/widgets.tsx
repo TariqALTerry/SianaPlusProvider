@@ -187,6 +187,7 @@ function CustomerShare({ item }: { item: Coverage & { finalAmount: number } }) {
         </p>
       )}
       <p className="mt-2 text-xs text-muted-foreground">{t('coverage.earnings')}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{t('coverage.cancelNote')}</p>
     </section>
   )
 }

@@ -54,6 +54,8 @@ const ar = {
     collect: 'يحصّله الفني من العميل',
     cashNote: 'إن كان الدفع نقدًا فحصّل {{amount}} فقط، والباقي يدفعه الاشتراك.',
     earnings: 'أجرك لا يتغير: العمولة وصافي لك محسوبان على سعر الخدمة كاملًا، والمنصة تدفع الجزء المغطى ويصلك في التسوية.',
+    cancelNote: 'إن أُلغيت الخدمة تعود الزيارة المشمولة لرصيد اشتراك العميل تلقائيًا.',
+    quoteNote: 'عند موافقة العميل على العرض يغطي اشتراكه بنود الأجرة والكشف حتى الحد، ويخصم من الباقي. إجمالي عرضك يبقى كما هو، ويتغير ما يدفعه العميل فقط.',
   },
   inspection: {
     open: 'تقرير صحة بيتك',
@@ -305,6 +307,8 @@ const en: typeof ar = {
     collect: 'Technician collects from the customer',
     cashNote: 'If paying in cash, collect only {{amount}}; the subscription pays the rest.',
     earnings: 'Your earnings do not change: commission and net are on the full price, and the platform pays the covered part in your settlement.',
+    cancelNote: 'If the service is cancelled, the included visit goes back to the customer’s subscription automatically.',
+    quoteNote: 'When the customer approves a quotation, their subscription covers the labour and inspection lines up to its limit and takes a discount off the rest. Your quotation total stays the same; only what the customer pays changes.',
   },
   inspection: {
     open: 'Home health report',
