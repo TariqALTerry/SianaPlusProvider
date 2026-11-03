@@ -4,9 +4,9 @@ import react from '@vitejs/plugin-react'
 import { defineConfig, loadEnv, type ProxyOptions } from 'vite'
 
 /**
- * Vendor splitting. Only the libraries every page needs get a named chunk. Recharts and Leaflet
- * are deliberately left to Rollup's default splitting so they load with the pages that import
- * them (home charts and the coverage editor), never in the initial bundle.
+ * Vendor splitting. Only the libraries every page needs get a named chunk. Leaflet
+ * is deliberately left to Rollup's default splitting so it loads with the page that imports
+ * it (the coverage editor), never in the initial bundle.
  */
 function manualChunks(id: string): string | undefined {
   if (!id.includes('node_modules')) return undefined

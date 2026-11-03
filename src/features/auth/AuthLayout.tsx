@@ -10,7 +10,7 @@ import { changeLanguage } from '@/i18n'
 export function LogoMark({ className = 'size-10' }: { className?: string }) {
   return (
     <span className={`flex shrink-0 items-center justify-center rounded-lg bg-white p-1 shadow-sm ${className}`}>
-      <img src="/logo-mark.png" alt="" className="size-full object-contain" />
+      <img src="/logo-mark.png" alt="" width={128} height={128} decoding="async" className="size-full object-contain" />
     </span>
   )
 }
