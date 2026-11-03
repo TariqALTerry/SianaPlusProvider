@@ -212,7 +212,7 @@
     "StatusChanged": "Status changed",
     "AutoAssignSkipped": "Auto-assign skipped",
     "AutoAssignNoProvider": "Auto-assign found no provider",
-    "CashCollected": "Cash collected",
+    "CashCollected": "Technician collected the cash",
     "DeviceDiagnosed": "Device diagnosed",
     "DisputeEscalated": "Complaint escalated",
     "DisputeOpened": "Complaint opened",
@@ -234,7 +234,7 @@
     "RefundProcessed": "Refund processed",
     "RefundRejected": "Refund rejected",
     "RefundRequested": "Refund requested",
-    "Rescheduled": "Rescheduled",
+    "Rescheduled": "Appointment changed",
     "Reviewed": "Reviewed by customer",
     "WarrantyClaimAccepted": "Warranty claim accepted",
     "WarrantyClaimDeclined": "Warranty claim declined",
@@ -249,7 +249,11 @@
     "QuotationSentForReview": "Quote sent to the company for approval",
     "QuotationReviewApproved": "Company approved the quote",
     "QuotationReviewRejected": "Company rejected the quote",
-    "PaymentRecorded": "Payment recorded"
+    "PaymentRecorded": "Online payment recorded",
+    "CashPaymentDue": "Cash amount due",
+    "RepairTested": "Repair tested",
+    "ClosedAfterInspection": "Closed with the inspection fee",
+    "QuotationExpired": "Quote expired"
   },
   "auth": {
     "title": "Sign in",

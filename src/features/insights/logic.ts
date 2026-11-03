@@ -44,19 +44,41 @@ export function resolvePeriod(state: { period: string; from: string; to: string 
 
 export type Flag = 'danger' | 'attention' | null
 
-/** §4 colouring: on-time < 80 % red, rating < 4 red, any warranty claim or timed-out job orange. */
-export function perfFlags(p: Pick<ExecutorPerformance, 'onTimeRate' | 'averageRating' | 'warrantyClaims' | 'assignmentsTimedOut'>): { onTime: Flag; rating: Flag; warranty: Flag; timedOut: Flag } {
+/** SERVICE-JOURNEY-RULES §1: a rejection rate this high, over at least this many quotes, is a warning. */
+export const QUOTATION_REJECTION_WARN_RATE = 0.3
+export const QUOTATION_REJECTION_MIN_SENT = 3
+
+/**
+ * §4 colouring: on-time < 80 % red, rating < 4 red, any warranty claim or timed-out job orange,
+ * customers rejecting ≥ 30 % of the technician's quotes (with ≥ 3 sent) orange.
+ */
+export function perfFlags(
+  p: Pick<ExecutorPerformance, 'onTimeRate' | 'averageRating' | 'warrantyClaims' | 'assignmentsTimedOut' | 'quotationsSent' | 'quotationRejectionRate'>,
+): { onTime: Flag; rating: Flag; warranty: Flag; timedOut: Flag; quotations: Flag } {
   return {
     onTime: p.onTimeRate !== null && p.onTimeRate < 0.8 ? 'danger' : null,
     rating: p.averageRating !== null && p.averageRating < 4 ? 'danger' : null,
     warranty: p.warrantyClaims > 0 ? 'attention' : null,
     timedOut: p.assignmentsTimedOut > 0 ? 'attention' : null,
+    quotations:
+      p.quotationsSent >= QUOTATION_REJECTION_MIN_SENT && p.quotationRejectionRate !== null && p.quotationRejectionRate >= QUOTATION_REJECTION_WARN_RATE ? 'attention' : null,
   }
 }
 
 export type PerfSortKey = keyof Pick<
   ExecutorPerformance,
-  'fullName' | 'completed' | 'averageRating' | 'onTimeRate' | 'acceptanceRate' | 'assignmentsTimedOut' | 'averageWorkMinutes' | 'warrantyClaims' | 'disputes' | 'cancelledAfterAssignment' | 'revenue'
+  | 'fullName'
+  | 'completed'
+  | 'averageRating'
+  | 'onTimeRate'
+  | 'acceptanceRate'
+  | 'assignmentsTimedOut'
+  | 'quotationRejectionRate'
+  | 'averageWorkMinutes'
+  | 'warrantyClaims'
+  | 'disputes'
+  | 'cancelledAfterAssignment'
+  | 'revenue'
 >
 
 /** Sorts with nulls ("—") always last, whichever the direction. */

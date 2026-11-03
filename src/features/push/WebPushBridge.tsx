@@ -46,7 +46,7 @@ export function WebPushBridge() {
 
       // onMessage reaches every open tab; only the visible one shows a toast.
       if (document.visibilityState !== 'visible') return
-      const href = notificationHref({ ...ref, title: payload.notification?.title })
+      const href = notificationHref({ ...ref, title: payload.notification?.title, eventKey: data.event ?? null })
       const show = data.type === 'Success' ? toast.success : data.type === 'Warning' ? toast.warning : data.type === 'Error' ? toast.error : toast.info
       show(payload.notification?.title ?? '', {
         description: payload.notification?.body,

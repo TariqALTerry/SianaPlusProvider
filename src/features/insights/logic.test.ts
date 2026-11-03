@@ -30,6 +30,9 @@ const row = (over: Partial<ExecutorPerformance>): ExecutorPerformance => ({
   assignmentsOffered: 0,
   assignmentsRejected: 0,
   assignmentsTimedOut: 0,
+  quotationsSent: 0,
+  quotationsRejected: 0,
+  quotationRejectionRate: null,
   averageWorkMinutes: null,
   warrantyClaims: 0,
   disputes: 0,
@@ -54,9 +57,23 @@ describe('demand helpers', () => {
 
 describe('performance', () => {
   it('flags late arrivals, low ratings and warranty claims', () => {
-    expect(perfFlags(row({ onTimeRate: 0.79, averageRating: 3.9, warrantyClaims: 1, assignmentsTimedOut: 1 }))).toEqual({ onTime: 'danger', rating: 'danger', warranty: 'attention', timedOut: 'attention' })
-    expect(perfFlags(row({ onTimeRate: 0.8, averageRating: 4, warrantyClaims: 0 }))).toEqual({ onTime: null, rating: null, warranty: null, timedOut: null })
-    expect(perfFlags(row({}))).toEqual({ onTime: null, rating: null, warranty: null, timedOut: null })
+    expect(perfFlags(row({ onTimeRate: 0.79, averageRating: 3.9, warrantyClaims: 1, assignmentsTimedOut: 1 }))).toEqual({
+      onTime: 'danger',
+      rating: 'danger',
+      warranty: 'attention',
+      timedOut: 'attention',
+      quotations: null,
+    })
+    expect(perfFlags(row({ onTimeRate: 0.8, averageRating: 4, warrantyClaims: 0 }))).toEqual({ onTime: null, rating: null, warranty: null, timedOut: null, quotations: null })
+    expect(perfFlags(row({}))).toEqual({ onTime: null, rating: null, warranty: null, timedOut: null, quotations: null })
+  })
+
+  it('warns on quote rejections from 30 % with at least 3 quotes sent', () => {
+    expect(perfFlags(row({ quotationsSent: 10, quotationsRejected: 3, quotationRejectionRate: 0.3 })).quotations).toBe('attention')
+    expect(perfFlags(row({ quotationsSent: 10, quotationsRejected: 2, quotationRejectionRate: 0.2 })).quotations).toBeNull()
+    // Too few quotes to judge: one rejection out of two is not a pattern.
+    expect(perfFlags(row({ quotationsSent: 2, quotationsRejected: 1, quotationRejectionRate: 0.5 })).quotations).toBeNull()
+    expect(perfFlags(row({ quotationsSent: 3, quotationsRejected: 1, quotationRejectionRate: 1 / 3 })).quotations).toBe('attention')
   })
 
   it('sorts with nulls last in both directions', () => {

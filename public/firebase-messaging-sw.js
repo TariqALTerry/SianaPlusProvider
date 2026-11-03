@@ -17,7 +17,8 @@ self.addEventListener('notificationclick', (event) => {
   const params = new URLSearchParams()
   if (data.referenceType) params.set('referenceType', data.referenceType)
   if (data.referenceId) params.set('referenceId', data.referenceId)
-  // Tracking alerts share referenceType ServiceItem; /n/ tells them apart by title.
+  // Tracking alerts share referenceType ServiceItem; /n/ tells them apart by event key (older pushes: by title).
+  if (data.event) params.set('event', data.event)
   if (data.referenceType === 'ServiceItem' && event.notification.title) params.set('title', event.notification.title)
   const path = data.notificationId ? `/n/${encodeURIComponent(data.notificationId)}${params.size ? `?${params}` : ''}` : '/'
   const url = new URL(path, self.location.origin).href

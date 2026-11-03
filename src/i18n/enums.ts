@@ -202,6 +202,13 @@ export const QuotationStatus: EnumMap<T.QuotationStatus> = {
   PendingReview: e('بانتظار موافقة الشركة', 'Waiting for the company', 'attention'),
 }
 
+/** How an approved quote combines with the service price (SERVICE-JOURNEY-RULES). */
+export const QuotationEffect: EnumMap<T.QuotationEffect> = {
+  Replaces: e('يحل محل السعر', 'Replaces the price', 'neutral'),
+  CreditsInspectionFee: e('تُخصم منه رسوم المعاينة', 'Credits the inspection fee', 'info'),
+  AddsTo: e('يُضاف إلى السعر', 'Adds to the price', 'neutral'),
+}
+
 /** Where one job ended up for the technician, in their report. */
 export const TechnicianJobOutcome: EnumMap<T.TechnicianJobOutcome> = {
   Completed: e('مكتملة', 'Completed', 'success'),
@@ -560,7 +567,7 @@ export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
   ProviderDocumentStatus, ProviderMemberRole, ExecutorAvailability, ExecutionMode, PricingType,
-  AssignmentType, AssignmentStatus, CustomerPaymentStage, FinancialRecordKind, ActorType, CancellationInitiator, QuotationStatus, TechnicianJobOutcome, PriceItemType,
+  AssignmentType, AssignmentStatus, CustomerPaymentStage, FinancialRecordKind, ActorType, CancellationInitiator, QuotationStatus, QuotationEffect, TechnicianJobOutcome, PriceItemType,
   EvidenceStage, EvidenceType, DynamicFieldType, RefundStatus, SettlementStatus, SettlementPartyType,
   DisputeStatus, DisputeResolutionType, WarrantyStatus, MarketplaceRequestStatus, MarketplaceOfferStatus,
   StoreOrderStatus, UserStatus, Role, ActiveFilter, NotificationType, ExecutionStep, CoverageShape,

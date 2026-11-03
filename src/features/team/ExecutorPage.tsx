@@ -118,6 +118,12 @@ function PerformanceCards({ executorId }: { executorId: string }) {
               [t('perf.rating'), p.averageRating === null ? '—' : formatNumber(p.averageRating, lang, 1), p.ratingsCount ? t('perf.ratings', { count: p.ratingsCount }) : undefined, !!f.rating],
               [t('perf.onTime'), pct(p.onTimeRate), p.scheduledArrivals ? t('perf.arrivals', { count: p.scheduledArrivals }) : undefined, !!f.onTime],
               [t('perf.acceptance'), pct(p.acceptanceRate), p.assignmentsOffered ? t('perf.offered', { rejected: p.assignmentsRejected, timedOut: p.assignmentsTimedOut, offered: p.assignmentsOffered }) : undefined],
+              [
+                t('perf.quotesRejected'),
+                p.quotationsSent ? pct(p.quotationRejectionRate) : '—',
+                p.quotationsSent ? t('perf.quotesRejectedOf', { rejected: formatNumber(p.quotationsRejected, lang), sent: formatNumber(p.quotationsSent, lang) }) : undefined,
+                !!f.quotations,
+              ],
               [t('perf.workTime'), p.averageWorkMinutes === null ? '—' : formatDuration(p.averageWorkMinutes, lang), undefined],
               [t('perf.warranty'), formatNumber(p.warrantyClaims, lang), undefined, !!f.warranty],
               [t('perf.disputes'), formatNumber(p.disputes, lang), undefined],

@@ -78,6 +78,7 @@ const COLUMNS: Array<{ key: PerfSortKey; label: string; hint?: string; numeric: 
   { key: 'onTimeRate', label: 'perf.onTime', hint: 'perf.onTimeHint', numeric: true },
   { key: 'acceptanceRate', label: 'perf.acceptance', hint: 'perf.acceptanceHint', numeric: true },
   { key: 'assignmentsTimedOut', label: 'perf.timedOut', hint: 'perf.timedOutHint', numeric: true },
+  { key: 'quotationRejectionRate', label: 'perf.quotesRejected', hint: 'perf.quotesRejectedHint', numeric: true },
   { key: 'averageWorkMinutes', label: 'perf.workTime', hint: 'perf.workTimeHint', numeric: true },
   { key: 'warrantyClaims', label: 'perf.warranty', numeric: true },
   { key: 'disputes', label: 'perf.disputes', numeric: true },
@@ -167,6 +168,18 @@ function PerformanceTable({ rows, period, range }: { rows: ExecutorPerformance[]
                   )}
                 </Td>
                 <Td className={cn('tabular text-end', flagClass(f.timedOut))}>{formatNumber(p.assignmentsTimedOut, lang)}</Td>
+                <Td className="text-end">
+                  {p.quotationsSent === 0 ? (
+                    <span className="tabular text-muted-foreground">—</span>
+                  ) : (
+                    <>
+                      <span className={cn('tabular', flagClass(f.quotations))}>
+                        {t('perf.quotesRejectedOf', { rejected: formatNumber(p.quotationsRejected, lang), sent: formatNumber(p.quotationsSent, lang) })}
+                      </span>
+                      <div className={cn('text-[0.6875rem]', f.quotations ? flagClass(f.quotations) : 'text-muted-foreground')}>{pct(p.quotationRejectionRate)}</div>
+                    </>
+                  )}
+                </Td>
                 <Td className="tabular text-end text-xs">{p.averageWorkMinutes === null ? '—' : formatDuration(p.averageWorkMinutes, lang)}</Td>
                 <Td className={cn('tabular text-end', flagClass(f.warranty))}>{formatNumber(p.warrantyClaims, lang)}</Td>
                 <Td className="tabular text-end">{formatNumber(p.disputes, lang)}</Td>

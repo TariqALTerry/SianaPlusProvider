@@ -102,6 +102,8 @@ export const ServiceItemLegTypeValues = ['Pickup', 'Return'] as const
 export type ServiceItemLegType = (typeof ServiceItemLegTypeValues)[number]
 export const ServiceItemLegStatusValues = ['Planned', 'Done', 'Cancelled'] as const
 export type ServiceItemLegStatus = (typeof ServiceItemLegStatusValues)[number]
+export const QuotationEffectValues = ['Replaces', 'CreditsInspectionFee', 'AddsTo'] as const
+export type QuotationEffect = (typeof QuotationEffectValues)[number]
 export const PaymentMethodValues = ['Cash', 'Card', 'Wallet', 'BankTransfer', 'ApplePay'] as const
 export type PaymentMethod = (typeof PaymentMethodValues)[number]
 export const PaymentStatusValues = ['Pending', 'Authorized', 'Paid', 'Failed', 'Refunded', 'PartiallyRefunded'] as const
@@ -1051,6 +1053,7 @@ export interface UpdateCapabilityRequest {
 }
 export interface PriceItemListRequest extends PaginatedRequest {
   serviceId?: string | null
+  subcategoryId?: string | null
   globalOnly?: boolean | null
   itemType?: PriceItemType | null
   status?: ActiveFilter
@@ -1058,6 +1061,7 @@ export interface PriceItemListRequest extends PaginatedRequest {
 }
 export interface CreatePriceItemRequest {
   canonicalServiceId?: string | null
+  subcategoryId?: string | null
   code: string
   nameAr: string
   nameEn: string
@@ -1183,6 +1187,7 @@ export interface CapabilityResponse {
 export interface PriceItemResponse {
   id: string
   canonicalServiceId: string | null
+  subcategoryId: string | null
   code: string
   nameAr: string
   nameEn: string
@@ -2320,6 +2325,9 @@ export interface ServiceItemCustomerView {
   subscriptionId: string | null
   subscriptionVisitIncluded: boolean
   pendingQuotationCoveredAmount: number | null
+  pendingQuotationEffect: QuotationEffect | null
+  pendingQuotationResultingAmount: number | null
+  inspectionFee: number
   homeInspectionId: string | null
   provider: LookupResponse | null
   executor: PersonLookupResponse | null
@@ -2343,6 +2351,7 @@ export interface ServiceItemCustomerView {
   canConfirm: boolean
   canReview: boolean
   canReschedule: boolean
+  cancelBlockedReason: string | null
   createdAt: string
 }
 export interface ServiceItemCustomerDetailResponse {
@@ -2544,6 +2553,11 @@ export interface UpdateDiagnosisRequest {
 export interface CompleteJobRequest {
   completionNotes?: string | null
   collectedCash?: boolean | null
+  testResult?: string | null
+}
+export interface CloseAfterInspectionRequest {
+  collectedCash?: boolean | null
+  notes?: string | null
 }
 export interface ExecutorProfileResponse {
   id: string
@@ -2607,6 +2621,13 @@ export interface EvidenceGroupResponse {
 }
 export interface JobDetailResponse extends JobSummaryResponse {
   requiresHomeInspection: boolean
+  quotationEffect: QuotationEffect
+  inspectionFee: number
+  paymentMethod: PaymentMethod | null
+  requiresCashCollection: boolean
+  requiresTestResult: boolean
+  testResult: string | null
+  cashCollectedAt: string | null
   customer: JobCustomerResponse
   dynamicFields: Record<string, unknown> | null
   customerDescription: string | null
@@ -3136,6 +3157,7 @@ export interface NotificationResponse {
   readAt: string | null
   referenceId: string | null
   referenceType: string | null
+  eventKey: string | null
   createdAt: string
 }
 export interface UnreadCountResponse {
@@ -4206,6 +4228,9 @@ export interface ExecutorPerformance {
   assignmentsOffered: number
   assignmentsRejected: number
   assignmentsTimedOut: number
+  quotationsSent: number
+  quotationsRejected: number
+  quotationRejectionRate: number | null
   averageWorkMinutes: number | null
   warrantyClaims: number
   disputes: number

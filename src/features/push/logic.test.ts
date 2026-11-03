@@ -13,6 +13,12 @@ describe('push destinations (PHASE2 §8)', () => {
     expect(notificationHref({ referenceType: 'ServiceItem', referenceId: 's1', title: 'Plan the return of Washer repair' })).toBe('/work/s1?tab=tracking')
     expect(notificationHref({ referenceType: 'ServiceItem', referenceId: 's1', title: 'No update on Washer repair' })).toBe('/work/s1?tab=tracking')
     expect(notificationHref({ referenceType: 'ServiceItem', referenceId: 's1', title: 'خدمة جديدة: صيانة غسالة' })).toBe('/work/s1')
+    // With an event key the key decides, whatever the title says.
+    expect(notificationHref({ referenceType: 'ServiceItem', referenceId: 's1', eventKey: 'ReturnTripNeeded', title: 'x' })).toBe('/work/s1?tab=tracking')
+    expect(notificationHref({ referenceType: 'ServiceItem', referenceId: 's1', eventKey: 'ServiceUpdateOverdue' })).toBe('/work/s1?tab=tracking')
+    expect(notificationHref({ referenceType: 'ServiceItem', referenceId: 's1', eventKey: 'QuotationRejectedTeam', title: 'لا تحديث على صيانة غسالة' })).toBe('/work/s1')
+    expect(notificationHref({ referenceType: 'ServiceItem', referenceId: 's1', eventKey: 'QuotationRejectedRepeatedly' })).toBe('/work/s1')
+    expect(notificationHref({ referenceType: 'ServiceItem', referenceId: 's1', eventKey: 'ServiceRescheduledTeam' })).toBe('/work/s1')
     expect(notificationHref({ referenceType: 'ServiceItemConversation', referenceId: 's1' })).toBe('/messages/s1')
     expect(notificationHref({ referenceType: 'ProviderWithdrawal', referenceId: 'w1' })).toBe('/wallet?tab=withdrawals')
     expect(notificationHref({ referenceType: 'Settlement', referenceId: 'st' })).toBe('/settlements/st')

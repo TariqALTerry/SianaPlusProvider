@@ -16,8 +16,13 @@ export function NotificationRedirectPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const done = useRef(false)
-  // The title tells the tracking alerts apart (they open the item's tracking tab).
-  const href = notificationHref({ referenceType: params.get('referenceType'), referenceId: params.get('referenceId'), title: params.get('title') })
+  // The event key (or, on older pushes, the title) tells the tracking alerts apart (they open the item's tracking tab).
+  const href = notificationHref({
+    referenceType: params.get('referenceType'),
+    referenceId: params.get('referenceId'),
+    title: params.get('title'),
+    eventKey: params.get('event'),
+  })
 
   useEffect(() => {
     if (done.current) return

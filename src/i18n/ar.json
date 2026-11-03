@@ -212,7 +212,7 @@
     "StatusChanged": "تغيّرت الحالة",
     "AutoAssignSkipped": "تعذّر الإسناد التلقائي",
     "AutoAssignNoProvider": "لم يجد الإسناد التلقائي مزودًا",
-    "CashCollected": "تحصيل نقدي",
+    "CashCollected": "استلم الفني النقد",
     "DeviceDiagnosed": "تشخيص جهاز",
     "DisputeEscalated": "تصعيد الشكوى",
     "DisputeOpened": "فتح شكوى",
@@ -234,7 +234,7 @@
     "RefundProcessed": "تنفيذ استرداد",
     "RefundRejected": "رفض استرداد",
     "RefundRequested": "طلب استرداد",
-    "Rescheduled": "إعادة جدولة",
+    "Rescheduled": "تغيير الموعد",
     "Reviewed": "تقييم العميل",
     "WarrantyClaimAccepted": "قبول مطالبة الضمان",
     "WarrantyClaimDeclined": "رفض مطالبة الضمان",
@@ -249,7 +249,11 @@
     "QuotationSentForReview": "أُرسل عرض السعر لموافقة الشركة",
     "QuotationReviewApproved": "وافقت الشركة على عرض السعر",
     "QuotationReviewRejected": "رفضت الشركة عرض السعر",
-    "PaymentRecorded": "تسجيل دفعة"
+    "PaymentRecorded": "تسجيل دفعة إلكترونية",
+    "CashPaymentDue": "مبلغ نقدي مستحق",
+    "RepairTested": "اختبار الإصلاح",
+    "ClosedAfterInspection": "أُغلقت برسوم المعاينة",
+    "QuotationExpired": "انتهت مهلة العرض"
   },
   "auth": {
     "title": "تسجيل الدخول",

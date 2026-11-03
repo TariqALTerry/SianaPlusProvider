@@ -51,21 +51,30 @@ export function useUnreadCount() {
 
 /**
  * The service-tracking alerts to management ("لا تحديث على {الخدمة}" after 72 h, "رتّب إرجاع {الخدمة}"). They share
- * `referenceType = "ServiceItem"` with every other service notification and carry no key, so the localized title
- * (`ServiceUpdateOverdueTitle`, `ReturnTripNeededTitle` in the backend resources) tells them apart.
+ * `referenceType = "ServiceItem"` with every other service notification. `eventKey` (SERVICE-JOURNEY-RULES §2) names
+ * them; older rows have no key, so their localized title (`ServiceUpdateOverdueTitle`, `ReturnTripNeededTitle` in the
+ * backend resources) tells them apart.
  */
+const TRACKING_ALERT_KEYS = new Set(['ServiceUpdateOverdue', 'ReturnTripNeeded'])
 const TRACKING_ALERT_TITLE = /^(لا تحديث على|رتّب إرجاع|رتب إرجاع|No update on|Plan the return of)\s/i
 
-export function isTrackingAlert(title: string | null | undefined): boolean {
+export function isTrackingAlert(title: string | null | undefined, eventKey?: string | null): boolean {
+  if (eventKey) return TRACKING_ALERT_KEYS.has(eventKey)
   return !!title && TRACKING_ALERT_TITLE.test(title.trim())
 }
 
-/** Deep links (§8.14); anything else is only marked read. Tracking alerts open the item's "التتبع" tab. */
-export function notificationHref(n: Pick<NotificationResponse, 'referenceId' | 'referenceType'> & { title?: string | null }): string | null {
+/**
+ * Deep links (§8.14); anything else is only marked read. Tracking alerts open the item's "التتبع" tab; every other
+ * service alert (`QuotationRejectedTeam`, `QuotationRejectedRepeatedly`, `ServiceRescheduledTeam` …) opens the service,
+ * where a rescheduled item waits for a technician like any other.
+ */
+export function notificationHref(
+  n: Pick<NotificationResponse, 'referenceId' | 'referenceType'> & { title?: string | null; eventKey?: string | null },
+): string | null {
   switch (n.referenceType) {
     case 'ServiceItem':
       if (!n.referenceId) return null
-      return isTrackingAlert(n.title) ? `/work/${n.referenceId}?tab=tracking` : `/work/${n.referenceId}`
+      return isTrackingAlert(n.title, n.eventKey) ? `/work/${n.referenceId}?tab=tracking` : `/work/${n.referenceId}`
     case 'MarketplaceRequest':
       return n.referenceId ? `/marketplace/${n.referenceId}` : null
     case 'ProviderOrganization':

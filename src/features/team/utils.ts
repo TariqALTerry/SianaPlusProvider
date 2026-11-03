@@ -72,7 +72,7 @@ export interface ExecutorDraft extends PersonDraft {
   maxJobs: string
   /** Blank: no limit on the quotation total. */
   maxQuote: string
-  /** Blank: no discount allowed. */
+  /** Blank: the technician inherits the company's discount limit. */
   maxDiscount: string
   capabilityIds: string[]
 }
