@@ -253,7 +253,8 @@
     "CashPaymentDue": "Cash amount due",
     "RepairTested": "Repair tested",
     "ClosedAfterInspection": "Closed with the inspection fee",
-    "QuotationExpired": "Quote expired"
+    "QuotationExpired": "Quote expired",
+    "CompletedUnusuallyFast": "Finished unusually fast"
   },
   "auth": {
     "title": "Sign in",

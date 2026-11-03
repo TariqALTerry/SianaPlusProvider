@@ -253,7 +253,8 @@
     "CashPaymentDue": "مبلغ نقدي مستحق",
     "RepairTested": "اختبار الإصلاح",
     "ClosedAfterInspection": "أُغلقت برسوم المعاينة",
-    "QuotationExpired": "انتهت مهلة العرض"
+    "QuotationExpired": "انتهت مهلة العرض",
+    "CompletedUnusuallyFast": "أُنهيت أسرع من المعتاد"
   },
   "auth": {
     "title": "تسجيل الدخول",

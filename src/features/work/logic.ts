@@ -117,7 +117,14 @@ export function assignmentResponseDue(a: Pick<AssignmentResponse, 'type' | 'stat
 
 /** "الأنسب" goes on the first eligible row; the server already sorted the list. */
 export function bestCandidateId(list: readonly ExecutorCandidateResponse[]): string | null {
-  return list.find((c) => c.isEligible)?.executorId ?? null
+  // A technician who already declined this item is never suggested; picking them stays a deliberate choice.
+  return list.find((c) => c.isEligible && !c.declinedThisItem)?.executorId ?? null
+}
+
+/** Badge key for a technician who already said no to this item: declined, or let the answer window run out. */
+export function declineBadge(c: Pick<ExecutorCandidateResponse, 'declinedThisItem' | 'declineReason'>): 'declined' | 'timedOut' | null {
+  if (!c.declinedThisItem) return null
+  return c.declineReason === 'TimedOut' ? 'timedOut' : 'declined'
 }
 
 export function initials(name: string | null | undefined): string {

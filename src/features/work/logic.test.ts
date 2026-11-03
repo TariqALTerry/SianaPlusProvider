@@ -6,6 +6,7 @@ import {
   assignmentResponseDue,
   availableWorkActions,
   bestCandidateId,
+  declineBadge,
   canRejectIncoming,
   commissionAmount,
   defaultScheduleWindow,
@@ -136,6 +137,10 @@ describe('candidate picker (§8.5)', () => {
     offDutyReason: null,
     canRepair: true,
     canDeliver: false,
+    locationUnreliable: false,
+    declinedThisItem: false,
+    declineReason: null,
+    declineNote: null,
     ...over,
   })
 
@@ -155,6 +160,14 @@ describe('candidate picker (§8.5)', () => {
   it('marks the first eligible row as the best, keeping the server order', () => {
     expect(bestCandidateId([c({ executorId: 'a', isEligible: false }), c({ executorId: 'b' }), c({ executorId: 'c' })])).toBe('b')
     expect(bestCandidateId([c({ isEligible: false })])).toBeNull()
+  })
+
+  it('never suggests a technician who already declined this item', () => {
+    expect(bestCandidateId([c({ executorId: 'a', declinedThisItem: true, declineReason: 'Rejected' })])).toBeNull()
+    expect(bestCandidateId([c({ executorId: 'b' }), c({ executorId: 'a', declinedThisItem: true })])).toBe('b')
+    expect(declineBadge(c({}))).toBeNull()
+    expect(declineBadge(c({ declinedThisItem: true, declineReason: 'Rejected' }))).toBe('declined')
+    expect(declineBadge(c({ declinedThisItem: true, declineReason: 'TimedOut' }))).toBe('timedOut')
   })
 
   it('builds avatar initials', () => {

@@ -532,6 +532,10 @@ export interface ExecutorCandidateResponse {
   canDeliver: boolean
   isOffDuty: boolean
   offDutyReason: string | null
+  locationUnreliable: boolean
+  declinedThisItem: boolean
+  declineReason: string | null
+  declineNote: string | null
   isEligible: boolean
   score: number
   hasCapacity: boolean
@@ -2555,6 +2559,9 @@ export interface CompleteJobRequest {
   collectedCash?: boolean | null
   testResult?: string | null
 }
+export interface RequestConfirmationRequest {
+  collectedCash?: boolean | null
+}
 export interface CloseAfterInspectionRequest {
   collectedCash?: boolean | null
   notes?: string | null
@@ -2628,6 +2635,7 @@ export interface JobDetailResponse extends JobSummaryResponse {
   requiresTestResult: boolean
   testResult: string | null
   cashCollectedAt: string | null
+  startedAt: string | null
   customer: JobCustomerResponse
   dynamicFields: Record<string, unknown> | null
   customerDescription: string | null

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { ActionDialog } from '@/components/ActionDialog'
 import { ErrorState, Spinner } from '@/components/States'
 import { Badge, toneDot } from '@/components/ui/badge'
+import { CheckboxField } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Field } from '@/components/ui/label'
 import { useAction } from '@/hooks/useAction'
@@ -15,7 +16,7 @@ import { formatNumber } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { WORK_INVALIDATION, workApi, workKeys } from '../api'
 import { useTargetLabel, type WorkTarget } from '../hooks'
-import { bestCandidateId, ineligibleReasons, workErrorDetail } from '../logic'
+import { bestCandidateId, declineBadge, ineligibleReasons, workErrorDetail } from '../logic'
 import { Avatar, LoadBar, ScoreBar, WorkErrorHint } from './widgets'
 import '../i18n'
 
@@ -41,6 +42,8 @@ export function CandidatePickerDialog({ item, open, onOpenChange, mode = 'assign
   const reasonId = useId()
   const [selected, setSelected] = useState<string | null>(null)
   const [reason, setReason] = useState('')
+  const [confirmDeclined, setConfirmDeclined] = useState(false)
+  const confirmId = useId()
 
   const query = useQuery({
     queryKey: workKeys.candidates(item.id),
@@ -65,6 +68,7 @@ export function CandidatePickerDialog({ item, open, onOpenChange, mode = 'assign
     if (open) {
       setSelected(null)
       setReason('')
+      setConfirmDeclined(false)
       action.reset()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,6 +83,10 @@ export function CandidatePickerDialog({ item, open, onOpenChange, mode = 'assign
   const { error, detail } = useMemo(() => workErrorDetail(action.error), [action.error])
   const chosen = rows.find((r) => r.executorId === selected)
   const anyEligible = best !== null
+  // Picking someone who already said no to this item is allowed, but only on purpose.
+  const needsDeclineConfirm = !!chosen?.declinedThisItem && !confirmDeclined
+
+  useEffect(() => setConfirmDeclined(false), [selected])
 
   // Arrow keys move between the selectable rows (a radiogroup).
   const selectable = rows.filter((r) => r.isEligible)
@@ -105,7 +113,7 @@ export function CandidatePickerDialog({ item, open, onOpenChange, mode = 'assign
       changes={chosen ? <span className="font-medium">{chosen.fullName}</span> : undefined}
       confirmLabel={title}
       submitting={action.isPending}
-      submitDisabled={!selected || selected === currentExecutorId}
+      submitDisabled={!selected || selected === currentExecutorId || needsDeclineConfirm}
       error={error}
       onSubmit={() => selected && action.mutate({ executorId: selected, reason: reason.trim() || null })}
     >
@@ -135,6 +143,12 @@ export function CandidatePickerDialog({ item, open, onOpenChange, mode = 'assign
           </div>
         </>
       )}
+      {chosen?.declinedThisItem && (
+        <div className="space-y-2 rounded-md bg-tone-waiting-soft px-3 py-2 text-xs text-tone-waiting">
+          <p>{t('picker.reassignDeclined')}</p>
+          <CheckboxField id={confirmId} checked={confirmDeclined} onCheckedChange={setConfirmDeclined} label={t('picker.reassignDeclinedConfirm')} />
+        </div>
+      )}
       <Field label={t('picker.reason')} htmlFor={reasonId} optional>
         <Input id={reasonId} value={reason} onChange={(e) => setReason(e.target.value)} maxLength={1000} />
       </Field>
@@ -161,6 +175,7 @@ function CandidateRow({
   const { t } = useTranslation('work')
   const { lang } = useLang()
   const reasons = ineligibleReasons(c)
+  const declined = declineBadge(c)
   const disabled = !c.isEligible || current
   return (
     <div
@@ -196,7 +211,9 @@ function CandidateRow({
             <span className="truncate font-medium">{c.fullName}</span>
             {best && <Badge tone="success">{t('picker.best')}</Badge>}
             {current && <Badge tone="info">{t('picker.current')}</Badge>}
+            {declined && <Badge tone="attention">{t(`picker.${declined}`)}</Badge>}
           </div>
+          {declined && c.declineNote && <p className="mt-0.5 text-xs text-muted-foreground">{t('picker.declineNote', { note: c.declineNote })}</p>}
           <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1">
               <span className={cn('size-2 rounded-full', toneDot[enumTone('ExecutorAvailability', c.availability)])} aria-hidden />
@@ -222,9 +239,16 @@ function CandidateRow({
           {c.averageRating > 0 ? formatNumber(c.averageRating, lang, 1) : '—'}
         </span>
         <span className="text-muted-foreground">{t('picker.completed', { count: c.completedItemsCount })}</span>
-        <span className="inline-flex items-center gap-1 text-muted-foreground" title={c.distanceKm === null ? t('picker.noDistance') : undefined}>
+        <span
+          className={cn('inline-flex items-center gap-1', c.locationUnreliable ? 'text-tone-waiting' : 'text-muted-foreground')}
+          title={c.locationUnreliable ? t('picker.unreliableLocationHint') : c.distanceKm === null ? t('picker.noDistance') : undefined}
+        >
           <MapPin className="size-3.5" aria-hidden />
-          {c.distanceKm === null ? '—' : t('picker.distance', { distance: formatNumber(c.distanceKm, lang, 1) })}
+          {c.locationUnreliable
+            ? t('picker.unreliableLocation')
+            : c.distanceKm === null
+              ? '—'
+              : t('picker.distance', { distance: formatNumber(c.distanceKm, lang, 1) })}
         </span>
         {c.isEligible && <ScoreBar score={c.score} />}
       </div>
