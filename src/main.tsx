@@ -8,6 +8,7 @@ import { queryClient } from '@/api/queryClient'
 import { router } from '@/app/router'
 import { useTheme } from '@/app/theme'
 import { useLang } from '@/hooks/useLang'
+import { startMonitoring } from '@/lib/monitoring'
 import '@/i18n'
 import '@/styles/globals.css'
 
@@ -43,3 +44,6 @@ createRoot(container).render(
     </QueryClientProvider>
   </StrictMode>,
 )
+
+// Opt-in (VITE_SENTRY_DSN): loads the SDK when the browser is idle; does nothing without a DSN.
+startMonitoring()

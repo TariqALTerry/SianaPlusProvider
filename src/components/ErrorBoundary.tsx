@@ -1,5 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { i18next } from '@/i18n'
+import { reportError } from '@/lib/monitoring'
 
 interface Props {
   children: ReactNode
@@ -21,6 +22,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   override componentDidCatch(error: Error, info: ErrorInfo): void {
     if (import.meta.env.DEV) console.error(error, info.componentStack)
+    reportError(error, info.componentStack)
   }
 
   override componentDidUpdate(prev: Props): void {

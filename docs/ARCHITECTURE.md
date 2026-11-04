@@ -57,7 +57,8 @@ src/
   hooks/        useUrlState, useAction, useLang, usePageVisible (usePollingInterval),
                 useDebouncedValue, useMediaQuery
   i18n/         index.ts, ar.json/en.json (common namespace ONLY), enums.ts (all enum labels, provider wording §9)
-  lib/          format.ts, phone.ts (Saudi mobile helpers), cities.ts, csv.ts, storage.ts, env.ts, utils.ts
+  lib/          format.ts, phone.ts (Saudi mobile helpers), cities.ts, csv.ts, storage.ts, env.ts, utils.ts,
+                monitoring.ts (+ lazy monitoringSdk.ts)
 ```
 
 A feature folder never edits another feature's files, `ar.json`/`en.json`, the router or `app/`.
@@ -172,6 +173,19 @@ dashboard uses.
 14. **RTL uses logical classes:** `ms-`, `me-`, `ps-`, `pe-`, `start-`, `end-`, `text-start`, `text-end`.
 15. **Accessibility:** real buttons and links, labels on inputs (`Field`), and Radix dialogs (focus
     trap and Esc).
+
+## Monitoring
+
+Real-user monitoring is opt-in through `VITE_SENTRY_DSN` (see the README).
+
+- `lib/monitoring.ts` is the only entry point: `startMonitoring()` (called once in `main.tsx`) and
+  `reportError(error, componentStack?)`. `ErrorBoundary` and `RouteError` report what they catch;
+  unhandled errors and rejections are picked up globally. Don't call Sentry anywhere else.
+- Without a DSN the module folds to nothing in the build. With one, `lib/monitoringSdk.ts` and
+  `@sentry/react` load by dynamic `import()` when the browser is idle after the first render. Never
+  import either statically.
+- No PII: only the user id is attached. `monitoringSdk.ts` scrubs the Authorization header, tokens
+  and phone / email / search query values from URLs, breadcrumbs, spans and events.
 
 ## Commands
 

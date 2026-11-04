@@ -46,6 +46,9 @@ Sign in with the phone of an owner or supervisor. To create a new organization, 
 | `VITE_DEFAULT_LANG` | `ar` (default) or `en`. |
 | `VITE_SUPPORT_PHONE` | Optional. Shown on the "organization suspended" screen. |
 | `VITE_EXECUTOR_APP_IOS_URL`, `VITE_EXECUTOR_APP_ANDROID_URL` | Optional. Store links shown to technicians who try to sign in here. |
+| `VITE_SENTRY_DSN` | Optional. Turns on real-user monitoring: production errors and Core Web Vitals go to Sentry. Empty = off, and nothing extra is downloaded. |
+| `VITE_SENTRY_TRACES_SAMPLE_RATE` | Optional. Share of page loads traced for web vitals, `0`–`1` (default `0.1`). |
+| `VITE_SENTRY_ENVIRONMENT` | Optional. Sentry environment; defaults to the Vite mode (`production`). |
 
 ## Production
 
@@ -62,6 +65,8 @@ Then build:
 ```bash
 npm run build
 ```
+
+The `VITE_*` values are read at build time, so set `VITE_SENTRY_DSN` (if any) before building.
 
 The build writes static files to `dist/`. Any static host with an SPA fallback to `index.html`
 works; `vercel.json` is included.
