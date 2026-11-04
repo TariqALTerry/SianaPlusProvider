@@ -8,6 +8,7 @@ import {
   bestCandidateId,
   declineBadge,
   canRejectIncoming,
+  customerContact,
   commissionAmount,
   defaultScheduleWindow,
   delegateSkipped,
@@ -90,6 +91,46 @@ describe('privacy, polling and money', () => {
     expect(isContactHidden('AssignedToExecutor')).toBe(true)
     expect(isContactHidden('Rejected')).toBe(true)
     expect(isContactHidden('Accepted')).toBe(false)
+  })
+
+  describe('customer contact controls', () => {
+    const view = (status: ServiceItemStatus, phone: string | null, line: string | null, lat: number | null, lng: number | null) => ({
+      status,
+      customer: { id: 'c1', fullName: 'سارة', phoneNumber: phone },
+      address: { label: 'المنزل', city: 'الرياض', district: 'النرجس', addressLine: line, latitude: lat, longitude: lng },
+    })
+
+    it('offers call and directions when the server sends them', () => {
+      const c = customerContact(view('Accepted', '0550000000', 'شارع 1', 24.7, 46.6))
+      expect(c.phone).toBe('0550000000')
+      expect(c.door).toBe('المنزل — شارع 1')
+      expect(c.directionsUrl).toBe('https://www.google.com/maps/dir/?api=1&destination=24.7,46.6')
+      expect(c.note).toBeNull()
+    })
+
+    it('hides call, address and directions after a cancellation or refund', () => {
+      for (const s of ['Cancelled', 'Refunded'] as const) {
+        const c = customerContact({ ...view(s, null, null, null, null), address: { label: null, city: 'الرياض', district: 'النرجس', addressLine: null, latitude: null, longitude: null } })
+        expect(c).toEqual({ phone: null, door: null, directionsUrl: null, note: 'afterCancellation' })
+      }
+    })
+
+    it('needs both coordinates for directions', () => {
+      expect(customerContact(view('Accepted', '055', 'x', 24.7, null)).directionsUrl).toBeNull()
+      expect(customerContact(view('Accepted', '055', 'x', null, 46.6)).directionsUrl).toBeNull()
+    })
+
+    it('treats a blank phone as missing', () => {
+      expect(customerContact(view('Accepted', '  ', 'x', 1, 2)).phone).toBeNull()
+    })
+
+    it('explains withheld details before acceptance', () => {
+      expect(customerContact(view('AssignedToExecutor', null, null, null, null)).note).toBe('beforeAcceptance')
+    })
+
+    it('adds no note to a cancelled item that still carries its details', () => {
+      expect(customerContact(view('Cancelled', '055', 'x', 1, 2)).note).toBeNull()
+    })
   })
 
   it('polls items that can still change', () => {

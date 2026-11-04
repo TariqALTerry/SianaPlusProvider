@@ -49,6 +49,38 @@ export function isContactHidden(status: ServiceItemStatus): boolean {
   return CONTACT_HIDDEN_STATUSES.includes(status)
 }
 
+/** After a cancellation or refund the server withholds them again: city and district only, no phone. */
+export const CONTACT_WITHDRAWN_STATUSES: readonly ServiceItemStatus[] = ['Cancelled', 'Refunded']
+
+export interface CustomerContact {
+  /** The phone to call, or null: no "call customer" button and no phone row. */
+  phone: string | null
+  /** Label and street line, or null: no address row. */
+  door: string | null
+  /** Google Maps directions to the point, or null: no "directions" button. */
+  directionsUrl: string | null
+  /** Why the details are missing, when the server withholds them. */
+  note: 'beforeAcceptance' | 'afterCancellation' | null
+}
+
+/**
+ * What the customer card can offer. Each control shows only when its data is there, so an item
+ * whose contact was withheld (before acceptance, or after Cancelled/Refunded) shows no empty or
+ * broken call/directions controls.
+ */
+export function customerContact(item: Pick<ServiceItemProviderView, 'status' | 'customer' | 'address'>): CustomerContact {
+  const { address } = item
+  const phone = item.customer.phoneNumber?.trim() || null
+  const door = [address.label, address.addressLine].map((s) => s?.trim()).filter(Boolean).join(' — ') || null
+  const lat = address.latitude
+  const lng = address.longitude
+  const hasPoint = lat !== null && lng !== null && Number.isFinite(lat) && Number.isFinite(lng)
+  const directionsUrl = hasPoint ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}` : null
+  const withheld = !phone || !door || !hasPoint
+  const note = isContactHidden(item.status) ? 'beforeAcceptance' : withheld && CONTACT_WITHDRAWN_STATUSES.includes(item.status) ? 'afterCancellation' : null
+  return { phone, door, directionsUrl, note }
+}
+
 export type WorkActionKey = 'assign' | 'reassign' | 'unassign' | 'delegate' | 'schedule' | 'reject'
 
 const ASSIGNABLE: readonly ServiceItemStatus[] = ['AssignedToProvider', 'Rejected']

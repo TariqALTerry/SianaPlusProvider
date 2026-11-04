@@ -27,7 +27,7 @@ import { enumLabel, EvidenceStage as EvidenceStageMap } from '@/i18n/enums'
 import { formatDateTime, formatTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import type { WorkTarget } from '../hooks'
-import { assignmentResponseDue, isContactHidden } from '../logic'
+import { assignmentResponseDue, customerContact } from '../logic'
 import { QuotationReviewActions } from './QuotationReview'
 import { Avatar } from './widgets'
 import '../i18n'
@@ -39,46 +39,46 @@ function SectionEmpty({ children }: { children: ReactNode }) {
 /** Customer and address, with the privacy rule (§8.4) spelled out while details are withheld. */
 export function CustomerCard({ item }: { item: ServiceItemProviderView }) {
   const { t } = useTranslation('work')
-  const hidden = isContactHidden(item.status)
+  const { phone, door, directionsUrl, note } = customerContact(item)
   const { address } = item
-  const hasCoords = address.latitude !== null && address.longitude !== null
-  const directions = hasCoords ? `https://www.google.com/maps/dir/?api=1&destination=${address.latitude},${address.longitude}` : null
   const area = [address.district, address.city].filter(Boolean).join('، ')
   return (
     <Card>
       <CardHeader
         title={t('detail.customer')}
         actions={
-          <>
-            {item.customer.phoneNumber && (
-              <Button asChild size="xs">
-                <a href={`tel:${item.customer.phoneNumber}`}>
-                  <Phone /> {t('detail.call')}
-                </a>
-              </Button>
-            )}
-            {directions && (
-              <Button asChild size="xs" variant="outline">
-                <a href={directions} target="_blank" rel="noreferrer">
-                  <Navigation /> {t('detail.directions')}
-                </a>
-              </Button>
-            )}
-          </>
+          phone || directionsUrl ? (
+            <>
+              {phone && (
+                <Button asChild size="xs">
+                  <a href={`tel:${phone}`}>
+                    <Phone /> {t('detail.call')}
+                  </a>
+                </Button>
+              )}
+              {directionsUrl && (
+                <Button asChild size="xs" variant="outline">
+                  <a href={directionsUrl} target="_blank" rel="noreferrer">
+                    <Navigation /> {t('detail.directions')}
+                  </a>
+                </Button>
+              )}
+            </>
+          ) : undefined
         }
       />
       <CardBody className="space-y-3">
-        {hidden && (
+        {note && (
           <p className="flex items-center gap-2 rounded-md bg-tone-info-soft px-3 py-2 text-xs text-tone-info" role="note">
-            <EyeOff className="size-3.5 shrink-0" aria-hidden /> {t('detail.privacy')}
+            <EyeOff className="size-3.5 shrink-0" aria-hidden /> {t(note === 'beforeAcceptance' ? 'detail.privacy' : 'detail.contactWithdrawn')}
           </p>
         )}
         <KeyValue
           items={[
             { label: t('common:common.name'), value: item.customer.fullName || null },
-            { label: t('common:common.phone'), value: item.customer.phoneNumber ? <PhoneText phone={item.customer.phoneNumber} /> : null, hidden: hidden && !item.customer.phoneNumber },
+            { label: t('common:common.phone'), value: phone ? <PhoneText phone={phone} /> : null, hidden: !phone },
             { label: t('common:common.district'), value: area || null },
-            { label: t('detail.addressLabel'), value: [address.label, address.addressLine].filter(Boolean).join(' — ') || null, hidden: hidden && !address.addressLine },
+            { label: t('detail.addressLabel'), value: door, hidden: !door },
             { label: t('detail.customerDescription'), value: item.customerDescription ? <span className="whitespace-pre-wrap">{item.customerDescription}</span> : null, wide: true, hidden: !item.customerDescription },
           ]}
         />

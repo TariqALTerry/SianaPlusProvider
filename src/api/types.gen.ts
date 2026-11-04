@@ -509,6 +509,8 @@ export interface ProviderCandidateResponse {
   completedItemsCount: number
   delegatesExecutorAssignment: boolean
   isDemo: boolean
+  declinedThisItem: boolean
+  declineNote: string | null
   distanceKm: number | null
   matchedAreaName: string | null
   isEligible: boolean
@@ -2636,6 +2638,9 @@ export interface JobDetailResponse extends JobSummaryResponse {
   testResult: string | null
   cashCollectedAt: string | null
   startedAt: string | null
+  cancellationReason: string | null
+  cancelledBy: CancellationInitiator | null
+  cancelledAt: string | null
   customer: JobCustomerResponse
   dynamicFields: Record<string, unknown> | null
   customerDescription: string | null
