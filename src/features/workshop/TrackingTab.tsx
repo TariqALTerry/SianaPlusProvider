@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { CalendarClock, Camera, KeyRound, MessageSquarePlus, Package, Truck, X } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { fileUrl } from '@/api/files'
+import { fileUrl, thumbUrl } from '@/api/files'
 import type { CustodyEventResponse, DeviceCustodyStage, LegResponse, ProgressUpdateResponse, ServiceItemLegType, ServiceTrackingResponse, TrackedDevice } from '@/api/types'
 import { DateTime } from '@/components/Format'
 import { EmptyState, ErrorState } from '@/components/States'
@@ -351,7 +351,7 @@ function Photo({ url, alt, small }: { url: string; alt: string; small?: boolean 
         className={small ? 'relative size-12 shrink-0 overflow-hidden rounded-md border' : 'relative size-20 shrink-0 overflow-hidden rounded-md border'}
         aria-label={t('tracking.photo')}
       >
-        <img src={src} alt={alt} loading="lazy" className="size-full object-cover" />
+        <img src={thumbUrl(src, 80)} alt={alt} loading="lazy" className="size-full object-cover" />
         <Camera className="absolute bottom-0.5 end-0.5 size-3 text-white drop-shadow" aria-hidden />
       </button>
       <Dialog open={open} onOpenChange={setOpen}>

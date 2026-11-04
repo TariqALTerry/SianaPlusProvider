@@ -1,7 +1,7 @@
 import { FileText, ImagePlus, Paperclip, X } from 'lucide-react'
 import { useEffect, useRef, useState, type DragEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { fileUrl } from '@/api/files'
+import { fileUrl, thumbUrl } from '@/api/files'
 import type { SupportAttachmentResponse, SupportMessageResponse } from '@/api/types'
 import { DateTime } from '@/components/Format'
 import { Button } from '@/components/ui/button'
@@ -28,7 +28,7 @@ export function Attachments({ items, className }: { items: readonly SupportAttac
             className="flex size-20 items-center justify-center overflow-hidden rounded-md border bg-muted hover:ring-2 hover:ring-primary/40"
           >
             {isImage(a) ? (
-              <img src={fileUrl(a.url)} alt={a.fileName} loading="lazy" className="size-full object-cover" />
+              <img src={thumbUrl(a.url, 80)} alt={a.fileName} loading="lazy" className="size-full object-cover" />
             ) : (
               <span className="flex flex-col items-center gap-1 px-1 text-center">
                 <FileText className="size-6 text-muted-foreground" />

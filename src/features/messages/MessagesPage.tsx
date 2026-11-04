@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router'
 import type { ServiceConversationSummary, ServiceMessageResponse } from '@/api/types'
-import { fileUrl, validateUpload } from '@/api/files'
+import { fileUrl, thumbUrl, validateUpload } from '@/api/files'
 import { DateTime } from '@/components/Format'
 import { PageHeader } from '@/components/PageHeader'
 import { StatusBadge } from '@/components/StatusBadge'
@@ -242,7 +242,7 @@ function Bubble({ m }: { m: ServiceMessageResponse }) {
       >
         {src && (
           <button type="button" onClick={() => setPhotoOpen(true)} className="mb-1 block overflow-hidden rounded-lg" aria-label={t('openPhoto')}>
-            <img src={src} alt="" loading="lazy" className="max-h-48 w-auto object-cover" />
+            <img src={thumbUrl(src, 384)} alt="" loading="lazy" className="max-h-48 w-auto object-cover" />
           </button>
         )}
         {m.text && (

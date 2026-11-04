@@ -1,7 +1,7 @@
 import { ListChecks } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
-import { fileUrl } from '@/api/files'
+import { fileUrl, thumbUrl } from '@/api/files'
 import { PageHeader } from '@/components/PageHeader'
 import { StatusBadge } from '@/components/StatusBadge'
 import { Button } from '@/components/ui/button'
@@ -47,7 +47,7 @@ export function OrganizationPage() {
       <PageHeader
         title={
           <span className="flex items-center gap-3">
-            {logo && <img src={logo} alt="" className="size-9 rounded-md border bg-surface object-cover" />}
+            {logo && <img src={thumbUrl(logo, 36)} alt="" className="size-9 rounded-md border bg-surface object-cover" />}
             <span>{t('title')}</span>
           </span>
         }

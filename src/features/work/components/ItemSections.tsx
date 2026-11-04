@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardBody, CardHeader } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Table, TBody, Td, Th, THead, Tr } from '@/components/ui/table'
-import { fileUrl, isPdf, isVideo } from '@/api/files'
+import { fileUrl, isPdf, isVideo, thumbUrl } from '@/api/files'
 import type {
   AssignmentResponse,
   EvidenceResponse,
@@ -341,7 +341,7 @@ export function PhotosSection({ evidence }: { evidence: EvidenceResponse[] }) {
                     <video src={url} controls preload="metadata" className="aspect-[4/3] w-full bg-black object-contain" />
                   ) : (
                     <button type="button" onClick={() => setLightbox(e)} className="block aspect-[4/3] w-full">
-                      <img src={url} alt={e.caption ?? enumLabel('EvidenceStage', e.stage, lang)} loading="lazy" className="size-full object-cover" />
+                      <img src={thumbUrl(url, 320)} alt={e.caption ?? enumLabel('EvidenceStage', e.stage, lang)} loading="lazy" className="size-full object-cover" />
                     </button>
                   )}
                   <figcaption className="space-y-0.5 p-2 text-xs">

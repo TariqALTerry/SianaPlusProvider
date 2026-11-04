@@ -23,6 +23,22 @@ export function fileUrl(path: string | null | undefined): string | undefined {
   return `${API_ORIGIN}${path.startsWith('/') ? '' : '/'}${path}`
 }
 
+/** Widths the API makes thumbnails at (`/uploads/...?w=`); anything else gets the original. */
+export const THUMB_WIDTHS = [200, 400, 800] as const
+
+/**
+ * A thumbnail of an uploaded picture for a box [cssPx] wide: the smallest of {@link THUMB_WIDTHS} that covers it
+ * on this screen. The API makes it once (WebP) and keeps it, so a 36 px table cell no longer downloads the full
+ * photo. Anything that is not an uploaded jpg/png/webp, or needs more than 800 px, is returned unchanged.
+ */
+export function thumbUrl(path: string | null | undefined, cssPx: number): string | undefined {
+  const url = fileUrl(path)
+  if (!url || url.includes('?') || !/\/uploads\//.test(url) || !/\.(jpe?g|png|webp)$/i.test(url)) return url
+  const need = cssPx * (globalThis.devicePixelRatio || 1)
+  const width = THUMB_WIDTHS.find((w) => w >= need)
+  return width ? `${url}?w=${width}` : url
+}
+
 export function isPdf(url: string): boolean {
   return /\.pdf($|\?)/i.test(url)
 }
