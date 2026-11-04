@@ -5028,6 +5028,7 @@ export interface SystemHealthResponse {
 }
 export interface ProcessHealth {
   workingSetMb: number
+  memoryLimitMb: number
   managedHeapMb: number
   is64Bit: boolean
   processorCount: number
