@@ -204,6 +204,12 @@ export const SupportMessageSideValues = ['Requester', 'Staff'] as const
 export type SupportMessageSide = (typeof SupportMessageSideValues)[number]
 export const SupportTicketEventTypeValues = ['Created', 'StatusChanged', 'Assigned', 'PriorityChanged', 'RequesterReplied', 'StaffReplied', 'InternalNote'] as const
 export type SupportTicketEventType = (typeof SupportTicketEventTypeValues)[number]
+export const JourneyStageValues = ['ToProvider', 'ToTechnician', 'TechnicianAccepts', 'Travel', 'BeforeWork', 'Work', 'CustomerConfirmation', 'Total'] as const
+export type JourneyStage = (typeof JourneyStageValues)[number]
+export const QualityGradeValues = ['InsufficientData', 'Good', 'Watch', 'Risk'] as const
+export type QualityGrade = (typeof QualityGradeValues)[number]
+export const QualitySignalKindValues = ['FastCompletion', 'QuotationRejected', 'AssignmentDeclined', 'AssignmentTimedOut', 'Dispute', 'LowRating', 'WarrantyClaim'] as const
+export type QualitySignalKind = (typeof QualitySignalKindValues)[number]
 export const UserStatusValues = ['PendingApproval', 'Active', 'Suspended'] as const
 export type UserStatus = (typeof UserStatusValues)[number]
 export const WalletItemsBucketValues = ['Available', 'OnHold'] as const
@@ -3408,6 +3414,7 @@ export interface ServiceItemAdminView {
   hasReview: boolean
   warrantyId: string | null
   createdAt: string
+  orderCheckedOutAt: string | null
   updatedAt: string | null
 }
 export interface AdminOrderDetailResponse {
@@ -4816,6 +4823,244 @@ export interface OperationsReportRow {
   waitingTechnician: number
   timedOut: number
   averageHoursToComplete: number | null
+}
+
+// ── Reports/TrackingDtos.cs
+export interface TrackingReportRequest {
+  from?: string | null
+  to?: string | null
+  providerOrganizationId?: string | null
+  executorId?: string | null
+  canonicalServiceId?: string | null
+}
+export interface TrackingItemRef {
+  serviceItemId: string
+  parentOrderId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  status: ServiceItemStatus
+}
+export interface JourneyStageStats {
+  stage: JourneyStage
+  count: number
+  medianMinutes: number | null
+  p90Minutes: number | null
+  averageMinutes: number | null
+}
+export interface JourneyProviderRow {
+  providerOrganizationId: string
+  providerName: string
+  items: number
+  stages: JourneyStageStats[]
+  slowestStage: JourneyStage | null
+  slowestStageRatio: number | null
+}
+export interface JourneyHeatCell {
+  day: DayOfWeek
+  hour: number
+  items: number
+  medianMinutesToAccepted: number | null
+}
+export interface JourneySlowItem extends TrackingItemRef {
+  providerName: string | null
+  executorName: string | null
+  stage: JourneyStage
+  minutes: number
+  timesMedian: number
+  checkedOutAt: string
+}
+export interface JourneyReportResponse {
+  from: string
+  to: string
+  items: number
+  completed: number
+  stages: JourneyStageStats[]
+  providers: JourneyProviderRow[]
+  heatmap: JourneyHeatCell[]
+  slowest: JourneySlowItem[]
+}
+export interface PunctualityStats {
+  visits: number
+  onTime: number
+  late: number
+  early: number
+  onTimeRate: number | null
+  averageLateMinutes: number | null
+  p90LateMinutes: number | null
+}
+export interface PunctualityTechnicianRow extends PunctualityStats {
+  executorId: string
+  fullName: string
+  providerOrganizationId: string
+  providerName: string
+  worstLateMinutes: number | null
+}
+export interface PunctualityWeek extends PunctualityStats {
+  weekStart: string
+}
+export interface LateVisit extends TrackingItemRef {
+  executorId: string
+  executorName: string
+  providerName: string
+  scheduledStart: string | null
+  scheduledEnd: string
+  arrivedAt: string
+  lateMinutes: number
+}
+export interface PunctualityReportResponse {
+  from: string
+  to: string
+  totals: PunctualityStats
+  technicians: PunctualityTechnicianRow[]
+  weeks: PunctualityWeek[]
+  lateVisits: LateVisit[]
+}
+export interface QualityTechnicianRow {
+  executorId: string
+  fullName: string
+  providerOrganizationId: string
+  providerName: string
+  completed: number
+  fastCompletions: number
+  quotationsSent: number
+  quotationsRejected: number
+  assignmentsOffered: number
+  assignmentsDeclined: number
+  assignmentsTimedOut: number
+  disputes: number
+  ratingsCount: number
+  lowRatings: number
+  averageRating: number | null
+  warrantyClaims: number
+  score: number | null
+  grade: QualityGrade
+}
+export interface QualitySignal extends TrackingItemRef {
+  kind: QualitySignalKind
+  executorId: string
+  executorName: string
+  at: string
+  value: number | null
+  limit: number | null
+  detail: string | null
+}
+export interface QualityReportResponse {
+  from: string
+  to: string
+  technicians: QualityTechnicianRow[]
+  signals: QualitySignal[]
+}
+export interface CashHolding {
+  executorId: string
+  fullName: string
+  providerOrganizationId: string
+  providerName: string
+  heldAmount: number
+  items: number
+  oldestCollectedAt: string
+  daysHeld: number
+}
+export interface CashHoldingsResponse {
+  totalHeld: number
+  items: number
+  technicians: CashHolding[]
+  handedOverLast30Days: number
+}
+export interface CashItemsRequest {
+  executorId: string
+  providerOrganizationId?: string | null
+  handedOver: boolean
+}
+export interface CashItem extends TrackingItemRef {
+  amount: number
+  collectedAt: string
+  handedOverAt: string | null
+  handedOverBy: string | null
+}
+export interface CashHandoverRequest {
+  serviceItemIds: string[]
+  note?: string | null
+}
+export interface CashHandoverResponse {
+  items: number
+  amount: number
+}
+export interface AuditLogListRequest extends PaginatedRequest {
+  from?: string | null
+  to?: string | null
+  userId?: string | null
+  action?: AuditAction | null
+  entityType?: string | null
+  entityId?: string | null
+  search?: string | null
+}
+export interface AuditLogResponse {
+  id: string
+  createdAt: string
+  userId: string | null
+  userName: string
+  action: AuditAction
+  entityType: string
+  entityId: string | null
+  oldValue: string | null
+  newValue: string | null
+  notes: string | null
+  ipAddress: string | null
+  tenantId: string | null
+}
+export interface AuditEntityTypeCount {
+  entityType: string
+  count: number
+}
+export interface SystemHealthResponse {
+  checkedAt: string
+  environment: string
+  version: string | null
+  startedAt: string
+  uptimeHours: number
+  process: ProcessHealth
+  database: DatabaseHealth
+  jobs: JobsHealth
+  ai: AiHealth
+  push: PushStatusResponse
+  sentryEnabled: boolean
+}
+export interface ProcessHealth {
+  workingSetMb: number
+  managedHeapMb: number
+  is64Bit: boolean
+  processorCount: number
+}
+export interface DatabaseHealth {
+  ok: boolean
+  roundTripMs: number | null
+  error: string | null
+}
+export interface JobsHealth {
+  ok: boolean
+  servers: number
+  enqueued: number
+  processing: number
+  scheduled: number
+  failed: number
+  recurring: RecurringJobHealth[]
+  error: string | null
+}
+export interface RecurringJobHealth {
+  id: string
+  cron: string | null
+  lastRunAt: string | null
+  lastState: string | null
+  nextRunAt: string | null
+  error: string | null
+}
+export interface AiHealth {
+  callsLast24Hours: number
+  failedLast24Hours: number
+  medianLatencyMs: number | null
+  lastFailureAt: string | null
+  lastFailure: string | null
 }
 
 // ── Staff/StaffDtos.cs

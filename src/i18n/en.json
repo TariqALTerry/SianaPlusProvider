@@ -22,6 +22,9 @@
     "messages": "Messages",
     "teamPerformance": "Performance",
     "teamMap": "Map",
+    "teamPunctuality": "Punctuality",
+    "teamQuality": "Quality",
+    "teamCash": "Cash with technicians",
     "wallet": "Wallet",
     "growthDemand": "Growth: demand near you"
   },

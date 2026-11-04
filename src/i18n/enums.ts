@@ -563,6 +563,37 @@ export const HomeInspectionResult: EnumMap<T.HomeInspectionResult> = {
   NotApplicable: e('لا ينطبق', 'Not applicable', 'muted'),
 }
 
+/** A stretch of a service's journey (the admin's "where time is lost"; labelled for completeness). */
+export const JourneyStage: EnumMap<T.JourneyStage> = {
+  ToProvider: e('حتى تُسند لمنشأة', 'Until a company is assigned'),
+  ToTechnician: e('حتى يُسند لفني', 'Until a technician is assigned'),
+  TechnicianAccepts: e('قبول الفني', 'Technician accepts'),
+  Travel: e('الطريق إلى العميل', 'Travel'),
+  BeforeWork: e('قبل بدء العمل', 'Before work starts'),
+  Work: e('العمل', 'Work'),
+  CustomerConfirmation: e('تأكيد العميل', 'Customer confirmation'),
+  Total: e('الرحلة كاملة', 'Whole journey'),
+}
+
+/** Where a technician stands on the period's quality signals (مؤشرات الجودة). */
+export const QualityGrade: EnumMap<T.QualityGrade> = {
+  InsufficientData: e('بيانات غير كافية', 'Not enough data', 'muted'),
+  Good: e('جيد', 'Good', 'success'),
+  Watch: e('يحتاج متابعة', 'Watch', 'attention'),
+  Risk: e('خطر', 'At risk', 'danger'),
+}
+
+/** An event that counts against a technician's quality score. */
+export const QualitySignalKind: EnumMap<T.QualitySignalKind> = {
+  FastCompletion: e('إنهاء سريع غير معتاد', 'Unusually fast finish', 'attention'),
+  QuotationRejected: e('رفض العميل العرض', 'Quote rejected', 'waiting'),
+  AssignmentDeclined: e('اعتذر عن مهمة', 'Declined a job', 'attention'),
+  AssignmentTimedOut: e('لم يرد في المهلة', 'Didn’t answer in time', 'attention'),
+  Dispute: e('شكوى من العميل', 'Dispute', 'danger'),
+  LowRating: e('تقييم منخفض', 'Low rating', 'danger'),
+  WarrantyClaim: e('مطالبة ضمان', 'Warranty claim', 'danger'),
+}
+
 export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
@@ -575,6 +606,7 @@ export const enumMaps = {
   DeviceCustodyStage, ProgressUpdateKind, ServiceItemLegType, ServiceItemLegStatus,
   SupportTicketKind, SupportChannel, SupportTicketCategory, SupportTicketPriority, SupportTicketStatus, SupportMessageSide,
   SupportTicketEventType, StoreProductImageStatus, StoreOptionKind, HomeInspectionStatus, HomeInspectionResult,
+  JourneyStage, QualityGrade, QualitySignalKind,
 } as const
 
 export type EnumName = keyof typeof enumMaps

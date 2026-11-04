@@ -1,7 +1,10 @@
 import {
+  AlarmClockCheck,
   Bell,
   Building2,
   Gavel,
+  HandCoins,
+  ShieldCheck,
   Home,
   Inbox,
   LifeBuoy,
@@ -48,9 +51,13 @@ export const NAV: readonly NavItem[] = [
   { to: '/workshop', label: 'workshop', icon: Warehouse },
   { to: '/messages', label: 'messages', icon: MessagesSquare, badge: 'messages' },
   { to: '/team', label: 'team', icon: Users },
-  // Under الفريق (PHASE2 §4, §6).
+  // Under الفريق (PHASE2 §4, §6, then the tracking pages).
   { to: '/team/performance', label: 'teamPerformance', icon: BarChart3, sub: true },
   { to: '/team/map', label: 'teamMap', icon: MapIcon, sub: true },
+  // Tracking: punctuality, quality signals, cash still with technicians.
+  { to: '/team/punctuality', label: 'teamPunctuality', icon: AlarmClockCheck, sub: true },
+  { to: '/team/quality', label: 'teamQuality', icon: ShieldCheck, sub: true },
+  { to: '/team/cash', label: 'teamCash', icon: HandCoins, sub: true },
   { to: '/marketplace', label: 'marketplace', icon: Gavel, visible: (c) => c.marketplaceEnabled },
   { to: '/wallet', label: 'wallet', icon: Wallet },
   { to: '/settlements', label: 'settlements', icon: ReceiptText },

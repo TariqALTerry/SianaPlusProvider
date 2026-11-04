@@ -3,14 +3,12 @@ import { ArrowDown, ArrowUp, FileText, Info } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router'
-import { LOOKUP_STALE_TIME } from '@/api/queryClient'
 import type { ExecutorPerformance } from '@/api/types'
 import { Money } from '@/components/Format'
 import { PageHeader } from '@/components/PageHeader'
 import { EmptyState, ErrorState } from '@/components/States'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
-import { Select } from '@/components/ui/input'
 import { Tooltip } from '@/components/ui/menu'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TBody, Td, Th, THead, Tr } from '@/components/ui/table'
@@ -18,10 +16,10 @@ import { useLang } from '@/hooks/useLang'
 import { useUrlState } from '@/hooks/useUrlState'
 import { formatDuration, formatNumber, formatPercent, riyadhDateToIso } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { boardQueryOptions } from '@/features/work/api'
 import { insightKeys, insightsApi } from './api'
 import { perfFlags, reportHref, resolvePeriod, sortPerformance, type Flag, type PerfPeriod, type PerfSortKey } from './logic'
 import { PeriodFilter } from './PeriodFilter'
+import { TechnicianFilter } from './TechnicianFilter'
 import './i18n'
 
 const schema = { period: '30', from: '', to: '', executorId: '' }
@@ -34,24 +32,11 @@ export function TeamPerformancePage() {
   const params = { from: riyadhDateToIso(range.from, 'start') ?? undefined, to: riyadhDateToIso(range.to, 'end') ?? undefined, executorId: state.executorId || undefined }
   const query = useQuery({ queryKey: insightKeys.performance(params), queryFn: ({ signal }) => insightsApi.teamPerformance(params, signal), enabled: ready })
 
-  // The filter lists the whole team, so it keeps its options while the table shows one technician.
-  const board = useQuery({ ...boardQueryOptions, staleTime: LOOKUP_STALE_TIME })
-  const executors = useMemo(() => [...(board.data?.executors ?? [])].sort((a, b) => Number(b.isActive) - Number(a.isActive) || a.fullName.localeCompare(b.fullName)), [board.data])
-
   return (
     <>
       <PageHeader title={t('perf.title')} description={t('perf.subtitle')} />
       <PeriodFilter period={period} range={range} custom={{ from: state.from, to: state.to }} onChange={set}>
-        <Select value={state.executorId} onChange={(e) => set({ executorId: e.target.value })} className="h-8 w-auto min-w-[10rem] text-xs" aria-label={t('perf.filterTechnician')}>
-          <option value="">{t('perf.allTechnicians')}</option>
-          {executors.map((e) => (
-            <option key={e.executorId} value={e.executorId}>
-              {e.fullName}
-              {e.isActive ? '' : ` (${t('perf.inactive')})`}
-            </option>
-          ))}
-          {state.executorId && !executors.some((e) => e.executorId === state.executorId) && <option value={state.executorId}>…</option>}
-        </Select>
+        <TechnicianFilter value={state.executorId} onChange={(executorId) => set({ executorId })} />
       </PeriodFilter>
 
       {!ready ? null : query.isPending ? (
