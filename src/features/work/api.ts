@@ -27,7 +27,8 @@ export const workApi = {
   list: (params: WorkListParams, signal?: AbortSignal) => http.get<PaginatedResponse<ServiceItemProviderView>>(`${base}/items`, params, signal),
   detail: (id: string, signal?: AbortSignal) => http.get<ServiceItemProviderDetailResponse>(`${base}/items/${id}`, undefined, signal),
   candidates: (id: string, signal?: AbortSignal) => http.get<ExecutorCandidateResponse[]>(`${base}/items/${id}/candidates`, undefined, signal),
-  board: (signal?: AbortSignal) => http.get<ProviderWorkBoardResponse>(`${base}/board`, undefined, signal),
+  /** `branchId`: the branch's technicians and those without a branch (PROVIDER-BRANCHES phase 1 §5). */
+  board: (branchId: string | undefined, signal?: AbortSignal) => http.get<ProviderWorkBoardResponse>(`${base}/board`, { branchId }, signal),
   executorItems: (executorId: string, params: WorkListParams, signal?: AbortSignal) =>
     http.get<PaginatedResponse<ServiceItemProviderView>>(`${base}/executors/${executorId}/items`, params, signal),
 
@@ -55,7 +56,7 @@ export const workKeys = {
   homeInspection: (id: string) => [...qk.work, 'home-inspection', id] as const,
   quotationReviews: () => [...qk.work, 'quotation-reviews'] as const,
   executorItems: (executorId: string, params: WorkListParams) => [...qk.work, 'list', 'executor', executorId, params] as const,
-  board: () => [...qk.board, 'summary'] as const,
+  board: (branchId?: string) => [...qk.board, 'summary', branchId ?? 'all'] as const,
 }
 
 /**
@@ -75,7 +76,10 @@ export function prefetchWorkItem(queryClient: QueryClient, id: string) {
   })
 }
 
-export const boardQueryOptions = {
-  queryKey: workKeys.board(),
-  queryFn: ({ signal }: { signal: AbortSignal }) => workApi.board(signal),
+/** The board summary for the branch switcher's scope (`useBranchParam()`). */
+export function boardQuery(branchId: string | undefined) {
+  return {
+    queryKey: workKeys.board(branchId),
+    queryFn: ({ signal }: { signal: AbortSignal }) => workApi.board(branchId, signal),
+  }
 }

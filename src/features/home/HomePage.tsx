@@ -1,3 +1,4 @@
+import { ScanBarcode } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, ArrowRight, CalendarDays, CheckCircle2, Inbox, ListChecks, RefreshCw, Star, Users } from 'lucide-react'
 import type { ReactNode } from 'react'
@@ -15,7 +16,8 @@ import { usePollingInterval } from '@/hooks/usePageVisible'
 import { enumLabel, enumTone } from '@/i18n/enums'
 import { formatNumber, formatTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { boardQueryOptions } from '@/features/work/api'
+import { useBranchParam } from '@/features/branches/scope'
+import { boardQuery } from '@/features/work/api'
 import { loadRatio } from '@/features/work/logic'
 import './i18n'
 import { homeApi, homeKeys } from './api'
@@ -25,7 +27,8 @@ import { activeDistribution, workHrefForStatus } from './logic'
 export function HomePage() {
   const { t } = useTranslation('home')
   const { lang, pick, isRtl } = useLang()
-  const { org } = useProvider()
+  // A "counter only" shop gets no platform work: its home points at the counter (PROVIDER-BRANCHES phase 3 §7).
+  const { org, counterOnly } = useProvider()
   const interval = usePollingInterval(60_000)
   const Forward = isRtl ? ArrowLeft : ArrowRight
 
@@ -35,7 +38,8 @@ export function HomePage() {
     refetchInterval: interval,
     refetchOnWindowFocus: true,
   })
-  const board = useQuery({ ...boardQueryOptions, refetchInterval: interval })
+  const branchId = useBranchParam()
+  const board = useQuery({ ...boardQuery(branchId), refetchInterval: interval })
 
   const d = dashboard.data
   const segments = d ? activeDistribution(d.itemsByStatus) : []
@@ -51,12 +55,22 @@ export function HomePage() {
             <p className="mt-1 text-sm text-white/75">{t('subtitle')}</p>
           </div>
           <div className="flex flex-col items-start gap-2 sm:items-end">
-            {d ? <p className="text-sm font-medium">{t('pendingCta', { count: d.pendingAssignments })}</p> : <Skeleton className="h-4 w-40 bg-white/20" />}
-            <Button asChild size="sm" className="bg-brand-yellow text-brand-deep hover:bg-brand-yellow/90">
-              <Link to="/incoming">
-                <Inbox /> {t('openIncoming')} <Forward />
-              </Link>
-            </Button>
+            {counterOnly ? (
+              <Button asChild size="sm" className="bg-brand-yellow text-brand-deep hover:bg-brand-yellow/90">
+                <Link to="/counter">
+                  <ScanBarcode /> {t('common:nav.counter')} <Forward />
+                </Link>
+              </Button>
+            ) : (
+              <>
+                {d ? <p className="text-sm font-medium">{t('pendingCta', { count: d.pendingAssignments })}</p> : <Skeleton className="h-4 w-40 bg-white/20" />}
+                <Button asChild size="sm" className="bg-brand-yellow text-brand-deep hover:bg-brand-yellow/90">
+                  <Link to="/incoming">
+                    <Inbox /> {t('openIncoming')} <Forward />
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -67,9 +81,11 @@ export function HomePage() {
         </Card>
       ) : (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
-          <Kpi to="/incoming" icon={Inbox} label={t('kpi.pending')} loading={!d} highlight={!!d && d.pendingAssignments > 0}>
-            <BigNum value={d?.pendingAssignments} />
-          </Kpi>
+          {!counterOnly && (
+            <Kpi to="/incoming" icon={Inbox} label={t('kpi.pending')} loading={!d} highlight={!!d && d.pendingAssignments > 0}>
+              <BigNum value={d?.pendingAssignments} />
+            </Kpi>
+          )}
           <Kpi to="/work?tab=inProgress" icon={ListChecks} label={t('kpi.active')} loading={!d}>
             {d && (
               <>
@@ -86,7 +102,7 @@ export function HomePage() {
               </>
             )}
           </Kpi>
-          <Kpi to="/board" icon={CalendarDays} label={t('kpi.today')} loading={!d}>
+          <Kpi to={counterOnly ? '/work' : '/board'} icon={CalendarDays} label={t('kpi.today')} loading={!d}>
             <BigNum value={d?.todayScheduledItems} />
           </Kpi>
           <Kpi to="/team" icon={Users} label={t('kpi.executors')} loading={!d}>
@@ -161,9 +177,11 @@ export function HomePage() {
           <CardHeader
             title={t('today.title')}
             actions={
-              <Button asChild variant="link" size="xs">
-                <Link to="/board">{t('today.viewBoard')}</Link>
-              </Button>
+              counterOnly ? undefined : (
+                <Button asChild variant="link" size="xs">
+                  <Link to="/board">{t('today.viewBoard')}</Link>
+                </Button>
+              )
             }
           />
           <CardBody className="p-0">

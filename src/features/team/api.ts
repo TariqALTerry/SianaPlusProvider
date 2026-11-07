@@ -4,6 +4,7 @@ import { qk } from '@/api/keys'
 import { listQueryOptions } from '@/api/queryClient'
 import type {
   CreateExecutorRequest,
+  CreateFrontDeskRequest,
   CreateTimeOffRequest,
   ExecutorScheduleResponse,
   WorkingHoursEntry,
@@ -49,6 +50,14 @@ export const teamApi = {
   setSupervisorActive: (memberId: string, isActive: boolean) =>
     http.patch<TeamMemberResponse>(`${base}/supervisors/${memberId}/active`, { isActive }),
 
+  // Front desk (PROVIDER-BRANCHES phase 2 §2): owner or supervisor; a branch-linked supervisor within their branches.
+  /** At least one branch (`FrontDeskBranchRequired`). */
+  createFrontDesk: (body: CreateFrontDeskRequest) => http.post<TeamMemberResponse>(`${base}/front-desk`, body),
+  /** Disabling ends their session. */
+  setFrontDeskActive: (memberId: string, isActive: boolean) => http.patch<TeamMemberResponse>(`${base}/front-desk/${memberId}/active`, { isActive }),
+  /** Replaces all their branches (one at least). */
+  setFrontDeskBranches: (memberId: string, branchIds: string[]) => http.put<TeamMemberResponse>(`${base}/front-desk/${memberId}/branches`, { branchIds }),
+
   /** Skills may only come from these (§8.7). */
   organizationCapabilities: (signal?: AbortSignal) =>
     http.get<ProviderCapabilitiesResponse>('/api/provider/organization/capabilities', undefined, signal),
@@ -76,6 +85,8 @@ export const teamKeys = {
 export const teamInvalidation = {
   skills: [qk.team],
   supervisor: [qk.team, qk.organization],
+  /** Front desk: the team, the counts and the branches' linked staff. */
+  frontDesk: [qk.team, qk.organization, qk.branches],
   executor: [qk.team, qk.organization, qk.board, qk.dashboard],
   /** Roles change who is offered repairs (candidates) and trips. */
   roles: [qk.team, qk.work],

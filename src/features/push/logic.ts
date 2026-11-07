@@ -7,7 +7,7 @@ import { qk } from '@/api/keys'
 export function referenceQueryKeys(referenceType: string | null | undefined): ReadonlyArray<readonly string[]> {
   switch (referenceType) {
     case 'ServiceItem':
-      return [qk.work, qk.incoming, qk.board, qk.dashboard]
+      return [qk.work, qk.incoming, qk.board, qk.dashboard, qk.counter, qk.workshop]
     case 'ServiceItemConversation':
       return [qk.messages]
     case 'ProviderWithdrawal':
@@ -20,6 +20,9 @@ export function referenceQueryKeys(referenceType: string | null | undefined): Re
       return [qk.disputes]
     case 'SupportTicket':
       return [qk.support]
+    case 'ProviderSubscriptionInvoice':
+    case 'ProviderSubscription':
+      return [qk.subscription, qk.wallet, qk.organization]
     default:
       return []
   }

@@ -1,5 +1,6 @@
 import type {
   CreateExecutorRequest,
+  CreateFrontDeskRequest,
   CreateSupervisorRequest,
   ExecutorAvailability,
   ExecutorResponse,
@@ -11,7 +12,7 @@ import { isSaudiMobile, localMobileDigits, looksLikePhone, toSaudiE164 } from '@
 
 // ── URL state ────────────────────────────────────────────────────────────────
 
-export const TEAM_TABS = ['technicians', 'members', 'supervisors'] as const
+export const TEAM_TABS = ['technicians', 'members', 'supervisors', 'frontDesk'] as const
 export type TeamTab = (typeof TEAM_TABS)[number]
 
 /** One schema for the page and the technicians list: they share the query string. */
@@ -24,7 +25,10 @@ export const TEAM_URL_SCHEMA = {
   pageSize: 25,
 }
 
-/** An unknown tab, or the supervisors tab for a supervisor (§7), falls back to technicians. */
+/**
+ * An unknown tab, or the supervisors tab for a supervisor (§7), falls back to technicians. The front-desk tab is for
+ * the owner and supervisors (PROVIDER-BRANCHES phase 2 §2).
+ */
 export function resolveTab(raw: string, isOwner: boolean): TeamTab {
   const tab = (TEAM_TABS as readonly string[]).includes(raw) ? (raw as TeamTab) : 'technicians'
   return tab === 'supervisors' && !isOwner ? 'technicians' : tab
@@ -136,6 +140,20 @@ const optional = (v: string) => v.trim() || null
 
 export function supervisorBody(d: PersonDraft): CreateSupervisorRequest {
   return { fullName: d.fullName.trim(), phone: normalizePhone(d.phone) ?? '', email: optional(d.email) }
+}
+
+export function frontDeskBody(d: PersonDraft, branchIds: readonly string[]): CreateFrontDeskRequest {
+  return { ...supervisorBody(d), branchIds: [...new Set(branchIds)] }
+}
+
+/** Front-desk staff, newest first like the other member lists. */
+export function frontDeskOf(members: readonly TeamMemberResponse[] | undefined): TeamMemberResponse[] {
+  return (members ?? []).filter((m) => m.role === 'FrontDesk')
+}
+
+/** Branch names of a member's `branchIds`, in the switcher's order; unknown ids are skipped. */
+export function branchNames(ids: readonly string[], branches: ReadonlyArray<{ id: string; name: string }>): string[] {
+  return branches.filter((b) => ids.includes(b.id)).map((b) => b.name)
 }
 
 export function executorProfileBody(d: ExecutorDraft): UpdateExecutorRequest {

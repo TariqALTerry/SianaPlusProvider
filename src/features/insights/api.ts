@@ -5,6 +5,7 @@ import type {
   CashHandoverResponse,
   CashHoldingsResponse,
   CashItem,
+  CounterReportResponse,
   JobBriefResponse,
   PunctualityReportResponse,
   QualityReportResponse,
@@ -37,17 +38,32 @@ export const insightsApi = {
   punctuality: (params: TrackingParams, signal?: AbortSignal) => http.get<PunctualityReportResponse>(`${base}/punctuality`, params, signal),
   quality: (params: TrackingParams, signal?: AbortSignal) => http.get<QualityReportResponse>(`${base}/quality`, params, signal),
   /** Current state, no period. */
-  cash: (signal?: AbortSignal) => http.get<CashHoldingsResponse>(`${base}/cash`, undefined, signal),
+  cash: (branchId: string | undefined, signal?: AbortSignal) => http.get<CashHoldingsResponse>(`${base}/cash`, { branchId }, signal),
   /** `handedOver: true`: what was recorded as received in the last 30 days instead of what is held. */
-  cashItems: (executorId: string, handedOver: boolean, signal?: AbortSignal) => http.get<CashItem[]>(`${base}/cash/items`, { executorId, handedOver }, signal),
+  cashItems: (executorId: string, handedOver: boolean, branchId: string | undefined, signal?: AbortSignal) =>
+    http.get<CashItem[]>(`${base}/cash/items`, { executorId, handedOver, branchId }, signal),
   /** `CashHandoverInvalid` (an item is no longer cash held by this company's technicians), `CashHandoverTooMany` (> 200). */
   cashHandover: (body: CashHandoverRequest) => http.post<CashHandoverResponse>(`${base}/cash/handover`, body),
+
+  /**
+   * The counter report (PROVIDER-BRANCHES phase 5 §8, parts in phase 6 §12): local days `yyyy-MM-dd`, both included, default
+   * the last 30, up to 366 (`ReportRangeInvalid`, `ReportRangeTooLong`). A counter service counts for the branch that received it.
+   */
+  counter: (params: CounterReportParams, signal?: AbortSignal) => http.get<CounterReportResponse>(`${base}/counter`, params, signal),
+}
+
+export interface CounterReportParams {
+  from: string
+  to: string
+  branchId?: string
 }
 
 export interface TrackingParams {
   from: string
   to: string
   executorId?: string
+  /** The branch switcher scope (PROVIDER-BRANCHES phase 1 §5). */
+  branchId?: string
 }
 
 export const insightKeys = {
@@ -60,5 +76,7 @@ export const insightKeys = {
   quality: (params: TrackingParams) => [...qk.insights, 'quality', params] as const,
   /** Prefix of the holdings and every technician's items: a handover refreshes all of them. */
   cash: [...qk.insights, 'cash'] as const,
-  cashItems: (executorId: string, handedOver: boolean) => [...qk.insights, 'cash', 'items', executorId, handedOver] as const,
+  cashHoldings: (branchId?: string) => [...qk.insights, 'cash', 'holdings', branchId ?? 'all'] as const,
+  counter: (params: CounterReportParams) => [...qk.insights, 'counter', params] as const,
+  cashItems: (executorId: string, handedOver: boolean, branchId?: string) => [...qk.insights, 'cash', 'items', executorId, handedOver, branchId ?? 'all'] as const,
 }

@@ -10,7 +10,7 @@ import { LogoMark } from '@/features/auth/AuthLayout'
 import { useLang } from '@/hooks/useLang'
 import { cn } from '@/lib/utils'
 import { visibleNav, type NavBadge, type NavItem } from './nav'
-import { useProvider } from './provider'
+import { useShellContext } from './provider'
 
 function matches(item: NavItem, pathname: string): boolean {
   if (item.end) return pathname === item.to
@@ -28,10 +28,12 @@ export function Sidebar({ collapsed, onToggle, onNavigate }: { collapsed: boolea
   const { t } = useTranslation()
   const { isRtl } = useLang()
   const { pathname } = useLocation()
-  const ctx = useProvider()
-  const incoming = useIncoming(ctx.mode === 'full')
-  const unreadMessages = useUnreadMessages(ctx.mode === 'full')
-  const supportUnread = useSupportUnread()
+  const ctx = useShellContext()
+  const management = ctx.kind === 'management'
+  // A front-desk account reaches none of these endpoints (403), and a "counter only" shop has no incoming work.
+  const incoming = useIncoming(management && ctx.mode === 'full' && !ctx.counterOnly)
+  const unreadMessages = useUnreadMessages(management && ctx.mode === 'full')
+  const supportUnread = useSupportUnread(management)
   const badges: Record<NavBadge, number | undefined> = { incoming: incoming.data?.length, messages: unreadMessages.data, support: supportUnread.data }
   const items = visibleNav(ctx)
   const CollapseIcon = collapsed !== isRtl ? ChevronsRight : ChevronsLeft
@@ -48,7 +50,7 @@ export function Sidebar({ collapsed, onToggle, onNavigate }: { collapsed: boolea
         )}
       </div>
 
-      {!collapsed && (
+      {!collapsed && ctx.kind === 'management' && (
         <div className="mx-3 mt-3 rounded-lg bg-white/5 px-3 py-2.5">
           <div className="truncate text-sm font-medium text-white" title={ctx.org.displayName}>
             {ctx.org.displayName}

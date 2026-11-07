@@ -18,8 +18,20 @@ type AuthStatus = 'unknown' | 'authenticated' | 'anonymous'
  */
 export type LogoutNotice = 'expired' | 'idle' | 'blocked' | 'tenant' | 'missing' | 'executor' | 'notProvider' | null
 
-/** The only roles that may use this platform. */
-export const PROVIDER_ROLES: readonly Role[] = ['ProviderOwner', 'ProviderSupervisor']
+/**
+ * The only roles that may use this platform. A front-desk (reception) account signs in like a supervisor but only
+ * reaches the counter, the shelf and its notifications (PROVIDER-BRANCHES-PROVIDER-PLATFORM-PROMPT, phase 2 §2).
+ */
+export const PROVIDER_ROLES: readonly Role[] = ['ProviderOwner', 'ProviderSupervisor', 'ProviderFrontDesk']
+
+/** Who is signed in, in the platform's terms. */
+export type ProviderRoleKind = 'owner' | 'supervisor' | 'frontDesk'
+
+export function roleKindFor(role: Role | null | undefined): ProviderRoleKind {
+  if (role === 'ProviderOwner') return 'owner'
+  if (role === 'ProviderFrontDesk') return 'frontDesk'
+  return 'supervisor'
+}
 
 export function noticeForRole(role: Role): LogoutNotice {
   if (PROVIDER_ROLES.includes(role)) return null
@@ -93,4 +105,13 @@ export function useCurrentUser(): CurrentUserResponse | null {
 /** Owner-only actions (§7) are hidden for supervisors; the server enforces it with `OwnerOnly`. */
 export function useIsOwner(): boolean {
   return useAuthStore((s) => s.user?.role === 'ProviderOwner')
+}
+
+/** The signed-in account's role kind; front desk sees a reduced shell without the organization profile. */
+export function useRoleKind(): ProviderRoleKind {
+  return useAuthStore((s) => roleKindFor(s.user?.role))
+}
+
+export function useIsFrontDesk(): boolean {
+  return useAuthStore((s) => s.user?.role === 'ProviderFrontDesk')
 }

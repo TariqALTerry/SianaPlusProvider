@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { VisitBrief } from '@/features/insights/VisitBrief'
 import { NewTicketDialog } from '@/features/support/components/NewTicketDialog'
 import '@/features/support/i18n'
+import '@/features/counter/i18n'
 import { TrackingTab } from '@/features/workshop/TrackingTab'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -20,6 +21,7 @@ import { detailQueryOptions } from '@/api/queryClient'
 import { useLang } from '@/hooks/useLang'
 import { usePollingInterval } from '@/hooks/usePageVisible'
 import { enumLabel } from '@/i18n/enums'
+import { HoldButtons } from '@/features/counter/components/OpsDialogs'
 import './i18n'
 import { workApi, workKeys } from './api'
 import { useHomeInspection } from './hooks'
@@ -39,6 +41,9 @@ import {
 import { HomeInspectionButton, HomeInspectionSheet, InspectionWarning } from './components/HomeInspection'
 import { WorkActions } from './components/WorkActions'
 import { CoverageBadge, NetBlock } from './components/widgets'
+import { BranchCard } from './components/BranchCard'
+import { PlatformDeviceActions, PlatformIntakeDialog } from '@/features/counter/components/PlatformIntakeDialog'
+import type { DeviceResponse } from '@/api/types'
 
 // `?tab=tracking` is the deep link the 72 h no-update and "arrange the return" alerts open.
 const TABS = ['timeline', 'tracking', 'photos', 'quotations', 'assignments', 'schedules'] as const
@@ -49,8 +54,10 @@ export function WorkItemPage() {
   const { id = '' } = useParams()
   const { t } = useTranslation('work')
   const { t: ts } = useTranslation('support')
+  const { t: tc } = useTranslation('counter')
   const [ticketOpen, setTicketOpen] = useState(false)
   const [inspectionOpen, setInspectionOpen] = useState(false)
+  const [intakeDevice, setIntakeDevice] = useState<DeviceResponse | null>(null)
   const { lang, pick } = useLang()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -93,6 +100,23 @@ export function WorkItemPage() {
         // The service's conversation with the customer and the technician (PHASE2 §2).
         actions={
           <>
+            {item.fulfillmentChannel === 'WalkIn' && (
+              <Button asChild size="sm">
+                <Link to={`/counter/items/${item.id}`}>{tc('title')}</Link>
+              </Button>
+            )}
+            {/* A device at a branch can be paused with a reason (PROVIDER-BRANCHES phase 5 §2). */}
+            {item.fulfillmentChannel !== 'WalkIn' && (
+              <HoldButtons
+                item={{
+                  serviceItemId: item.id,
+                  label: [item.itemNumber, pick(item.serviceNameAr, item.serviceNameEn)].filter(Boolean).join(' · '),
+                  status: item.status,
+                  fulfillmentChannel: item.fulfillmentChannel,
+                  currentBranchId: item.currentBranchId,
+                }}
+              />
+            )}
             <Button asChild size="sm" variant="outline">
               <Link to={`/messages/${item.id}`}>
                 <MessagesSquare /> {t('detail.conversation')}
@@ -175,7 +199,11 @@ export function WorkItemPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="min-w-0 space-y-4 lg:col-span-2">
           <CustomerCard item={item} />
-          <DevicesCard item={item} />
+          <DevicesCard
+            item={item}
+            // A platform device collected to a branch: its arrival receipt and label (PROVIDER-BRANCHES phase 2 §12).
+            actions={item.fulfillmentChannel === 'PickupDelivery' ? (d) => <PlatformDeviceActions item={item} device={d} onIntake={() => setIntakeDevice(d)} /> : undefined}
+          />
           <Tabs
             value={tab}
             onValueChange={(v) => {
@@ -217,6 +245,7 @@ export function WorkItemPage() {
         </div>
         <aside className="min-w-0 space-y-4">
           <VisitBrief serviceItemId={item.id} />
+          <BranchCard item={item} />
           <NetBlock item={item} />
           <TechnicianCard item={item} />
           <ScheduleCard item={item} schedules={schedules} />
@@ -225,6 +254,7 @@ export function WorkItemPage() {
         </aside>
       </div>
       <HomeInspectionSheet query={inspection} open={inspectionOpen} onOpenChange={setInspectionOpen} />
+      <PlatformIntakeDialog item={item} device={intakeDevice} open={!!intakeDevice} onOpenChange={(o) => !o && setIntakeDevice(null)} />
       <NewTicketDialog
         open={ticketOpen}
         onOpenChange={setTicketOpen}

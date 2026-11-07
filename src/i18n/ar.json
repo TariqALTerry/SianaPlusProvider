@@ -26,7 +26,16 @@
     "teamQuality": "مؤشرات الجودة",
     "teamCash": "النقد مع الفنيين",
     "wallet": "المحفظة",
-    "growthDemand": "النمو: طلب قريب منك"
+    "growthDemand": "النمو: طلب قريب منك",
+    "counter": "الكاونتر",
+    "subscription": "الاشتراك",
+    "counterBoard": "لوحة الفرع",
+    "transfers": "التحويلات",
+    "counterWarranty": "الضمان",
+    "cashClose": "إغلاق الصندوق",
+    "counterReport": "تقرير الكاونتر",
+    "whatsapp": "واتساب",
+    "inventory": "المخزون"
   },
   "shell": {
     "language": "اللغة",
@@ -61,7 +70,8 @@
     "workHidden": "هذه الصفحة متاحة بعد اعتماد المنشأة.",
     "storeUnavailable": "المتجر غير متاح",
     "storeUnavailableHint": "وحدة المتجر غير مفعّلة لمنشأتك الآن. تواصل مع المنصة لتفعيلها.",
-    "support": "تواصل مع الدعم"
+    "support": "تواصل مع الدعم",
+    "frontDesk": "موظف استقبال"
   },
   "actions": {
     "save": "حفظ",
@@ -257,7 +267,31 @@
     "RepairTested": "اختبار الإصلاح",
     "ClosedAfterInspection": "أُغلقت برسوم المعاينة",
     "QuotationExpired": "انتهت مهلة العرض",
-    "CompletedUnusuallyFast": "أُنهيت أسرع من المعتاد"
+    "CompletedUnusuallyFast": "أُنهيت أسرع من المعتاد",
+    "IntakeCreated": "استلام بالكاونتر",
+    "IntakePhotosAdded": "صور الاستلام",
+    "IntakeSigned": "وقّع العميل",
+    "CustomerCallLogged": "اتصال بالعميل",
+    "CustomerApprovalRecorded": "سُجّل رد العميل",
+    "CounterPaymentRecorded": "دفعة في الكاونتر",
+    "CounterDiscountGiven": "خصم",
+    "ReceiptShared": "مشاركة مستند",
+    "ExecutorAssigned": "أُسند لفني",
+    "ExecutorUnassigned": "أُلغي إسناد الفني",
+    "ClaimedByScan": "استلمه الفني بالمسح",
+    "LockCodeViewed": "عرض رمز القفل",
+    "HandedOver": "سُلّم للعميل",
+    "BranchChanged": "تغيّر الفرع المسؤول",
+    "BranchTransferRequested": "طُلب تحويل لفرع آخر",
+    "BranchTransferSent": "خرج الجهاز لفرع آخر",
+    "BranchTransferReceived": "وصل الجهاز للفرع الآخر",
+    "BranchTransferCancelled": "أُلغي التحويل",
+    "DeviceAbandoned": "أُعلن الجهاز متروكًا",
+    "StorageFeeWaived": "إعفاء من رسوم التخزين",
+    "ReworkRootCauseRecorded": "سُجّل السبب الجذري",
+    "PartsUsed": "صُرفت قطع",
+    "PartsReturned": "أُرجعت قطع",
+    "SupplierReturnDrafted": "مسودة مرتجع للمورد"
   },
   "auth": {
     "title": "تسجيل الدخول",
@@ -301,7 +335,8 @@
   },
   "roles": {
     "ProviderOwner": "مالك المنشأة",
-    "ProviderSupervisor": "مشرف"
+    "ProviderSupervisor": "مشرف",
+    "ProviderFrontDesk": "موظف استقبال"
   },
   "notifications": {
     "title": "الإشعارات",

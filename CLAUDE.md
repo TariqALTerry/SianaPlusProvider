@@ -6,7 +6,8 @@ Read these before changing code:
    conventions (URL-synced list state, `DataTable` with phone cards, `useAction` + `ActionDialog`,
    `StatusBadge`, `PhoneField`, Riyadh time, an i18n namespace per feature).
 2. The product brief in the backend repo: `../Siana/docs/PROVIDER-PLATFORM-PROMPT.md`. **Never invent an
-   endpoint, field, status or error code.**
+   endpoint, field, status or error code.** Branches, the counter and its subscription:
+   `../Siana/docs/PROVIDER-BRANCHES-PROVIDER-PLATFORM-PROMPT.md`.
 3. `src/features/service-items/` in `../Siana-Dashboard` shows the house style for list, detail and
    action pages.
 

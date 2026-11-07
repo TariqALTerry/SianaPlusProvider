@@ -17,8 +17,19 @@ export function stepTab(key: StepKey): OrganizationTab {
   return ONBOARDING_STEPS.find((s) => s.key === key)!.tab
 }
 
+/**
+ * The steps this organization has to finish: a "counter only" shop skips capabilities and coverage areas
+ * (`capabilitiesRequired` / `coverageRequired` false, PROVIDER-BRANCHES phase 3 §7). `canSubmit` stays the server's.
+ */
+export function visibleSteps(steps: OnboardingStepsResponse): OnboardingStep[] {
+  return ONBOARDING_STEPS.filter(
+    (s) => (s.key !== 'capabilitiesSet' || steps.capabilitiesRequired) && (s.key !== 'coverageSet' || steps.coverageRequired),
+  )
+}
+
 export function stepProgress(steps: OnboardingStepsResponse): { done: number; total: number } {
-  return { done: ONBOARDING_STEPS.filter((s) => steps[s.key]).length, total: ONBOARDING_STEPS.length }
+  const shown = visibleSteps(steps)
+  return { done: shown.filter((s) => steps[s.key]).length, total: shown.length }
 }
 
 /**

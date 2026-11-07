@@ -25,6 +25,11 @@ describe('push destinations (PHASE2 §8)', () => {
     expect(notificationHref({ referenceType: 'MarketplaceRequest', referenceId: 'm' })).toBe('/marketplace/m')
     expect(notificationHref({ referenceType: 'Dispute', referenceId: 'd' })).toBe('/disputes/d')
     expect(notificationHref({ referenceType: 'SupportTicket', referenceId: 't1' })).toBe('/support/t1')
+    // Counter alerts open the counter item; the subscription's open /subscription (PROVIDER-BRANCHES phases 2–3).
+    expect(notificationHref({ referenceType: 'ServiceItem', referenceId: 's1', eventKey: 'CounterDeviceReady' })).toBe('/counter/items/s1')
+    expect(notificationHref({ referenceType: 'ServiceItem', referenceId: 's1', eventKey: 'CounterQuotationAwaitingCall' })).toBe('/counter/items/s1')
+    expect(notificationHref({ referenceType: 'ProviderSubscriptionInvoice', referenceId: 'i1' })).toBe('/subscription?invoice=i1')
+    expect(notificationHref({ referenceType: 'ProviderSubscription', referenceId: 'p1' })).toBe('/subscription')
     expect(notificationHref({ referenceType: 'Unknown', referenceId: 'x' })).toBeNull()
   })
 

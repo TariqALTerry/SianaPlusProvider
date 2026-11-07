@@ -34,7 +34,8 @@ const prim = {
 }
 
 function mapType(t) {
-  t = t.trim()
+  // Namespace-qualified names (`Enums.ProviderMemberRole`, `Inventory.StockRowResponse`): keep the type name.
+  t = t.trim().replace(/\b(?:\w+\.)+(\w+)/g, '$1')
   let nullable = false
   if (t.endsWith('?')) { nullable = true; t = t.slice(0, -1) }
   let ts
@@ -98,7 +99,7 @@ for (const f of walk(dtoDir).sort()) {
     // Query-string filters: every field is optional on the wire, the server applies defaults.
     const allOptional = name === "PaginatedRequest" || /ListRequest$/.test(name) || base?.trim() === "PaginatedRequest"
     const props = []
-    for (const pm of body.matchAll(/^\s*public\s+(?:required\s+)?(?:virtual\s+)?([\w<>\[\]?, ]+?)\s+(\w+)\s*\{\s*get;\s*(?:set;|init;)?\s*\}/gm)) {
+    for (const pm of body.matchAll(/^\s*public\s+(?:required\s+)?(?:virtual\s+)?([\w.<>\[\]?, ]+?)\s+(\w+)\s*\{\s*get;\s*(?:set;|init;)?\s*\}/gm)) {
       const [, type, pname] = pm
       const { ts, nullable } = mapType(type)
       const camel = pname[0].toLowerCase() + pname.slice(1)
@@ -107,7 +108,7 @@ for (const f of walk(dtoDir).sort()) {
     }
     // expression-bodied computed props: public T Name => ...
     // Requests skip them: computed server-side helpers (NormalizedPage) are never sent.
-    for (const pm of isRequest ? [] : body.matchAll(/^\s*public\s+([\w<>\[\]?, ]+?)\s+(\w+)\s*=>/gm)) {
+    for (const pm of isRequest ? [] : body.matchAll(/^\s*public\s+([\w.<>\[\]?, ]+?)\s+(\w+)\s*=>/gm)) {
       const [, type, pname] = pm
       const { ts, nullable } = mapType(type)
       props.push(`  ${pname[0].toLowerCase() + pname.slice(1)}: ${ts}${nullable ? ' | null' : ''}`)

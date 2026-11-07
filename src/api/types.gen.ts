@@ -26,6 +26,16 @@ export const AvailabilityAlertStatusValues = ['Waiting', 'Notified', 'Cancelled'
 export type AvailabilityAlertStatus = (typeof AvailabilityAlertStatusValues)[number]
 export const AvailabilityAlertSourceValues = ['App', 'Assistant'] as const
 export type AvailabilityAlertSource = (typeof AvailabilityAlertSourceValues)[number]
+export const ReworkRootCauseValues = ['SameFault', 'NewFault', 'DefectivePart', 'TechnicianError', 'CustomerMisuse'] as const
+export type ReworkRootCause = (typeof ReworkRootCauseValues)[number]
+export const BranchTransferStatusValues = ['Requested', 'InTransit', 'Received', 'Cancelled'] as const
+export type BranchTransferStatus = (typeof BranchTransferStatusValues)[number]
+export const AgingBucketValues = ['Days0To2', 'Days3To7', 'Over7Days'] as const
+export type AgingBucket = (typeof AgingBucketValues)[number]
+export const BranchBoardStageValues = ['Received', 'Diagnosing', 'AwaitingCustomer', 'InRepair', 'OnHold', 'Ready', 'InTransit'] as const
+export type BranchBoardStage = (typeof BranchBoardStageValues)[number]
+export const CashCloseStatusValues = ['Closed', 'Reopened'] as const
+export type CashCloseStatus = (typeof CashCloseStatusValues)[number]
 export const ExecutionModeValues = ['Appliance', 'DirectRepair', 'ScheduledService', 'ProjectService', 'Delivery', 'Workshop'] as const
 export type ExecutionMode = (typeof ExecutionModeValues)[number]
 export const PricingTypeValues = ['Fixed', 'InspectionThenQuote', 'QuoteRequired'] as const
@@ -44,7 +54,7 @@ export const AuditActionValues = ['Create', 'Update', 'Delete', 'Login', 'Logout
 export type AuditAction = (typeof AuditActionValues)[number]
 export const NotificationTypeValues = ['Info', 'Success', 'Warning', 'Alert'] as const
 export type NotificationType = (typeof NotificationTypeValues)[number]
-export const FileCategoryValues = ['Avatar', 'Attachment', 'Document', 'Import', 'Export', 'Evidence', 'ProviderDocument', 'CatalogMedia', 'ProductImage', 'CommunityMedia', 'AssistantMedia', 'SupportAttachment'] as const
+export const FileCategoryValues = ['Avatar', 'Attachment', 'Document', 'Import', 'Export', 'Evidence', 'ProviderDocument', 'CatalogMedia', 'ProductImage', 'CommunityMedia', 'AssistantMedia', 'SupportAttachment', 'CounterPrivate'] as const
 export type FileCategory = (typeof FileCategoryValues)[number]
 export const ActorTypeValues = ['System', 'Customer', 'Admin', 'Provider', 'Executor'] as const
 export type ActorType = (typeof ActorTypeValues)[number]
@@ -84,6 +94,40 @@ export const CommunityListingSortValues = ['Newest', 'PriceLowToHigh', 'PriceHig
 export type CommunityListingSort = (typeof CommunityListingSortValues)[number]
 export const CommunityPostFilterValues = ['Unanswered', 'Popular', 'Videos'] as const
 export type CommunityPostFilter = (typeof CommunityPostFilterValues)[number]
+export const IntakeAccessoryValues = ['Charger', 'Case', 'SimCard', 'MemoryCard', 'Box', 'Cable', 'Other'] as const
+export type IntakeAccessory = (typeof IntakeAccessoryValues)[number]
+export const IntakeConditionValues = ['None', 'Scratches', 'CrackedScreen', 'LiquidDamage', 'NotPoweringOn', 'Dents', 'MissingParts'] as const
+export type IntakeCondition = (typeof IntakeConditionValues)[number]
+export const PowersOnStateValues = ['Yes', 'No', 'NotTested'] as const
+export type PowersOnState = (typeof PowersOnStateValues)[number]
+export const IntakeEstimateTypeValues = ['Fixed', 'Range', 'AfterInspection'] as const
+export type IntakeEstimateType = (typeof IntakeEstimateTypeValues)[number]
+export const IntakeKindValues = ['Counter', 'PlatformArrival'] as const
+export type IntakeKind = (typeof IntakeKindValues)[number]
+export const CustomerApprovalDecisionValues = ['Approved', 'Rejected'] as const
+export type CustomerApprovalDecision = (typeof CustomerApprovalDecisionValues)[number]
+export const CustomerApprovalMethodValues = ['InApp', 'Call', 'InPerson', 'WhatsAppLink'] as const
+export type CustomerApprovalMethod = (typeof CustomerApprovalMethodValues)[number]
+export const CallOutcomeValues = ['Answered', 'NoAnswer', 'Busy', 'Off'] as const
+export type CallOutcome = (typeof CallOutcomeValues)[number]
+export const CounterPaymentKindValues = ['Deposit', 'InspectionFee', 'Payment'] as const
+export type CounterPaymentKind = (typeof CounterPaymentKindValues)[number]
+export const CounterTabValues = ['Received', 'InProgress', 'AwaitingCustomer', 'Ready', 'Delivered', 'All'] as const
+export type CounterTab = (typeof CounterTabValues)[number]
+export const HandoverProofValues = ['Code', 'Signature'] as const
+export type HandoverProof = (typeof HandoverProofValues)[number]
+export const SubscriptionBillingCycleValues = ['Monthly', 'Yearly'] as const
+export type SubscriptionBillingCycle = (typeof SubscriptionBillingCycleValues)[number]
+export const ProviderSubscriptionStatusValues = ['Trial', 'Active', 'PastDue', 'Expired', 'Cancelled', 'PendingPayment'] as const
+export type ProviderSubscriptionStatus = (typeof ProviderSubscriptionStatusValues)[number]
+export const SubscriptionInvoiceStatusValues = ['Pending', 'Paid', 'Cancelled'] as const
+export type SubscriptionInvoiceStatus = (typeof SubscriptionInvoiceStatusValues)[number]
+export const SubscriptionPaymentMethodValues = ['BankTransfer', 'WalletDeduction', 'Gateway'] as const
+export type SubscriptionPaymentMethod = (typeof SubscriptionPaymentMethodValues)[number]
+export const WalletDeductionKindValues = ['CounterSubscription'] as const
+export type WalletDeductionKind = (typeof WalletDeductionKindValues)[number]
+export const WalletItemKindValues = ['Service', 'CounterSubscription'] as const
+export type WalletItemKind = (typeof WalletItemKindValues)[number]
 export const QuotationStatusValues = ['Draft', 'Sent', 'Approved', 'Rejected', 'Expired', 'Cancelled', 'PendingReview'] as const
 export type QuotationStatus = (typeof QuotationStatusValues)[number]
 export const TechnicianJobOutcomeValues = ['Completed', 'InProgress', 'WaitingResponse', 'Cancelled', 'Rejected', 'TimedOut', 'Reassigned'] as const
@@ -94,7 +138,7 @@ export const EvidenceTypeValues = ['Image', 'Video', 'Document'] as const
 export type EvidenceType = (typeof EvidenceTypeValues)[number]
 export const ExecutionStepValues = ['Inspection', 'Diagnosis', 'Quotation', 'CustomerApproval', 'Repair', 'Testing', 'Documentation', 'Completion', 'Assessment', 'IdentifyIssue', 'Execution', 'ScopeReview', 'PreService', 'CustomerConfirmation', 'Survey', 'Measurements', 'Scheduling', 'Progress', 'Handover', 'Pickup', 'CustodyDocumentation', 'Transport', 'Delivery', 'Verification', 'DeviceIntake', 'Return'] as const
 export type ExecutionStep = (typeof ExecutionStepValues)[number]
-export const DeviceCustodyStageValues = ['AtCustomer', 'PickedUp', 'AtWorkshop', 'ReadyForReturn', 'OutForReturn', 'Returned'] as const
+export const DeviceCustodyStageValues = ['AtCustomer', 'PickedUp', 'AtWorkshop', 'ReadyForReturn', 'OutForReturn', 'Returned', 'InTransit', 'Abandoned'] as const
 export type DeviceCustodyStage = (typeof DeviceCustodyStageValues)[number]
 export const ProgressUpdateKindValues = ['InspectionStarted', 'DiagnosisDone', 'WaitingForParts', 'PartsArrived', 'RepairInProgress', 'Testing', 'ReadyForReturn', 'Delayed', 'Other'] as const
 export type ProgressUpdateKind = (typeof ProgressUpdateKindValues)[number]
@@ -120,6 +164,14 @@ export const SettlementStatusValues = ['Pending', 'Approved', 'Paid', 'OnHold'] 
 export type SettlementStatus = (typeof SettlementStatusValues)[number]
 export const WarrantyStatusValues = ['Active', 'Expired', 'Claimed', 'Void'] as const
 export type WarrantyStatus = (typeof WarrantyStatusValues)[number]
+export const StockMovementKindValues = ['Receive', 'Issue', 'Return', 'Adjust', 'TransferOut', 'TransferIn', 'ReturnToSupplier'] as const
+export type StockMovementKind = (typeof StockMovementKindValues)[number]
+export const StockReservationStatusValues = ['Active', 'Consumed', 'Released'] as const
+export type StockReservationStatus = (typeof StockReservationStatusValues)[number]
+export const WarrantyLineKindValues = ['Part', 'Labor'] as const
+export type WarrantyLineKind = (typeof WarrantyLineKindValues)[number]
+export const SupplierReturnStatusValues = ['Draft', 'Sent', 'Credited', 'Rejected'] as const
+export type SupplierReturnStatus = (typeof SupplierReturnStatusValues)[number]
 export const MarketplaceRequestStatusValues = ['Open', 'Awarded', 'Closed', 'Cancelled'] as const
 export type MarketplaceRequestStatus = (typeof MarketplaceRequestStatusValues)[number]
 export const MarketplaceOfferStatusValues = ['Submitted', 'Accepted', 'Rejected', 'Withdrawn'] as const
@@ -134,17 +186,23 @@ export const AssignmentTypeValues = ['ProviderAssignment', 'ExecutorAssignment']
 export type AssignmentType = (typeof AssignmentTypeValues)[number]
 export const AssignmentStatusValues = ['Pending', 'Accepted', 'Rejected', 'Reassigned', 'Cancelled', 'TimedOut'] as const
 export type AssignmentStatus = (typeof AssignmentStatusValues)[number]
-export const OrderSourceValues = ['CustomerApp', 'SmartRequest', 'Admin', 'Store'] as const
+export const OrderSourceValues = ['CustomerApp', 'SmartRequest', 'Admin', 'Store', 'ProviderCounter'] as const
 export type OrderSource = (typeof OrderSourceValues)[number]
-export const OtpPurposeValues = ['CustomerLogin', 'ProviderLogin', 'ProviderRegistration', 'AppLogin', 'ChangePhone'] as const
+export const FulfillmentChannelValues = ['OnSite', 'PickupDelivery', 'WalkIn'] as const
+export type FulfillmentChannel = (typeof FulfillmentChannelValues)[number]
+export const HoldReasonValues = ['WaitingParts', 'WaitingCustomer', 'ExternalWorkshop', 'Other'] as const
+export type HoldReason = (typeof HoldReasonValues)[number]
+export const RepairOutcomeValues = ['Repaired', 'NotRepairable', 'QuoteRejected', 'CustomerWithdrew'] as const
+export type RepairOutcome = (typeof RepairOutcomeValues)[number]
+export const OtpPurposeValues = ['CustomerLogin', 'ProviderLogin', 'ProviderRegistration', 'AppLogin', 'ChangePhone', 'CounterApproval'] as const
 export type OtpPurpose = (typeof OtpPurposeValues)[number]
 export const ProviderTypeValues = ['IndependentTechnician', 'Company'] as const
 export type ProviderType = (typeof ProviderTypeValues)[number]
 export const ProviderVerificationStatusValues = ['Draft', 'Submitted', 'UnderReview', 'Approved', 'Trial', 'Rejected', 'Suspended'] as const
 export type ProviderVerificationStatus = (typeof ProviderVerificationStatusValues)[number]
-export const ProviderBusinessModelValues = ['ExecutionPartner', 'MarketplacePartner', 'Both'] as const
+export const ProviderBusinessModelValues = ['ExecutionPartner', 'MarketplacePartner', 'Both', 'CounterOnly'] as const
 export type ProviderBusinessModel = (typeof ProviderBusinessModelValues)[number]
-export const ProviderMemberRoleValues = ['Owner', 'Supervisor', 'Executor'] as const
+export const ProviderMemberRoleValues = ['Owner', 'Supervisor', 'Executor', 'FrontDesk'] as const
 export type ProviderMemberRole = (typeof ProviderMemberRoleValues)[number]
 export const ProviderDocumentTypeValues = ['CommercialRegistration', 'NationalId', 'ProfessionalLicense', 'Insurance', 'TaxCertificate', 'Other'] as const
 export type ProviderDocumentType = (typeof ProviderDocumentTypeValues)[number]
@@ -172,7 +230,7 @@ export const DisputeStatusValues = ['Open', 'UnderReview', 'Resolved', 'Rejected
 export type DisputeStatus = (typeof DisputeStatusValues)[number]
 export const DisputeResolutionTypeValues = ['None', 'FullRefund', 'PartialRefund', 'Rework', 'NoAction'] as const
 export type DisputeResolutionType = (typeof DisputeResolutionTypeValues)[number]
-export const RoleValues = ['SuperAdmin', 'TenantAdmin', 'Manager', 'Member', 'PlatformAdmin', 'Customer', 'ProviderOwner', 'ProviderSupervisor', 'Executor', 'Supplier'] as const
+export const RoleValues = ['SuperAdmin', 'TenantAdmin', 'Manager', 'Member', 'PlatformAdmin', 'Customer', 'ProviderOwner', 'ProviderSupervisor', 'Executor', 'Supplier', 'ProviderFrontDesk'] as const
 export type Role = (typeof RoleValues)[number]
 export const StoreOrderStatusValues = ['Draft', 'PendingPayment', 'Paid', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] as const
 export type StoreOrderStatus = (typeof StoreOrderStatusValues)[number]
@@ -212,6 +270,16 @@ export const QualitySignalKindValues = ['FastCompletion', 'QuotationRejected', '
 export type QualitySignalKind = (typeof QualitySignalKindValues)[number]
 export const UserStatusValues = ['PendingApproval', 'Active', 'Suspended'] as const
 export type UserStatus = (typeof UserStatusValues)[number]
+export const WhatsAppMessageStatusValues = ['Queued', 'Sent', 'Delivered', 'Read', 'Failed', 'Skipped'] as const
+export type WhatsAppMessageStatus = (typeof WhatsAppMessageStatusValues)[number]
+export const WhatsAppSenderKindValues = ['Platform', 'Provider'] as const
+export type WhatsAppSenderKind = (typeof WhatsAppSenderKindValues)[number]
+export const WhatsAppTemplateKindValues = ['IntakeReceived', 'QuoteReady', 'QuoteReminder', 'ReadyForPickup', 'NotRepairable', 'PickupReminder', 'Completed', 'Otp', 'Test'] as const
+export type WhatsAppTemplateKind = (typeof WhatsAppTemplateKindValues)[number]
+export const WhatsAppSkipReasonValues = ['QuotaExceeded', 'NoPhone', 'SenderNotConfigured', 'GlobalDisabled', 'Outdated'] as const
+export type WhatsAppSkipReason = (typeof WhatsAppSkipReasonValues)[number]
+export const TrackingStageValues = ['Received', 'Diagnosing', 'AwaitingApproval', 'InRepair', 'Ready', 'Delivered', 'NotRepairable', 'Cancelled'] as const
+export type TrackingStage = (typeof TrackingStageValues)[number]
 export const WalletItemsBucketValues = ['Available', 'OnHold'] as const
 export type WalletItemsBucket = (typeof WalletItemsBucketValues)[number]
 
@@ -1946,6 +2014,1132 @@ export interface CommunityReportResponse {
   createdAt: string
 }
 
+// ── Counter/BranchOperationsDtos.cs
+export interface BranchBoardResponse {
+  branchId: string
+  branchName: string
+  generatedAt: string
+  receivedToday: number
+  readyToday: number
+  deliveredToday: number
+  stages: BranchBoardStageCount[]
+  overdue: BranchBoardItem[]
+  awaitingCustomer: BranchBoardItem[]
+  readyNotCollected: BranchBoardItem[]
+  onHoldByReason: BranchHoldCount[]
+  onHold: BranchBoardItem[]
+  abandonCandidates: BranchBoardItem[]
+  transfersOutgoing: number
+  transfersIncoming: number
+}
+export interface BranchBoardStageCount {
+  stage: BranchBoardStage
+  count: number
+  days0To2: number
+  days3To7: number
+  over7Days: number
+}
+export interface BranchHoldCount {
+  reason: HoldReason | null
+  count: number
+}
+export interface BranchBoardItem {
+  serviceItemId: string
+  itemNumber: string | null
+  code: string | null
+  fulfillmentChannel: FulfillmentChannel
+  deviceName: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  status: ServiceItemStatus
+  stage: BranchBoardStage
+  stageSince: string | null
+  daysInStage: number
+  aging: AgingBucket
+  customerName: string | null
+  executorName: string | null
+  promisedReadyAt: string | null
+  isOverdue: boolean
+  holdReason: HoldReason | null
+  holdNote: string | null
+  hoursWaiting: number | null
+  daysWaiting: number | null
+  storageFee: number | null
+  canAbandon: boolean
+}
+export interface ProviderPauseItemRequest {
+  holdReason?: HoldReason | null
+  note?: string | null
+  externalWorkshopName?: string | null
+  externalCost?: number | null
+}
+export interface ItemHoldResponse {
+  serviceItemId: string
+  status: ServiceItemStatus
+  statusBeforeHold: ServiceItemStatus | null
+  holdReason: HoldReason | null
+  holdNote: string | null
+  externalWorkshopName: string | null
+  externalCost: number | null
+}
+export interface CounterAbandonRequest {
+  reason?: string | null
+}
+export interface CounterStorageWaiverRequest {
+  reason: string
+}
+export interface CounterStorageResponse {
+  readySince: string | null
+  daysWaiting: number
+  freeDays: number
+  feePerDay: number | null
+  chargeableDays: number
+  amount: number
+  waived: boolean
+  waiverReason: string | null
+  charged: number
+  abandonAfterDays: number
+  remindersSent: number
+  canAbandon: boolean
+  abandonedAt: string | null
+  abandonReason: string | null
+}
+export interface CreateBranchTransferRequest {
+  serviceItemId: string
+  toBranchId: string
+  courierExecutorId?: string | null
+  reason?: string | null
+}
+export interface BranchTransferScanRequest {
+  code?: string | null
+  note?: string | null
+}
+export interface CancelBranchTransferRequest {
+  reason: string
+}
+export interface BranchTransferListRequest extends PaginatedRequest {
+  branchId?: string | null
+  status?: BranchTransferStatus | null
+  openOnly?: boolean
+}
+export interface BranchTransferResponse {
+  id: string
+  status: BranchTransferStatus
+  serviceItemId: string
+  itemNumber: string | null
+  intakeNumber: string | null
+  fulfillmentChannel: FulfillmentChannel
+  serviceNameAr: string
+  serviceNameEn: string
+  devices: TransferDeviceResponse[]
+  fromBranch: TransferBranchResponse
+  toBranch: TransferBranchResponse
+  courierExecutorId: string | null
+  courierName: string | null
+  reason: string | null
+  stageBeforeTransit: DeviceCustodyStage
+  requestedByName: string | null
+  createdAt: string
+  sentAt: string | null
+  receivedAt: string | null
+  receivedByName: string | null
+  cancelledAt: string | null
+  cancelReason: string | null
+  availableActions: string[]
+}
+export interface TransferDeviceResponse {
+  deviceId: string
+  name: string
+  brand: string | null
+  model: string | null
+  tagCode: string | null
+  stage: DeviceCustodyStage
+}
+export interface TransferBranchResponse {
+  id: string
+  name: string
+  code: string
+  phone: string | null
+  city: string | null
+  district: string | null
+  addressLine: string | null
+  latitude: number | null
+  longitude: number | null
+}
+export interface CounterWarrantyLookupRequest {
+  phone?: string | null
+  imei?: string | null
+  code?: string | null
+}
+export interface CounterWarrantyLookupResponse {
+  warranties: CounterWarrantyLookupItem[]
+  history: CounterRepairHistoryItem[]
+}
+export interface CounterWarrantyLookupItem {
+  warrantyId: string
+  warrantyNumber: string
+  status: WarrantyStatus
+  startsAt: string
+  endsAt: string
+  daysRemaining: number
+  inWarranty: boolean
+  alreadyClaimed: boolean
+  claimServiceItemId: string | null
+  serviceItemId: string
+  itemNumber: string | null
+  intakeNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  canonicalServiceId: string
+  deviceName: string | null
+  brand: string | null
+  model: string | null
+  imei: string | null
+  serialNumber: string | null
+  branchName: string | null
+  executorId: string | null
+  executorName: string | null
+  customerName: string
+  customerPhone: string | null
+  completedAt: string | null
+  lines: CounterWarrantyLineItem[]
+}
+export interface CounterWarrantyLineItem {
+  id: string
+  description: string
+  kind: WarrantyLineKind
+  quantity: number
+  warrantyDays: number
+  startsAt: string
+  endsAt: string
+  daysRemaining: number
+  claimable: boolean
+  claimedAt: string | null
+  claimServiceItemId: string | null
+  partItemId: string | null
+  sku: string | null
+  supplierName: string | null
+  batchRef: string | null
+}
+export interface CounterRepairHistoryItem {
+  serviceItemId: string
+  itemNumber: string | null
+  intakeNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  deviceName: string | null
+  imei: string | null
+  status: ServiceItemStatus
+  repairOutcome: RepairOutcome | null
+  isRework: boolean
+  reworkRootCause: ReworkRootCause | null
+  executorName: string | null
+  branchName: string | null
+  finalAmount: number
+  receivedAt: string
+  handedOverAt: string | null
+}
+export interface CounterWarrantyClaimRequest {
+  branchId: string
+  description: string
+  executorId?: string | null
+  goodwill: boolean
+  goodwillReason?: string | null
+  goodwillAmount?: number | null
+  accessories: IntakeAccessory[]
+  accessoriesNote?: string | null
+  conditions: IntakeCondition[]
+  conditionNotes?: string | null
+  powersOn?: PowersOnState | null
+  lockCode?: string | null
+  promisedReadyAt?: string | null
+  lineIds: string[]
+}
+export interface CashCloseQuery {
+  branchId: string
+  date?: string | null
+}
+export interface CashClosePreviewResponse {
+  branchId: string
+  branchName: string
+  businessDate: string
+  expected: CashExpectedResponse
+  payments: CashClosePaymentRow[]
+  close: CashCloseResponse | null
+  changedSinceClose: boolean
+  canClose: boolean
+  canReopen: boolean
+}
+export interface CashExpectedResponse {
+  cash: number
+  card: number
+  bankTransfer: number
+  total: number
+  paymentsCount: number
+}
+export interface CashClosePaymentRow {
+  paymentId: string
+  paymentNumber: string
+  method: PaymentMethod
+  kind: CounterPaymentKind | null
+  amount: number
+  paidAt: string | null
+  reference: string | null
+  collectedByName: string | null
+  serviceItemId: string | null
+  itemNumber: string | null
+  intakeNumber: string | null
+}
+export interface CloseCashRequest {
+  branchId: string
+  date?: string | null
+  countedCash: number
+  note?: string | null
+}
+export interface ReopenCashCloseRequest {
+  reason: string
+}
+export interface CashCloseHistoryRequest extends PaginatedRequest {
+  branchId?: string | null
+  from?: string | null
+  to?: string | null
+}
+export interface CashCloseResponse {
+  id: string
+  branchId: string
+  branchName: string
+  businessDate: string
+  status: CashCloseStatus
+  expected: CashExpectedResponse
+  countedCash: number
+  difference: number
+  note: string | null
+  closedByName: string | null
+  closedAt: string
+  reopenedAt: string | null
+  reopenedByName: string | null
+  reopenReason: string | null
+  reopenCount: number
+}
+export interface CounterReportRequest {
+  from?: string | null
+  to?: string | null
+  branchId?: string | null
+  providerOrganizationId?: string | null
+}
+export interface CounterReportResponse {
+  from: string
+  to: string
+  intakes: number
+  reworkIntakes: number
+  platformArrivals: number
+  delivered: number
+  averageTurnaroundHours: number | null
+  firstTimeFixRate: number | null
+  repaired: number
+  reworkedAfterRepair: number
+  quotationsDecided: number
+  quotationsApproved: number
+  quoteApprovalRate: number | null
+  averageQuoteResponseHours: number | null
+  revenue: CounterRevenueSplit
+  discountsTotal: number
+  discountsByUser: CounterDiscountByUser[]
+  paymentsByMethod: CounterRevenueByMethod[]
+  revenueByChannel: CounterRevenueByChannel[]
+  storageFeesCharged: number
+  storageFeesWaived: number
+  abandoned: number
+  reworkByTechnician: CounterTechnicianRework[]
+  rootCauses: CounterRootCauseCount[]
+  reworkInternalCost: number
+  organizations: CounterOrganizationRow[]
+  parts: CounterPartsReport | null
+}
+export interface CounterPartsReport {
+  partsRevenue: number
+  partsCost: number
+  partsMargin: number
+  partsMarginPercent: number | null
+  topParts: CounterTopPart[]
+  defectsByPart: CounterDefectRate[]
+  defectsBySupplier: CounterDefectRate[]
+  stockValueByBranch: CounterStockValue[]
+  stockValueTotal: number
+  lowStock: StockRowResponse[]
+}
+export interface CounterTopPart {
+  partItemId: string
+  sku: string
+  nameAr: string
+  nameEn: string
+  quantity: number
+  cost: number
+  services: number
+}
+export interface CounterDefectRate {
+  id: string | null
+  name: string
+  defective: number
+  issued: number
+  rate: number | null
+}
+export interface CounterStockValue {
+  branchId: string
+  branchName: string
+  value: number
+  parts: number
+}
+export interface CounterRevenueSplit {
+  parts: number
+  labor: number
+  fees: number
+  storageFees: number
+  total: number
+}
+export interface CounterDiscountByUser {
+  userId: string
+  fullName: string
+  count: number
+  amount: number
+}
+export interface CounterRevenueByMethod {
+  method: PaymentMethod
+  count: number
+  amount: number
+}
+export interface CounterRevenueByChannel {
+  channel: FulfillmentChannel
+  services: number
+  revenue: number
+}
+export interface CounterTechnicianRework {
+  executorId: string
+  fullName: string
+  repaired: number
+  reworked: number
+  reworkRate: number | null
+}
+export interface CounterRootCauseCount {
+  rootCause: ReworkRootCause
+  count: number
+}
+export interface CounterOrganizationRow {
+  providerOrganizationId: string
+  providerName: string
+  intakes: number
+  delivered: number
+  revenue: number
+  abandoned: number
+}
+
+// ── Counter/CounterDtos.cs
+export interface CounterCustomerLookupResponse {
+  phone: string
+  found: boolean
+  fullName: string | null
+  devices: CounterCustomerDeviceResponse[]
+  warranties: CounterCustomerWarrantyResponse[]
+}
+export interface CounterCustomerDeviceResponse {
+  serviceItemId: string
+  intakeNumber: string
+  deviceName: string
+  brand: string | null
+  model: string | null
+  imei: string | null
+  serialNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  status: ServiceItemStatus
+  branchName: string
+  receivedAt: string
+}
+export interface CounterCustomerWarrantyResponse {
+  warrantyId: string
+  warrantyNumber: string
+  serviceItemId: string
+  serviceNameAr: string
+  serviceNameEn: string
+  deviceName: string | null
+  endsAt: string
+}
+export interface CreateCounterIntakeRequest {
+  branchId: string
+  customerPhone: string
+  customerName?: string | null
+  canonicalServiceId: string
+  serviceIssueId?: string | null
+  device: CounterDeviceRequest
+  accessories: IntakeAccessory[]
+  accessoriesNote?: string | null
+  conditions: IntakeCondition[]
+  conditionNotes?: string | null
+  powersOn?: PowersOnState | null
+  lockCode?: string | null
+  estimateType?: IntakeEstimateType | null
+  estimateMin?: number | null
+  estimateMax?: number | null
+  inspectionFee: number
+  inspectionFeePaidNow: boolean
+  deposit: number
+  paymentMethod?: PaymentMethod | null
+  paymentReference?: string | null
+  promisedReadyAt?: string | null
+  customerNotes?: string | null
+}
+export interface CounterDeviceRequest {
+  name?: string | null
+  brand?: string | null
+  model?: string | null
+  serialNumber?: string | null
+  imei?: string | null
+  issueDescription?: string | null
+}
+export interface PlatformDeviceIntakeRequest {
+  accessories: IntakeAccessory[]
+  accessoriesNote?: string | null
+  conditions: IntakeCondition[]
+  conditionNotes?: string | null
+}
+export interface CounterIntakeResponse {
+  id: string
+  deviceId: string
+  kind: IntakeKind
+  intakeNumber: string
+  barcodeValue: string
+  branchId: string
+  branchName: string
+  accessories: IntakeAccessory[]
+  accessoriesNote: string | null
+  conditions: IntakeCondition[]
+  conditionNotes: string | null
+  powersOn: PowersOnState | null
+  hasLockCode: boolean
+  estimateType: IntakeEstimateType | null
+  estimateMin: number | null
+  estimateMax: number | null
+  inspectionFee: number
+  deposit: number
+  promisedReadyAt: string | null
+  signatureUrl: string | null
+  termsVersion: number | null
+  receivedByName: string | null
+  receivedAt: string
+  photosCount: number
+  isComplete: boolean
+  discountAmount: number
+  discountReason: string | null
+  handedOverAt: string | null
+  handoverProof: HandoverProof | null
+  debtAmount: number
+}
+export interface CounterItemListRequest extends PaginatedRequest {
+  branchId?: string | null
+  tab?: CounterTab | null
+  search?: string | null
+}
+export interface CounterItemSummaryResponse {
+  serviceItemId: string
+  intakeNumber: string | null
+  itemNumber: string | null
+  branchId: string
+  branchName: string | null
+  customerName: string
+  customerPhone: string | null
+  deviceName: string | null
+  brand: string | null
+  model: string | null
+  imei: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  status: ServiceItemStatus
+  custodyStage: DeviceCustodyStage | null
+  repairOutcome: RepairOutcome | null
+  executorName: string | null
+  promisedReadyAt: string | null
+  receivedAt: string
+  handedOverAt: string | null
+  awaitingCustomer: boolean
+  isReady: boolean
+  isComplete: boolean
+  isLate: boolean
+  amountDue: number
+  paid: number
+  balance: number
+}
+export interface CounterTabCountsResponse {
+  received: number
+  inProgress: number
+  awaitingCustomer: number
+  ready: number
+  delivered: number
+  incomplete: number
+}
+export interface CounterItemDetailResponse {
+  serviceItemId: string
+  orderId: string
+  itemNumber: string | null
+  orderNumber: string | null
+  status: ServiceItemStatus
+  fulfillmentChannel: FulfillmentChannel
+  repairOutcome: RepairOutcome | null
+  canonicalServiceId: string
+  serviceNameAr: string
+  serviceNameEn: string
+  customerDescription: string | null
+  branchId: string | null
+  branchName: string | null
+  currentBranchId: string | null
+  customer: CounterPartyResponse
+  executor: CounterPartyResponse | null
+  intake: CounterIntakeResponse | null
+  devices: DeviceResponse[]
+  photos: EvidenceResponse[]
+  quotations: QuotationResponse[]
+  pendingQuotation: QuotationResponse | null
+  approvals: CustomerApprovalResponse[]
+  money: CounterMoneyResponse
+  payments: CounterPaymentResponse[]
+  warranty: CounterWarrantyResponse | null
+  timeline: TimelineEventResponse[]
+  awaitingCustomer: boolean
+  isReady: boolean
+  availableActions: string[]
+  publicReceiptUrl: string | null
+  publicTrackingUrl: string | null
+  whatsAppAutoSend: boolean
+  whatsAppShareUrl: string | null
+  whatsAppReadyUrl: string | null
+  holdReason: HoldReason | null
+  holdNote: string | null
+  externalWorkshopName: string | null
+  externalCost: number | null
+  storage: CounterStorageResponse
+  reworkOfServiceItemId: string | null
+  reworkOfItemNumber: string | null
+  reworkRootCause: ReworkRootCause | null
+  internalCost: number | null
+  openTransfer: BranchTransferResponse | null
+  createdAt: string
+}
+export interface CounterPartyResponse {
+  id: string
+  fullName: string
+  phone: string | null
+}
+export interface CounterMoneyResponse {
+  amount: number
+  discount: number
+  amountDue: number
+  storageFee: number
+  paid: number
+  balance: number
+  debt: number
+  maxDiscountPercent: number
+}
+export interface CounterPaymentResponse {
+  id: string
+  paymentNumber: string
+  kind: CounterPaymentKind | null
+  method: PaymentMethod
+  amount: number
+  reference: string | null
+  collectedByName: string | null
+  branchName: string | null
+  paidAt: string | null
+}
+export interface CounterWarrantyResponse {
+  id: string
+  warrantyNumber: string
+  startsAt: string
+  endsAt: string
+  status: WarrantyStatus
+}
+export interface CustomerApprovalResponse {
+  id: string
+  quotationId: string
+  decision: CustomerApprovalDecision | null
+  method: CustomerApprovalMethod
+  callOutcome: CallOutcome | null
+  recordedByName: string | null
+  note: string | null
+  at: string
+}
+export interface CounterCallLogRequest {
+  outcome: CallOutcome
+  note?: string | null
+}
+export interface CounterDecisionRequest {
+  decision: CustomerApprovalDecision
+  method: CustomerApprovalMethod
+  callOutcome?: CallOutcome | null
+  note?: string | null
+}
+export interface CounterPaymentRequest {
+  method: PaymentMethod
+  amount: number
+  reference?: string | null
+}
+export interface CounterDiscountRequest {
+  percent?: number | null
+  amount?: number | null
+  reason: string
+}
+export interface CounterHandoverRequest {
+  code?: string | null
+  allowDebt: boolean
+  note?: string | null
+}
+export interface CounterShareLogRequest {
+  document: string
+  channel: string
+}
+export interface CreateFrontDeskRequest {
+  fullName: string
+  phone: string
+  email?: string | null
+  branchIds: string[]
+}
+export interface SetFrontDeskBranchesRequest {
+  branchIds: string[]
+}
+
+// ── Counter/CounterSubscriptionDtos.cs
+export interface CounterPlanResponse {
+  id: string
+  nameAr: string
+  nameEn: string
+  descriptionAr: string | null
+  descriptionEn: string | null
+  monthlyPrice: number
+  yearlyPrice: number
+  currency: string
+  includedBranches: number
+  extraBranchMonthlyPrice: number
+  whatsAppMonthlyQuota: number
+  trialDays: number
+  graceDays: number
+  sortOrder: number
+}
+export interface CounterPlanAdminResponse extends CounterPlanResponse {
+  isActive: boolean
+  liveSubscriptions: number
+  createdAt: string
+  updatedAt: string | null
+}
+export interface SaveCounterPlanRequest {
+  nameAr: string
+  nameEn: string
+  descriptionAr?: string | null
+  descriptionEn?: string | null
+  monthlyPrice: number
+  yearlyPrice: number
+  includedBranches: number
+  extraBranchMonthlyPrice: number
+  whatsAppMonthlyQuota: number
+  trialDays: number
+  graceDays: number
+  isActive: boolean
+  sortOrder: number
+}
+export interface ProviderSubscriptionResponse {
+  id: string
+  plan: CounterPlanResponse
+  billingCycle: SubscriptionBillingCycle
+  status: ProviderSubscriptionStatus
+  isLive: boolean
+  startsAt: string
+  trialEndsAt: string | null
+  currentPeriodEndsAt: string
+  graceEndsAt: string | null
+  extraBranches: number
+  allowedBranches: number
+  cancelAtPeriodEnd: boolean
+  autoPayFromWallet: boolean
+  nextPlan: CounterPlanResponse | null
+  nextBillingCycle: SubscriptionBillingCycle | null
+  nextExtraBranches: number | null
+  cancelledAt: string | null
+  createdAt: string
+}
+export interface ProviderSubscriptionOverviewResponse {
+  businessModel: ProviderBusinessModel
+  pendingBusinessModel: ProviderBusinessModel | null
+  counterModuleEnabled: boolean
+  counterAvailable: boolean
+  counterBlockedReason: string | null
+  counterBranchesUsed: number
+  counterBranchesAllowed: number | null
+  whatsAppQuotaUsed: number
+  whatsAppQuotaAllowed: number
+  whatsAppQuotaUnlimited: boolean
+  trialAvailable: boolean
+  canSubscribe: boolean
+  walletAvailableAmount: number | null
+  subscription: ProviderSubscriptionResponse | null
+  pendingInvoice: CounterInvoiceResponse | null
+}
+export interface StartCounterSubscriptionRequest {
+  planId: string
+  billingCycle: SubscriptionBillingCycle
+  extraBranches: number
+  startTrial: boolean
+  autoPayFromWallet: boolean
+}
+export interface ChangeCounterSubscriptionRequest {
+  planId: string
+  billingCycle: SubscriptionBillingCycle
+  extraBranches: number
+}
+export interface SetCounterAutoPayRequest {
+  enabled: boolean
+}
+export interface CounterInvoiceResponse {
+  id: string
+  invoiceNumber: string
+  subscriptionId: string
+  planId: string
+  planNameAr: string
+  planNameEn: string
+  billingCycle: SubscriptionBillingCycle
+  extraBranches: number
+  periodStart: string
+  periodEnd: string
+  amount: number
+  currency: string
+  status: SubscriptionInvoiceStatus
+  paymentMethod: SubscriptionPaymentMethod | null
+  paidAt: string | null
+  reference: string | null
+  receiptUrl: string | null
+  proofSubmittedAt: string | null
+  awaitingConfirmation: boolean
+  notes: string | null
+  cancellationReason: string | null
+  createdAt: string
+}
+export interface CounterInvoiceAdminResponse extends CounterInvoiceResponse {
+  providerOrganizationId: string
+  organizationName: string
+  recordedBy: string | null
+}
+export interface CounterInvoiceListRequest extends PaginatedRequest {
+  status?: SubscriptionInvoiceStatus | null
+}
+export interface PayCounterInvoiceRequest {
+  method: SubscriptionPaymentMethod
+}
+export interface SubmitTransferProofRequest {
+  reference?: string | null
+}
+export interface AdminProviderSubscriptionResponse extends ProviderSubscriptionResponse {
+  providerOrganizationId: string
+  organizationName: string
+  businessModel: ProviderBusinessModel
+  isCurrent: boolean
+  counterModuleEnabled: boolean
+  counterBranchesUsed: number
+  pendingInvoices: number
+  pendingAmount: number
+  awaitingConfirmation: boolean
+}
+export interface AdminProviderSubscriptionDetailResponse extends AdminProviderSubscriptionResponse {
+  invoices: CounterInvoiceAdminResponse[]
+  history: ProviderSubscriptionResponse[]
+}
+export interface AdminProviderSubscriptionListRequest extends PaginatedRequest {
+  status?: ProviderSubscriptionStatus | null
+  expiringWithinDays?: number | null
+  providerOrganizationId?: string | null
+  search?: string | null
+  awaitingConfirmation?: boolean | null
+  currentOnly?: boolean
+}
+export interface AdminCounterInvoiceListRequest extends PaginatedRequest {
+  status?: SubscriptionInvoiceStatus | null
+  awaitingConfirmation?: boolean | null
+  providerOrganizationId?: string | null
+}
+export interface ConfirmCounterInvoiceRequest {
+  reference?: string | null
+  notes?: string | null
+}
+export interface CancelCounterInvoiceRequest {
+  reason: string
+}
+export interface ExtendCounterSubscriptionRequest {
+  days: number
+  reason: string
+}
+export interface SetCounterSubscriptionStatusRequest {
+  status: ProviderSubscriptionStatus
+  reason: string
+}
+export interface GrantCounterSubscriptionRequest {
+  providerOrganizationId: string
+  planId: string
+  billingCycle: SubscriptionBillingCycle
+  extraBranches: number
+  days: number
+  reason: string
+}
+
+// ── Counter/CounterTrackingDtos.cs
+export interface PublicTrackingResponse {
+  shopName: string
+  shopLogoUrl: string | null
+  branch: PublicTrackingBranchResponse
+  intakeNumber: string
+  serviceNameAr: string
+  serviceNameEn: string
+  device: PublicTrackingDeviceResponse
+  stage: TrackingStage
+  repairOutcome: RepairOutcome | null
+  customerFirstName: string | null
+  customerPhoneMasked: string | null
+  receivedAt: string
+  promisedReadyAt: string | null
+  isLate: boolean
+  readyAt: string | null
+  handedOverAt: string | null
+  lastUpdateAt: string
+  pendingQuotation: PublicTrackingQuotationResponse | null
+  money: PublicTrackingMoneyResponse
+  documents: PublicTrackingDocumentsResponse
+  warranty: PublicTrackingWarrantyResponse | null
+  lastDecision: CustomerApprovalDecision | null
+  lastDecisionAt: string | null
+}
+export interface PublicTrackingBranchResponse {
+  name: string
+  phone: string | null
+  whatsAppNumber: string | null
+  city: string | null
+  district: string | null
+  addressLine: string | null
+  latitude: number | null
+  longitude: number | null
+  mapUrl: string | null
+  openingHours: PublicTrackingHoursResponse[]
+  closedToday: boolean
+}
+export interface PublicTrackingHoursResponse {
+  dayOfWeek: DayOfWeek
+  opens: string | null
+  closes: string | null
+  isClosed: boolean
+}
+export interface PublicTrackingDeviceResponse {
+  name: string
+  brand: string | null
+  model: string | null
+  imeiMasked: string | null
+  serialNumberMasked: string | null
+  issue: string | null
+}
+export interface PublicTrackingQuotationResponse {
+  id: string
+  quotationNumber: string
+  lines: PublicTrackingQuotationLineResponse[]
+  subtotal: number
+  discountAmount: number
+  total: number
+  amountIfApproved: number
+  amountIfRejected: number
+  notes: string | null
+  sentAt: string | null
+  canAnswerOnline: boolean
+}
+export interface PublicTrackingQuotationLineResponse {
+  description: string
+  quantity: number
+  unitPrice: number
+  total: number
+}
+export interface PublicTrackingMoneyResponse {
+  amount: number
+  discount: number
+  amountDue: number
+  paid: number
+  balance: number
+  inspectionFee: number
+  deposit: number
+}
+export interface PublicTrackingDocumentsResponse {
+  receiptUrl: string
+  invoiceUrl: string | null
+  warrantyUrl: string | null
+}
+export interface PublicTrackingWarrantyResponse {
+  warrantyNumber: string
+  startsAt: string
+  endsAt: string
+  isActive: boolean
+}
+export interface PublicTrackingOtpResponse {
+  channel: string
+  phoneMasked: string | null
+  codeLength: number
+  expiresAt: string
+  resendAvailableAt: string
+}
+export interface PublicTrackingDecisionRequest {
+  otp: string
+  decision: CustomerApprovalDecision
+  reason?: string | null
+}
+
+// ── Counter/WhatsAppDtos.cs
+export interface WhatsAppMessageResponse {
+  id: string
+  serviceItemId: string | null
+  kind: WhatsAppTemplateKind
+  template: string
+  language: string
+  toPhone: string
+  sender: WhatsAppSenderKind
+  status: WhatsAppMessageStatus
+  skipReason: WhatsAppSkipReason | null
+  error: string | null
+  attempts: number
+  nextAttemptAt: string | null
+  createdAt: string
+  sentAt: string | null
+  deliveredAt: string | null
+  readAt: string | null
+  failedAt: string | null
+  canResend: boolean
+}
+export interface WhatsAppAvailabilityResponse {
+  globalEnabled: boolean
+  branchAutoSend: boolean
+  senderAvailable: boolean
+  activeSender: WhatsAppSenderKind | null
+  quotaUsed: number
+  quotaAllowed: number
+  quotaUnlimited: boolean
+  autoSendActive: boolean
+}
+export interface CounterItemWhatsAppResponse {
+  availability: WhatsAppAvailabilityResponse
+  messages: WhatsAppMessageResponse[]
+}
+export interface ResendWhatsAppRequest {
+  messageId?: string | null
+  kind?: WhatsAppTemplateKind | null
+}
+export interface ProviderWhatsAppResponse {
+  globalEnabled: boolean
+  platformSenderConfigured: boolean
+  platformDisplayPhone: string | null
+  linked: boolean
+  enabled: boolean
+  disabledByAdmin: boolean
+  adminNote: string | null
+  verified: boolean
+  verifiedAt: string | null
+  phoneNumberId: string | null
+  wabaId: string | null
+  displayPhoneNumber: string | null
+  accessTokenMasked: string | null
+  hasAppSecret: boolean
+  language: string
+  webhookUrl: string | null
+  webhookVerifyToken: string | null
+  lastTestAt: string | null
+  lastTestSucceeded: boolean | null
+  lastTestError: string | null
+  activeSender: WhatsAppSenderKind | null
+  quotaUsed: number
+  quotaAllowed: number
+  quotaUnlimited: boolean
+  branches: WhatsAppBranchResponse[]
+}
+export interface WhatsAppBranchResponse {
+  branchId: string
+  name: string
+  counterEnabled: boolean
+  autoSendWhatsApp: boolean
+}
+export interface SaveProviderWhatsAppRequest {
+  phoneNumberId?: string | null
+  wabaId?: string | null
+  accessToken?: string | null
+  appSecret?: string | null
+  clearAppSecret: boolean
+  language?: string | null
+  enabled: boolean
+}
+export interface TestProviderWhatsAppRequest {
+  toPhone?: string | null
+}
+export interface WhatsAppTemplateInfoResponse {
+  kind: WhatsAppTemplateKind
+  name: string
+  language: string
+  header: string | null
+  bodyAr: string
+  parameters: string[]
+  buttonUrl: string | null
+}
+export interface WhatsAppAdminSettingsResponse {
+  autoSendEnabled: boolean
+  platformConfigured: boolean
+  platformDisplayPhone: string | null
+  platformPhoneNumberId: string | null
+  apiVersion: string
+  webhookConfigured: boolean
+  webhookUrl: string | null
+  trackingSiteBaseUrl: string | null
+  templates: WhatsAppTemplateInfoResponse[]
+  queuedCount: number
+  sentThisMonth: number
+  failedThisMonth: number
+  skippedThisMonth: number
+  updatedAt: string | null
+  updatedByName: string | null
+}
+export interface UpdateWhatsAppSettingsRequest {
+  autoSendEnabled: boolean
+}
+export interface AdminWhatsAppMessageListRequest extends PaginatedRequest {
+  organizationId?: string | null
+  serviceItemId?: string | null
+  status?: WhatsAppMessageStatus | null
+  kind?: WhatsAppTemplateKind | null
+  sender?: WhatsAppSenderKind | null
+  from?: string | null
+  to?: string | null
+}
+export interface AdminWhatsAppMessageResponse extends WhatsAppMessageResponse {
+  providerOrganizationId: string
+  organizationName: string | null
+  branchName: string | null
+  itemNumber: string | null
+  intakeNumber: string | null
+}
+export interface AdminProviderWhatsAppResponse {
+  organizationId: string
+  linked: boolean
+  enabled: boolean
+  verified: boolean
+  verifiedAt: string | null
+  disabledByAdmin: boolean
+  adminNote: string | null
+  displayPhoneNumber: string | null
+  phoneNumberId: string | null
+  wabaId: string | null
+  activeSender: WhatsAppSenderKind | null
+  quotaUsed: number
+  quotaAllowed: number
+  quotaUnlimited: boolean
+}
+export interface SetProviderWhatsAppLinkRequest {
+  disabled: boolean
+  note?: string | null
+}
+
 // ── Customers/AvailabilityAlertDtos.cs
 export interface CreateAvailabilityAlertRequest {
   canonicalServiceId: string
@@ -2260,6 +3454,7 @@ export interface OrderSummaryResponse {
   id: string
   orderNumber: string | null
   status: ParentOrderStatus
+  source: OrderSource
   paymentStatus: PaymentStatus
   paymentMethod: PaymentMethod | null
   currency: string
@@ -2277,6 +3472,8 @@ export interface OrderItemBriefResponse {
   serviceCode: string | null
   serviceImageUrl: string | null
   status: ServiceItemStatus
+  fulfillmentChannel: FulfillmentChannel
+  isManagedByShop: boolean
 }
 export interface OrderPaymentSummaryResponse {
   method: PaymentMethod | null
@@ -2310,6 +3507,13 @@ export interface OrderDetailResponse {
 }
 export interface ServiceItemCustomerView {
   id: string
+  fulfillmentChannel: FulfillmentChannel
+  isManagedByShop: boolean
+  branchId: string | null
+  branchName: string | null
+  branchPhone: string | null
+  branchAddress: string | null
+  repairOutcome: RepairOutcome | null
   orderId: string
   orderNumber: string | null
   itemNumber: string | null
@@ -2558,6 +3762,9 @@ export interface ArriveRequest {
 }
 export interface PauseJobRequest {
   reason: string
+  holdReason?: HoldReason | null
+  externalWorkshopName?: string | null
+  externalCost?: number | null
 }
 export interface UpdateDiagnosisRequest {
   diagnosisNotes: string
@@ -2566,13 +3773,20 @@ export interface CompleteJobRequest {
   completionNotes?: string | null
   collectedCash?: boolean | null
   testResult?: string | null
+  reworkRootCause?: ReworkRootCause | null
+  internalCost?: number | null
 }
 export interface RequestConfirmationRequest {
   collectedCash?: boolean | null
+  reworkRootCause?: ReworkRootCause | null
+  internalCost?: number | null
 }
 export interface CloseAfterInspectionRequest {
   collectedCash?: boolean | null
   notes?: string | null
+  reworkRootCause?: ReworkRootCause | null
+  internalCost?: number | null
+  notRepairable: boolean
 }
 export interface ExecutorProfileResponse {
   id: string
@@ -2614,6 +3828,9 @@ export interface JobSummaryResponse {
   maxDiscountPercent: number
   requiresQuotation: boolean
   hasPendingQuotation: boolean
+  fulfillmentChannel: FulfillmentChannel
+  branchName: string | null
+  intakeNumber: string | null
 }
 export interface JobCustomerResponse {
   fullName: string
@@ -2636,6 +3853,16 @@ export interface EvidenceGroupResponse {
 }
 export interface JobDetailResponse extends JobSummaryResponse {
   requiresHomeInspection: boolean
+  requiresHoldReason: boolean
+  holdReason: HoldReason | null
+  holdNote: string | null
+  externalWorkshopName: string | null
+  externalCost: number | null
+  isRework: boolean
+  reworkOfItemNumber: string | null
+  requiresRootCause: boolean
+  reworkRootCause: ReworkRootCause | null
+  internalCost: number | null
   quotationEffect: QuotationEffect
   inspectionFee: number
   paymentMethod: PaymentMethod | null
@@ -2671,6 +3898,8 @@ export interface QuotationLineRequest {
   itemType?: PriceItemType | null
   quantity: number
   unitPrice?: number | null
+  partItemId?: string | null
+  warrantyDays?: number | null
 }
 export interface SaveQuotationRequest {
   notes?: string | null
@@ -2678,6 +3907,28 @@ export interface SaveQuotationRequest {
   discountAmount: number
   expiresInHours: number
   items: QuotationLineRequest[]
+}
+
+// ── Executors/ExecutorScanDtos.cs
+export interface ScanResultResponse {
+  serviceItemId: string
+  code: string
+  intakeNumber: string | null
+  tagCode: string | null
+  deviceName: string | null
+  brand: string | null
+  model: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  status: ServiceItemStatus
+  fulfillmentChannel: FulfillmentChannel
+  branchName: string | null
+  isMine: boolean
+  canClaim: boolean
+}
+export interface LockCodeResponse {
+  deviceId: string
+  lockCode: string
 }
 
 // ── Executors/TrackingDtos.cs
@@ -2747,6 +3998,7 @@ export interface MoveDeviceRequest {
   note?: string | null
   latitude?: number | null
   longitude?: number | null
+  branchId?: string | null
 }
 export interface PlanLegRequest {
   type: ServiceItemLegType
@@ -2770,6 +4022,7 @@ export interface MyLegResponse extends LegResponse {
 }
 export interface WorkshopBoardRequest {
   stage?: DeviceCustodyStage | null
+  branchId?: string | null
 }
 export interface WorkshopBoardResponse {
   counts: WorkshopStageCount[]
@@ -2796,8 +4049,15 @@ export interface WorkshopDevice {
   technicianName: string | null
   expectedReadyAt: string | null
   lastUpdateAt: string | null
+  branchId: string | null
+  branchName: string | null
   needsUpdate: boolean
   needsReturnTrip: boolean
+  daysInStage: number | null
+  aging: AgingBucket | null
+  isOverdue: boolean
+  holdReason: HoldReason | null
+  fulfillmentChannel: FulfillmentChannel | null
 }
 export interface SetExecutorRolesRequest {
   canRepair: boolean
@@ -2919,6 +4179,7 @@ export interface SettlementResponse {
   periodEnd: string
   grossAmount: number
   commissionAmount: number
+  deductionsAmount: number
   netAmount: number
   status: SettlementStatus
   linesCount: number
@@ -3006,6 +4267,267 @@ export interface WarrantyResponse {
   claimDescription: string | null
   claimServiceItemId: string | null
   createdAt: string
+}
+
+// ── Inventory/InventoryDtos.cs
+export interface PartListRequest extends PaginatedRequest {
+  search?: string | null
+  category?: string | null
+  isActive?: boolean | null
+}
+export interface SavePartRequest {
+  sku: string
+  nameAr: string
+  nameEn: string
+  category?: string | null
+  brand?: string | null
+  compatibleModels?: string | null
+  unit?: string | null
+  defaultCost: number
+  defaultPrice: number
+  defaultWarrantyDays?: number | null
+  reorderLevel: number
+  barcode?: string | null
+  isActive: boolean
+}
+export interface PartResponse {
+  id: string
+  sku: string
+  nameAr: string
+  nameEn: string
+  category: string | null
+  brand: string | null
+  compatibleModels: string | null
+  unit: string
+  defaultCost: number | null
+  defaultPrice: number
+  defaultWarrantyDays: number | null
+  reorderLevel: number
+  barcode: string | null
+  isActive: boolean
+  totalOnHand: number
+  createdAt: string
+}
+export interface SupplierListRequest extends PaginatedRequest {
+  search?: string | null
+  isActive?: boolean | null
+}
+export interface SavePartSupplierRequest {
+  name: string
+  phone?: string | null
+  notes?: string | null
+  isActive: boolean
+}
+export interface SupplierResponse {
+  id: string
+  name: string
+  phone: string | null
+  notes: string | null
+  isActive: boolean
+  createdAt: string
+}
+export interface StockListRequest extends PaginatedRequest {
+  branchId?: string | null
+  search?: string | null
+  lowOnly?: boolean
+}
+export interface StockRowResponse {
+  stockItemId: string
+  branchId: string
+  branchName: string
+  partItemId: string
+  sku: string
+  nameAr: string
+  nameEn: string
+  category: string | null
+  brand: string | null
+  unit: string
+  partIsActive: boolean
+  onHand: number
+  reserved: number
+  available: number
+  reorderLevel: number
+  isLow: boolean
+  averageCost: number | null
+  value: number | null
+  updatedAt: string
+}
+export interface ReceiveStockRequest {
+  branchId: string
+  partItemId: string
+  quantity: number
+  unitCost?: number | null
+  supplierId?: string | null
+  batchRef?: string | null
+  note?: string | null
+}
+export interface AdjustBranchStockRequest {
+  branchId: string
+  partItemId: string
+  quantityDelta?: number | null
+  countedOnHand?: number | null
+  reason: string
+  allowNegative: boolean
+}
+export interface TransferStockRequest {
+  fromBranchId: string
+  toBranchId: string
+  partItemId: string
+  quantity: number
+  note?: string | null
+}
+export interface StockChangeResponse {
+  movements: StockMovementResponse[]
+  stock: StockRowResponse[]
+}
+export interface StockMovementListRequest extends PaginatedRequest {
+  branchId?: string | null
+  partItemId?: string | null
+  kind?: StockMovementKind | null
+  serviceItemId?: string | null
+  supplierId?: string | null
+  from?: string | null
+  to?: string | null
+}
+export interface StockMovementResponse {
+  id: string
+  branchId: string
+  branchName: string
+  partItemId: string
+  sku: string
+  partNameAr: string
+  partNameEn: string
+  kind: StockMovementKind
+  quantity: number
+  unitCost: number | null
+  onHandAfter: number
+  supplierId: string | null
+  supplierName: string | null
+  batchRef: string | null
+  serviceItemId: string | null
+  itemNumber: string | null
+  quotationItemId: string | null
+  transferGroupId: string | null
+  supplierReturnId: string | null
+  negativeOverride: boolean
+  note: string | null
+  byName: string | null
+  at: string
+}
+export interface LowStockRequest {
+  branchId?: string | null
+}
+export interface SupplierReturnListRequest extends PaginatedRequest {
+  branchId?: string | null
+  supplierId?: string | null
+  status?: SupplierReturnStatus | null
+}
+export interface CreateSupplierReturnRequest {
+  branchId: string
+  partItemId: string
+  supplierId?: string | null
+  quantity: number
+  batchRef?: string | null
+  reason: string
+  fromStock: boolean
+  note?: string | null
+}
+export interface UpdateSupplierReturnRequest {
+  supplierId?: string | null
+  quantity: number
+  batchRef?: string | null
+  reason: string
+  note?: string | null
+}
+export interface SupplierReturnStatusRequest {
+  status: SupplierReturnStatus
+  creditAmount?: number | null
+  note?: string | null
+}
+export interface SupplierReturnResponse {
+  id: string
+  branchId: string
+  branchName: string
+  supplierId: string | null
+  supplierName: string | null
+  partItemId: string
+  sku: string
+  partNameAr: string
+  partNameEn: string
+  quantity: number
+  unitCost: number
+  batchRef: string | null
+  reason: string
+  status: SupplierReturnStatus
+  fromStock: boolean
+  serviceItemId: string | null
+  itemNumber: string | null
+  warrantyLineId: string | null
+  creditAmount: number | null
+  note: string | null
+  createdAt: string
+  sentAt: string | null
+  resolvedAt: string | null
+}
+export interface InventorySettingsResponse {
+  defaultLaborWarrantyDays: number | null
+}
+export interface UpdateInventorySettingsRequest {
+  defaultLaborWarrantyDays?: number | null
+}
+export interface ExecutorPartSearchRequest {
+  search?: string | null
+  inStockOnly: boolean
+}
+export interface ExecutorPartOptionResponse {
+  partItemId: string
+  sku: string
+  nameAr: string
+  nameEn: string
+  category: string | null
+  brand: string | null
+  compatibleModels: string | null
+  unit: string
+  barcode: string | null
+  unitPrice: number
+  warrantyDays: number | null
+  onHand: number
+  reserved: number
+  available: number
+}
+export interface ExecutorPartsResponse {
+  branchId: string | null
+  branchName: string | null
+  parts: ExecutorPartOptionResponse[]
+}
+export interface RecordPartUsedRequest {
+  partItemId: string
+  quantity: number
+  batchRef?: string | null
+  note?: string | null
+}
+export interface ReturnPartRequest {
+  partItemId: string
+  quantity: number
+  note?: string | null
+}
+export interface JobPartsUsageResponse {
+  serviceItemId: string
+  branchId: string | null
+  branchName: string | null
+  lines: JobPartLine[]
+}
+export interface JobPartLine {
+  partItemId: string
+  sku: string
+  nameAr: string
+  nameEn: string
+  unit: string
+  quoted: number
+  reserved: number
+  used: number
+  lastBatchRef: string | null
+  lastUsedAt: string | null
 }
 
 // ── Marketplace/MarketplaceDtos.cs
@@ -3256,6 +4778,8 @@ export interface AdminServiceItemListRequest extends PaginatedRequest {
   scheduledFrom?: string | null
   scheduledTo?: string | null
   search?: string | null
+  fulfillmentChannel?: FulfillmentChannel | null
+  branchId?: string | null
 }
 export interface AdminCancelRequest {
   reason: string
@@ -3385,6 +4909,9 @@ export interface ServiceItemAdminView {
   executor: PersonLookupResponse | null
   executorAssignmentDelegated: boolean
   isMarketplace: boolean
+  fulfillmentChannel: FulfillmentChannel
+  branchId: string | null
+  branchName: string | null
   scheduledStart: string | null
   scheduledEnd: string | null
   baseAmount: number
@@ -3697,6 +5224,7 @@ export interface ProviderWorkListRequest extends PaginatedRequest {
   scheduledFrom?: string | null
   scheduledTo?: string | null
   search?: string | null
+  branchId?: string | null
 }
 export interface ProviderRejectRequest {
   note: string
@@ -3704,6 +5232,9 @@ export interface ProviderRejectRequest {
 export interface IncomingWorkItemResponse {
   id: string
   returnedByTimeout: boolean
+  fulfillmentChannel: FulfillmentChannel
+  branchId: string | null
+  branchName: string | null
   itemNumber: string | null
   orderNumber: string | null
   serviceNameAr: string
@@ -3739,6 +5270,12 @@ export interface ServiceItemProviderView {
   issueNameAr: string | null
   issueNameEn: string | null
   executionMode: ExecutionMode
+  fulfillmentChannel: FulfillmentChannel
+  branchId: string | null
+  branchName: string | null
+  currentBranchId: string | null
+  currentBranchName: string | null
+  canChangeBranch: boolean
   pricingType: PricingType
   requiresCustomerConfirmation: boolean
   status: ServiceItemStatus
@@ -3866,6 +5403,7 @@ export interface DeviceRequest {
   brand?: string | null
   model?: string | null
   serialNumber?: string | null
+  imei?: string | null
   issueDescription?: string | null
 }
 export interface DeviceResponse {
@@ -3877,6 +5415,11 @@ export interface DeviceResponse {
   serialNumber: string | null
   issueDescription: string | null
   diagnosisNotes: string | null
+  imei: string | null
+  custodyStage: DeviceCustodyStage
+  tagCode: string | null
+  intakeNumber: string | null
+  hasLockCode: boolean
 }
 export interface TimelineEventResponse {
   id: string
@@ -3907,6 +5450,8 @@ export interface QuotationItemResponse {
   quantity: number
   unitPrice: number
   total: number
+  partItemId: string | null
+  warrantyDays: number | null
 }
 export interface QuotationResponse {
   id: string
@@ -4019,6 +5564,7 @@ export interface ProviderAdminListRequest extends PaginatedRequest {
   type?: ProviderType | null
   city?: string | null
   search?: string | null
+  hasPendingBusinessModel?: boolean | null
 }
 export interface ApproveProviderRequest {
   notes?: string | null
@@ -4055,6 +5601,8 @@ export interface UpdateProviderSettingsRequest {
   capacity?: number | null
   delegateExecutorAssignmentToPlatform?: boolean | null
   storeModuleEnabled?: boolean | null
+  counterModuleEnabled?: boolean | null
+  supervisorMaxDiscountPercent?: number | null
   businessModel?: ProviderBusinessModel | null
   baseLatitude?: number | null
   baseLongitude?: number | null
@@ -4072,6 +5620,8 @@ export interface ProviderAdminListItemResponse {
   city: string | null
   verificationStatus: ProviderVerificationStatus
   businessModel: ProviderBusinessModel
+  pendingBusinessModel: ProviderBusinessModel | null
+  businessModelRequestedAt: string | null
   tenantIsActive: boolean
   capacity: number
   executorsCount: number
@@ -4120,10 +5670,134 @@ export interface ProviderAdminDetailResponse {
   totalItems: number
 }
 
+// ── Providers/ProviderBranchDtos.cs
+export interface SaveProviderBranchRequest {
+  name: string
+  code: string
+  phone?: string | null
+  whatsAppNumber?: string | null
+  city?: string | null
+  district?: string | null
+  addressLine?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  receivesPlatformDevices: boolean
+  counterEnabled: boolean
+  autoSendWhatsApp: boolean
+  allowScanToClaim: boolean
+  termsText?: string | null
+  receiptFooter?: string | null
+  abandonAfterDays?: number | null
+  storageFeePerDay?: number | null
+  freeStorageDays?: number | null
+}
+export interface SetBranchActiveRequest {
+  isActive: boolean
+}
+export interface BranchOpeningHoursRequest {
+  dayOfWeek: DayOfWeek
+  opens?: string | null
+  closes?: string | null
+  isClosed: boolean
+}
+export interface SetBranchOpeningHoursRequest {
+  days: BranchOpeningHoursRequest[]
+}
+export interface AddBranchClosureRequest {
+  startsOn: string
+  endsOn: string
+  reason?: string | null
+}
+export interface SetBranchMembersRequest {
+  memberIds: string[]
+}
+export interface SetExecutorHomeBranchRequest {
+  branchId?: string | null
+}
+export interface ChangeItemBranchRequest {
+  branchId: string
+}
+export interface BranchOpeningHoursResponse {
+  dayOfWeek: DayOfWeek
+  opens: string | null
+  closes: string | null
+  isClosed: boolean
+}
+export interface BranchClosureResponse {
+  id: string
+  startsOn: string
+  endsOn: string
+  reason: string | null
+}
+export interface BranchMemberResponse {
+  memberId: string
+  userId: string
+  fullName: string
+  role: ProviderMemberRole
+}
+export interface ProviderBranchResponse {
+  id: string
+  whatsAppGlobalEnabled: boolean
+  name: string
+  code: string
+  isMain: boolean
+  isActive: boolean
+  phone: string | null
+  whatsAppNumber: string | null
+  city: string | null
+  district: string | null
+  addressLine: string | null
+  latitude: number | null
+  longitude: number | null
+  receivesPlatformDevices: boolean
+  counterEnabled: boolean
+  autoSendWhatsApp: boolean
+  allowScanToClaim: boolean
+  termsText: string | null
+  termsVersion: number
+  receiptLogoUrl: string | null
+  receiptFooter: string | null
+  abandonAfterDays: number | null
+  storageFeePerDay: number | null
+  freeStorageDays: number
+  effectiveAbandonAfterDays: number
+  openingHours: BranchOpeningHoursResponse[]
+  closures: BranchClosureResponse[]
+  members: BranchMemberResponse[]
+  executorsCount: number
+  openItemsCount: number
+  devicesInBranchCount: number
+  createdAt: string
+  updatedAt: string | null
+}
+export interface BranchOptionResponse {
+  id: string
+  name: string
+  code: string
+  isMain: boolean
+  isActive: boolean
+  receivesPlatformDevices: boolean
+  counterEnabled: boolean
+  termsText: string | null
+  termsVersion: number
+  phone: string | null
+  addressLine: string | null
+}
+export interface MyCounterAccessResponse {
+  available: boolean
+  reason: string | null
+}
+export interface MyBranchesResponse {
+  allBranches: boolean
+  branches: BranchOptionResponse[]
+  counter: MyCounterAccessResponse
+}
+
 // ── Providers/ProviderGrowthDtos.cs
 export interface WalletResponse {
   availableAmount: number
   availableItems: number
+  deductionsAmount: number
   onHoldAmount: number
   onHoldItems: number
   nextReleaseAt: string | null
@@ -4154,7 +5828,9 @@ export interface BankAccountDetailResponse {
   accountHolderName: string | null
 }
 export interface WalletItemResponse {
+  kind: WalletItemKind
   serviceItemId: string
+  referenceId: string | null
   itemNumber: string | null
   serviceNameAr: string
   serviceNameEn: string
@@ -4229,6 +5905,7 @@ export interface TeamPerformanceRequest {
   from?: string | null
   to?: string | null
   executorId?: string | null
+  branchId?: string | null
 }
 export interface TeamPerformanceResponse {
   from: string
@@ -4370,6 +6047,8 @@ export interface OnboardingStepsResponse {
   coverageSet: boolean
   capacitySet: boolean
   businessModelSet: boolean
+  capabilitiesRequired: boolean
+  coverageRequired: boolean
   canSubmit: boolean
 }
 export interface ProviderOrganizationResponse {
@@ -4388,6 +6067,9 @@ export interface ProviderOrganizationResponse {
   logoUrl: string | null
   verificationStatus: ProviderVerificationStatus
   businessModel: ProviderBusinessModel
+  pendingBusinessModel: ProviderBusinessModel | null
+  businessModelRequestedAt: string | null
+  counterSubscriptionStatus: ProviderSubscriptionStatus | null
   submittedAt: string | null
   reviewedAt: string | null
   reviewNotes: string | null
@@ -4397,6 +6079,9 @@ export interface ProviderOrganizationResponse {
   commissionRate: number
   maxDiscountPercent: number | null
   storeModuleEnabled: boolean
+  counterModuleEnabled: boolean
+  supervisorMaxDiscountPercent: number
+  branchesCount: number
   baseLatitude: number | null
   baseLongitude: number | null
   isDemo: boolean
@@ -4468,6 +6153,14 @@ export interface ProviderRegistrationRequest {
   otpCode: string
   deviceId?: string | null
   businessModel: ProviderBusinessModel
+  mainBranch?: RegistrationBranchRequest | null
+}
+export interface RegistrationBranchRequest {
+  name?: string | null
+  district?: string | null
+  addressLine?: string | null
+  latitude?: number | null
+  longitude?: number | null
 }
 export interface ProviderRegistrationResponse {
   providerOrganizationId: string
@@ -4526,6 +6219,7 @@ export interface TeamMemberResponse {
   isActive: boolean
   joinedAt: string
   executorId: string | null
+  branchIds: string[]
 }
 export interface ExecutorResponse {
   id: string
@@ -4536,6 +6230,8 @@ export interface ExecutorResponse {
   email: string | null
   specialization: string | null
   availability: ExecutorAvailability
+  homeBranchId: string | null
+  homeBranchName: string | null
   canRepair: boolean
   canDeliver: boolean
   maxConcurrentJobs: number
@@ -4832,6 +6528,7 @@ export interface TrackingReportRequest {
   providerOrganizationId?: string | null
   executorId?: string | null
   canonicalServiceId?: string | null
+  branchId?: string | null
 }
 export interface TrackingItemRef {
   serviceItemId: string
@@ -4971,6 +6668,7 @@ export interface CashItemsRequest {
   executorId: string
   providerOrganizationId?: string | null
   handedOver: boolean
+  branchId?: string | null
 }
 export interface CashItem extends TrackingItemRef {
   amount: number

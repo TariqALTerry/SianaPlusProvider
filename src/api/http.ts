@@ -100,6 +100,21 @@ export function setStaleStateHandler(handler: typeof onStaleState): void {
   onStaleState = handler
 }
 
+/**
+ * A list read with a `branchId` the user no longer has (`BranchNotFound`, PROVIDER-BRANCHES phase 1 §4): the branch
+ * switcher clears its saved choice, and the queries run again without it.
+ */
+let onBranchRejected: () => void = () => {}
+
+export function setBranchRejectedHandler(handler: () => void): void {
+  onBranchRejected = handler
+}
+
+function isBranchScopedRead(config: AxiosRequestConfig | undefined): boolean {
+  const params = config?.params as Record<string, unknown> | undefined
+  return (config?.method ?? 'get').toLowerCase() === 'get' && !!params && params.branchId !== undefined
+}
+
 // ── Instances ───────────────────────────────────────────────────────────────
 
 export const client = axios.create({
@@ -220,6 +235,7 @@ client.interceptors.response.use(
     }
 
     if (code && STALE_STATE_CODES.has(code)) onStaleState(code)
+    if (code === 'BranchNotFound' && isBranchScopedRead(config)) onBranchRejected()
 
     const endReason = (status === 403 || status === 404) && session.accessToken ? sessionEndReasonFor(code) : null
     if (endReason) {
@@ -310,4 +326,31 @@ export const http = {
     if (file) form.append('file', file)
     return send<T>({ method: 'POST', url, data: form })
   },
+}
+
+/**
+ * The public pages (the tracking page `/t/{token}`, PROVIDER-BRANCHES phase 4 §6): no `Authorization`, no refresh, no
+ * session handling, and no back-off shared with the signed-in app. Same envelope and `ApiError` as `http`.
+ */
+const publicClient = axios.create({ baseURL: API_ORIGIN, timeout: TIMEOUT_MS, headers: { Accept: 'application/json' } })
+
+async function sendPublic<T>(config: AxiosRequestConfig): Promise<T> {
+  try {
+    const response = await publicClient.request<ApiResponse<T>>({ ...config, headers: { 'Accept-Language': currentLanguage() } })
+    const body = response.data
+    if (!body || body.success !== true) {
+      throw new ApiError({ status: response.status, errorCode: body?.errorCode ?? null, message: body?.message ?? 'UnknownError', details: body?.data })
+    }
+    return body.data as T
+  } catch (error) {
+    const e = toApiError(error)
+    // A 429 from the rate limiter may come without the envelope.
+    if (e.status === 429 && !e.errorCode) throw new ApiError({ status: 429, errorCode: 'TooManyRequests', message: e.message, details: e.details })
+    throw e
+  }
+}
+
+export const publicHttp = {
+  get: <T>(url: string, signal?: AbortSignal) => sendPublic<T>({ method: 'GET', url, signal }),
+  post: <T>(url: string, body?: unknown) => sendPublic<T>({ method: 'POST', url, data: body ?? {} }),
 }

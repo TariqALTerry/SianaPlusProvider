@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ProviderOrganizationResponse } from '@/api/types'
-import { canChangeBusinessModel, hasMarketplace, isOperational, providerContextFor, shellModeFor } from './provider'
+import { canChangeBusinessModel, hasMarketplace, isBusinessModelRequest, isOperational, providerContextFor, selectableBusinessModels, shellModeFor } from './provider'
 
 const org = (over: Partial<ProviderOrganizationResponse>) => ({ verificationStatus: 'Approved', trialEndsAt: null, businessModel: 'ExecutionPartner', storeModuleEnabled: false, ...over }) as ProviderOrganizationResponse
 
@@ -32,5 +32,16 @@ describe('verification status drives the shell (§6)', () => {
     expect(hasMarketplace('Both')).toBe(true)
     expect(canChangeBusinessModel('Draft')).toBe(true)
     expect(canChangeBusinessModel('Approved')).toBe(false)
+  })
+
+  it('lets an approved shop move to "counter only", and leave it only by request (PROVIDER-BRANCHES phase 3 §7)', () => {
+    expect(selectableBusinessModels('Draft', 'ExecutionPartner')).toHaveLength(4)
+    expect(selectableBusinessModels('Approved', 'ExecutionPartner')).toEqual(['ExecutionPartner', 'CounterOnly'])
+    expect(selectableBusinessModels('Trial', 'CounterOnly')).toHaveLength(4)
+    expect(selectableBusinessModels('UnderReview', 'Both')).toEqual([])
+    expect(isBusinessModelRequest('Approved', 'CounterOnly', 'Both')).toBe(true)
+    expect(isBusinessModelRequest('Approved', 'Both', 'CounterOnly')).toBe(false)
+    expect(isBusinessModelRequest('Draft', 'CounterOnly', 'Both')).toBe(false)
+    expect(providerContextFor(org({ businessModel: 'CounterOnly' }), true).counterOnly).toBe(true)
   })
 })

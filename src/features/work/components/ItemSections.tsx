@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Table, TBody, Td, Th, THead, Tr } from '@/components/ui/table'
 import { fileUrl, isPdf, isVideo, thumbUrl } from '@/api/files'
 import type {
+  DeviceResponse,
   AssignmentResponse,
   EvidenceResponse,
   EvidenceStage,
@@ -169,7 +170,11 @@ export function ScheduleCard({ item, schedules }: { item: ServiceItemProviderVie
   )
 }
 
-export function DevicesCard({ item }: { item: ServiceItemProviderView }) {
+/**
+ * The devices, with IMEI, custody stage and intake number (PROVIDER-BRANCHES phase 2 §6). `actions` adds per-device
+ * buttons (the arrival receipt and label of a platform device at a branch).
+ */
+export function DevicesCard({ item, actions }: { item: ServiceItemProviderView; actions?: (device: DeviceResponse) => ReactNode }) {
   const { t } = useTranslation('work')
   const devices = [...item.devices].sort((a, b) => a.sequence - b.sequence)
   return (
@@ -182,11 +187,17 @@ export function DevicesCard({ item }: { item: ServiceItemProviderView }) {
           <ul className="divide-y">
             {devices.map((d) => (
               <li key={d.id} className="py-2.5 first:pt-0 last:pb-0">
-                <p className="font-medium">
-                  <span className="text-xs text-muted-foreground">{t('detail.device', { n: d.sequence })} · </span>
-                  {d.name}
-                  {(d.brand || d.model) && <span className="text-sm font-normal text-muted-foreground"> — {[d.brand, d.model].filter(Boolean).join(' ')}</span>}
-                </p>
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <p className="font-medium">
+                    <span className="text-xs text-muted-foreground">{t('detail.device', { n: d.sequence })} · </span>
+                    {d.name}
+                    {(d.brand || d.model) && <span className="text-sm font-normal text-muted-foreground"> — {[d.brand, d.model].filter(Boolean).join(' ')}</span>}
+                  </p>
+                  <span className="flex flex-wrap items-center gap-2">
+                    {item.fulfillmentChannel !== 'OnSite' && <StatusBadge enum="DeviceCustodyStage" value={d.custodyStage} />}
+                    {actions?.(d)}
+                  </span>
+                </div>
                 <dl className="mt-1 grid gap-x-4 gap-y-1 text-sm sm:grid-cols-[auto_1fr]">
                   {d.issueDescription && (
                     <>
@@ -204,6 +215,12 @@ export function DevicesCard({ item }: { item: ServiceItemProviderView }) {
                     <>
                       <dt className="text-xs text-muted-foreground">{t('detail.serial')}</dt>
                       <dd className="ltr-nums font-mono text-xs">{d.serialNumber}</dd>
+                    </>
+                  )}
+                  {d.imei && (
+                    <>
+                      <dt className="text-xs text-muted-foreground">IMEI</dt>
+                      <dd className="ltr-nums font-mono text-xs">{d.imei}</dd>
                     </>
                   )}
                 </dl>

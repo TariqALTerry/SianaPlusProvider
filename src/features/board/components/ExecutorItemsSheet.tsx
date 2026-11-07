@@ -1,3 +1,4 @@
+import { useBranchParam } from '@/features/branches/scope'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -32,7 +33,8 @@ export function ExecutorItemsSheet({ executor, onClose }: { executor: ExecutorLo
     setPage(1)
   }, [executor?.executorId])
 
-  const params: WorkListParams = { status: scope === 'active' ? [...PROVIDER_ACTIVE_STATUSES] : [], page, pageSize: PAGE_SIZE }
+  const branchId = useBranchParam()
+  const params: WorkListParams = { status: scope === 'active' ? [...PROVIDER_ACTIVE_STATUSES] : [], page, pageSize: PAGE_SIZE, branchId }
   const query = useQuery({
     queryKey: workKeys.executorItems(executor?.executorId ?? '', params),
     queryFn: ({ signal }) => workApi.executorItems(executor!.executorId, params, signal),

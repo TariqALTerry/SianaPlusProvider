@@ -1,3 +1,4 @@
+import { useBranchParam } from '@/features/branches/scope'
 import { useQuery } from '@tanstack/react-query'
 import { FileText, FileX, MessageSquareWarning, ShieldAlert, ShieldCheck, Star, StarOff, TimerOff, UserX, X, Zap, type LucideIcon } from 'lucide-react'
 import { useMemo } from 'react'
@@ -47,7 +48,8 @@ export function QualityPage() {
   const { t } = useTranslation('tracking')
   const { state, set } = useUrlState(schema)
   const { period, range, ready } = resolvePeriod(state)
-  const params: TrackingParams = { from: range.from, to: range.to, executorId: state.executorId || undefined }
+  const branchId = useBranchParam()
+  const params: TrackingParams = { from: range.from, to: range.to, executorId: state.executorId || undefined, branchId }
   const query = useQuery({ queryKey: insightKeys.quality(params), queryFn: ({ signal }) => insightsApi.quality(params, signal), enabled: ready })
   const toggleTechnician = (id: string) => set({ executorId: id === state.executorId ? '' : id })
 

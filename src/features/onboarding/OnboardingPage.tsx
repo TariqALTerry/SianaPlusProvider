@@ -17,7 +17,7 @@ import { useAction } from '@/hooks/useAction'
 import { useLang } from '@/hooks/useLang'
 import { cn } from '@/lib/utils'
 import { onboardingApi } from './api'
-import { isHighlighted, missingStepsFrom, ONBOARDING_STEPS, stepProgress, type StepKey } from './steps'
+import { isHighlighted, missingStepsFrom, stepProgress, visibleSteps, type StepKey } from './steps'
 import './i18n'
 
 /**
@@ -89,7 +89,9 @@ export function OnboardingPage() {
     } else runSubmit(false)
   }
 
-  const highlightedCount = ONBOARDING_STEPS.filter((s) => isHighlighted(s.key, missing, org.steps)).length
+  const steps = visibleSteps(org.steps)
+  const highlightedCount = steps.filter((s) => isHighlighted(s.key, missing, org.steps)).length
+  const counterOnly = org.businessModel === 'CounterOnly'
 
   return (
     <div className="mx-auto max-w-5xl space-y-5">
@@ -140,7 +142,7 @@ export function OnboardingPage() {
           {t('checklist')}
         </h2>
         <ol ref={listRef} className="grid scroll-mt-20 gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {ONBOARDING_STEPS.map((step, i) => (
+          {steps.map((step, i) => (
             <li key={step.key}>
               <StepCard
                 n={i + 1}
@@ -155,6 +157,17 @@ export function OnboardingPage() {
           <li>
             <BusinessModelCard org={org} editable={isOwner && canChangeBusinessModel(status)} />
           </li>
+          {/* A "counter only" shop: its first branch (created with the organization) and the plans, to look at now. */}
+          {counterOnly && (
+            <li>
+              <InfoCard title={t('counterOnly.branchTitle')} body={t('counterOnly.branchBody')} href={organizationTabHref('branches')} action={t('counterOnly.branchAction')} />
+            </li>
+          )}
+          {counterOnly && (
+            <li>
+              <InfoCard title={t('counterOnly.plansTitle')} body={t('counterOnly.plansBody')} href="/subscription" action={t('counterOnly.plansAction')} />
+            </li>
+          )}
         </ol>
       </section>
 
@@ -388,5 +401,25 @@ function BusinessModelCard({ org, editable }: { org: ProviderOrganizationRespons
         </span>
       </div>
     </Link>
+  )
+}
+
+/** A card next to the steps that informs and links, without counting toward submission. */
+function InfoCard({ title, body, href, action }: { title: string; body: string; href: string; action: string }) {
+  return (
+    <div className="flex h-full flex-col gap-3 rounded-xl border border-dashed bg-surface p-4">
+      <div className="flex items-start gap-3">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-tone-info-soft text-tone-info">
+          <Info className="size-4" aria-hidden />
+        </span>
+        <div className="min-w-0">
+          <p className="font-semibold">{title}</p>
+          <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{body}</p>
+        </div>
+      </div>
+      <Button asChild size="sm" variant="outline" className="mt-auto self-start">
+        <Link to={href}>{action}</Link>
+      </Button>
+    </div>
   )
 }

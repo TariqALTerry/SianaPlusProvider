@@ -9,7 +9,11 @@ Siana Plus:
 - the team and coverage;
 - tenders;
 - settlements, reviews and complaints;
-- an optional store.
+- an optional store;
+- branches, the shop counter (walk-in devices) and its subscription;
+- automatic WhatsApp messages, branch operations (board, transfers, warranty, cash close, counter report) and the
+  workshop parts inventory;
+- the public tracking page `/t/{token}` that customers open from WhatsApp (no sign-in).
 
 - Brief: `../Siana/docs/PROVIDER-PLATFORM-PROMPT.md`.
 - Conventions: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
@@ -33,8 +37,8 @@ Siana Plus:
 3. Open http://localhost:5174. `/api` and `/uploads` are proxied to `VITE_API_PROXY_TARGET` (see
    `.env.development`).
 
-Sign in with the phone of an owner or supervisor. To create a new organization, go to
-`/join`.
+Sign in with the phone of an owner, a supervisor or a front-desk member (the counter only). To create a new
+organization, go to `/join`.
 
 ## Environment
 
@@ -69,7 +73,8 @@ npm run build
 The `VITE_*` values are read at build time, so set `VITE_SENTRY_DSN` (if any) before building.
 
 The build writes static files to `dist/`. Any static host with an SPA fallback to `index.html`
-works; `vercel.json` is included.
+works; `vercel.json` is included. The fallback must also cover `/t/{token}`: the backend builds the customers'
+tracking links on this site (`publicTrackingUrl`), and that page loads without a session.
 
 ## Scripts
 

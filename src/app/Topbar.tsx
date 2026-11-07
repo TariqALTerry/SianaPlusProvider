@@ -11,7 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/menu'
-import { useAuthStore } from '@/features/auth/authStore'
+import { roleKindFor, useAuthStore } from '@/features/auth/authStore'
+import { BranchSwitcher } from '@/features/branches/BranchSwitcher'
 import { NotificationBell } from '@/features/notifications/NotificationBell'
 import { changeLanguage } from '@/i18n'
 import { useLang } from '@/hooks/useLang'
@@ -31,7 +32,7 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
     { value: 'system', label: t('shell.themeSystem'), icon: Monitor },
   ]
   const ThemeIcon = themes.find((x) => x.value === theme)?.icon ?? Monitor
-  const isOwner = user?.role === 'ProviderOwner'
+  const roleKind = roleKindFor(user?.role)
 
   return (
     <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b bg-surface/90 px-3 backdrop-blur md:px-6">
@@ -41,6 +42,8 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
       <div className="min-w-0 flex-1 truncate text-sm font-medium lg:hidden">{t('app.name')}</div>
 
       <div className="ms-auto flex items-center gap-1">
+        {/* The branch switcher (PROVIDER-BRANCHES phase 1 §4): its choice scopes the lists and reports. */}
+        <BranchSwitcher className="me-1" />
         <NotificationBell />
 
         <Button variant="ghost" size="sm" onClick={() => void changeLanguage(lang === 'ar' ? 'en' : 'ar')} aria-label={t('shell.language')}>
@@ -78,7 +81,7 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
               {user?.phoneNumber && (
                 <div className="ltr-nums truncate font-latin font-normal tabular">{formatSaudiMobile(user.phoneNumber)}</div>
               )}
-              <Badge tone={isOwner ? 'active' : 'info'}>{isOwner ? t('shell.owner') : t('shell.supervisor')}</Badge>
+              <Badge tone={roleKind === 'owner' ? 'active' : 'info'}>{t(`shell.${roleKind}`)}</Badge>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem destructive onSelect={() => void signOut()}>

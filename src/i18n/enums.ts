@@ -78,6 +78,7 @@ export const OrderSource: EnumMap<T.OrderSource> = {
   SmartRequest: e('الطلب الذكي', 'Smart request', 'info'),
   Admin: e('الإدارة', 'Admin', 'active'),
   Store: e('المتجر', 'Store', 'neutral'),
+  ProviderCounter: e('الكاونتر', 'Counter', 'info'),
 }
 
 export const ProviderVerificationStatus: EnumMap<T.ProviderVerificationStatus> = {
@@ -94,6 +95,7 @@ export const ProviderBusinessModel: EnumMap<T.ProviderBusinessModel> = {
   ExecutionPartner: e('تنفيذ الطلبات', 'Execution partner', 'neutral'),
   MarketplacePartner: e('المناقصات', 'Marketplace partner', 'neutral'),
   Both: e('التنفيذ والمناقصات', 'Both', 'neutral'),
+  CounterOnly: e('الكاونتر فقط', 'Counter only', 'info'),
 }
 
 export const ProviderType: EnumMap<T.ProviderType> = {
@@ -121,6 +123,7 @@ export const ProviderMemberRole: EnumMap<T.ProviderMemberRole> = {
   Owner: e('مالك', 'Owner', 'active'),
   Supervisor: e('مشرف', 'Supervisor', 'info'),
   Executor: e('فني', 'Technician', 'neutral'),
+  FrontDesk: e('موظف استقبال', 'Front desk', 'info'),
 }
 
 export const ExecutorAvailability: EnumMap<T.ExecutorAvailability> = {
@@ -383,6 +386,7 @@ export const Role: EnumMap<T.Role> = {
   Customer: e('عميل', 'Customer', 'neutral'),
   ProviderOwner: e('مالك منشأة', 'Provider owner', 'success'),
   ProviderSupervisor: e('مشرف منشأة', 'Provider supervisor', 'success'),
+  ProviderFrontDesk: e('موظف استقبال', 'Front desk', 'info'),
   Executor: e('فني', 'Technician', 'attention'),
   Supplier: e('مورّد قطع', 'Parts supplier', 'neutral'),
   // Legacy roles from the pre–Siana Plus template; still in the enum, never issued to new users.
@@ -447,6 +451,8 @@ export const DeviceCustodyStage: EnumMap<T.DeviceCustodyStage> = {
   ReadyForReturn: e('جاهز للإرجاع', 'Ready for return', 'attention'),
   OutForReturn: e('في طريق الإرجاع', 'On its way back', 'active'),
   Returned: e('رجع للعميل', 'Back with the customer', 'success'),
+  InTransit: e('في الطريق إلى فرع آخر', 'On the way to another branch', 'active'),
+  Abandoned: e('متروك', 'Abandoned', 'danger'),
 }
 
 /** What the customer was told about the work, without asking. */
@@ -594,6 +600,253 @@ export const QualitySignalKind: EnumMap<T.QualitySignalKind> = {
   WarrantyClaim: e('مطالبة ضمان', 'Warranty claim', 'danger'),
 }
 
+// ── Branches and the counter (PROVIDER-BRANCHES-PROVIDER-PLATFORM-PROMPT) ─────────────────────────────
+
+/** How a service reaches the provider: at the customer, collected to a branch, or handed in at the counter. */
+export const FulfillmentChannel: EnumMap<T.FulfillmentChannel> = {
+  OnSite: e('عند العميل', 'At the customer', 'neutral'),
+  PickupDelivery: e('استلام وتسليم عبر فرع', 'Pickup and delivery', 'info'),
+  WalkIn: e('كاونتر (عميل المحل)', 'Counter (walk-in)', 'active'),
+}
+
+export const HoldReason: EnumMap<T.HoldReason> = {
+  WaitingParts: e('بانتظار قطعة', 'Waiting for a part', 'waiting'),
+  WaitingCustomer: e('بانتظار العميل', 'Waiting for the customer', 'waiting'),
+  ExternalWorkshop: e('ورشة خارجية', 'External workshop', 'info'),
+  Other: e('أخرى', 'Other', 'neutral'),
+}
+
+export const RepairOutcome: EnumMap<T.RepairOutcome> = {
+  Repaired: e('أُصلح', 'Repaired', 'success'),
+  NotRepairable: e('تعذّر الإصلاح', 'Not repairable', 'danger'),
+  QuoteRejected: e('رُفض العرض', 'Quote rejected', 'attention'),
+  CustomerWithdrew: e('انسحب العميل', 'Customer withdrew', 'muted'),
+}
+
+export const IntakeAccessory: EnumMap<T.IntakeAccessory> = {
+  Charger: e('شاحن', 'Charger'),
+  Case: e('جراب', 'Case'),
+  SimCard: e('شريحة', 'SIM card'),
+  MemoryCard: e('بطاقة ذاكرة', 'Memory card'),
+  Box: e('علبة', 'Box'),
+  Cable: e('كيبل', 'Cable'),
+  Other: e('أخرى', 'Other'),
+}
+
+export const IntakeCondition: EnumMap<T.IntakeCondition> = {
+  None: e('سليم', 'No marks', 'success'),
+  Scratches: e('خدوش', 'Scratches', 'attention'),
+  CrackedScreen: e('شاشة مكسورة', 'Cracked screen', 'danger'),
+  LiquidDamage: e('تعرض لسائل', 'Liquid damage', 'danger'),
+  NotPoweringOn: e('لا يعمل', 'Not powering on', 'danger'),
+  Dents: e('صدمات', 'Dents', 'attention'),
+  MissingParts: e('قطع ناقصة', 'Missing parts', 'attention'),
+}
+
+export const PowersOnState: EnumMap<T.PowersOnState> = {
+  Yes: e('يعمل', 'Powers on', 'success'),
+  No: e('لا يعمل', 'Does not power on', 'danger'),
+  NotTested: e('لم يُختبر', 'Not tested', 'muted'),
+}
+
+export const IntakeEstimateType: EnumMap<T.IntakeEstimateType> = {
+  Fixed: e('مبلغ', 'Fixed amount'),
+  Range: e('من–إلى', 'Range'),
+  AfterInspection: e('بعد الفحص', 'After inspection'),
+}
+
+export const IntakeKind: EnumMap<T.IntakeKind> = {
+  Counter: e('كاونتر', 'Counter', 'active'),
+  PlatformArrival: e('جهاز منصة وصل الفرع', 'Platform device at the branch', 'info'),
+}
+
+export const CustomerApprovalDecision: EnumMap<T.CustomerApprovalDecision> = {
+  Approved: e('موافق', 'Approved', 'success'),
+  Rejected: e('رافض', 'Rejected', 'danger'),
+}
+
+export const CustomerApprovalMethod: EnumMap<T.CustomerApprovalMethod> = {
+  InApp: e('من التطبيق', 'In the app'),
+  Call: e('اتصال', 'Phone call'),
+  InPerson: e('حضوريًا', 'In person'),
+  WhatsAppLink: e('رابط واتساب', 'WhatsApp link'),
+}
+
+export const CallOutcome: EnumMap<T.CallOutcome> = {
+  Answered: e('ردّ', 'Answered', 'success'),
+  NoAnswer: e('لم يرد', 'No answer', 'attention'),
+  Busy: e('مشغول', 'Busy', 'waiting'),
+  Off: e('مغلق', 'Phone off', 'muted'),
+}
+
+export const CounterPaymentKind: EnumMap<T.CounterPaymentKind> = {
+  Deposit: e('عربون', 'Deposit'),
+  InspectionFee: e('رسوم فحص', 'Inspection fee'),
+  Payment: e('دفعة', 'Payment'),
+}
+
+export const CounterTab: EnumMap<T.CounterTab> = {
+  Received: e('مستلم', 'Received'),
+  InProgress: e('قيد العمل', 'In progress'),
+  AwaitingCustomer: e('بانتظار اتصال العميل', 'Call the customer'),
+  Ready: e('جاهز', 'Ready'),
+  Delivered: e('سُلّم اليوم', 'Delivered today'),
+  All: e('الكل', 'All'),
+}
+
+export const HandoverProof: EnumMap<T.HandoverProof> = {
+  Code: e('كود الاستلام', 'Pickup code'),
+  Signature: e('توقيع', 'Signature'),
+}
+
+// ── Counter subscription (phase 3) ─────────────────────────────────────────
+
+export const SubscriptionBillingCycle: EnumMap<T.SubscriptionBillingCycle> = {
+  Monthly: e('شهري', 'Monthly'),
+  Yearly: e('سنوي', 'Yearly'),
+}
+
+export const ProviderSubscriptionStatus: EnumMap<T.ProviderSubscriptionStatus> = {
+  Trial: e('تجربة مجانية', 'Free trial', 'info'),
+  Active: e('نشط', 'Active', 'success'),
+  PastDue: e('متأخر الدفع', 'Past due', 'danger'),
+  Expired: e('منتهٍ', 'Expired', 'muted'),
+  Cancelled: e('ملغى', 'Cancelled', 'muted'),
+  PendingPayment: e('بانتظار الدفع', 'Pending payment', 'waiting'),
+}
+
+export const SubscriptionInvoiceStatus: EnumMap<T.SubscriptionInvoiceStatus> = {
+  Pending: e('غير مدفوعة', 'Unpaid', 'waiting'),
+  Paid: e('مدفوعة', 'Paid', 'success'),
+  Cancelled: e('ملغاة', 'Cancelled', 'muted'),
+}
+
+export const SubscriptionPaymentMethod: EnumMap<T.SubscriptionPaymentMethod> = {
+  BankTransfer: e('تحويل بنكي', 'Bank transfer'),
+  WalletDeduction: e('من رصيد المحفظة', 'From the wallet balance'),
+  Gateway: e('بطاقة (قريبًا)', 'Card (soon)'),
+}
+
+export const WalletItemKind: EnumMap<T.WalletItemKind> = {
+  Service: e('خدمة', 'Service'),
+  CounterSubscription: e('اشتراك الكاونتر', 'Counter subscription', 'danger'),
+}
+
+export const WalletDeductionKind: EnumMap<T.WalletDeductionKind> = {
+  CounterSubscription: e('اشتراك الكاونتر', 'Counter subscription', 'danger'),
+}
+
+// ── Phases 4–6: WhatsApp (grey queued, blue sent, green delivered/read, red failed, orange not sent), branch operations, inventory ─
+
+export const WhatsAppMessageStatus: EnumMap<T.WhatsAppMessageStatus> = {
+  Queued: e('في الانتظار', 'Queued', 'neutral'),
+  Sent: e('أُرسلت', 'Sent', 'info'),
+  Delivered: e('وصلت', 'Delivered', 'success'),
+  Read: e('قُرئت', 'Read', 'success'),
+  Failed: e('فشلت', 'Failed', 'danger'),
+  Skipped: e('لم تُرسل', 'Not sent', 'attention'),
+}
+
+export const WhatsAppSenderKind: EnumMap<T.WhatsAppSenderKind> = {
+  Platform: e('رقم صيانة بلس', 'Siana Plus number'),
+  Provider: e('رقمك الخاص', 'Your own number'),
+}
+
+export const WhatsAppTemplateKind: EnumMap<T.WhatsAppTemplateKind> = {
+  IntakeReceived: e('سند الاستلام', 'Intake receipt'),
+  QuoteReady: e('عرض السعر', 'Quote ready'),
+  QuoteReminder: e('تذكير بالعرض', 'Quote reminder'),
+  ReadyForPickup: e('جاهز للاستلام', 'Ready for pickup'),
+  NotRepairable: e('تعذّر الإصلاح', 'Not repairable'),
+  PickupReminder: e('تذكير بالاستلام', 'Pickup reminder'),
+  Completed: e('تم التسليم', 'Delivered'),
+  Otp: e('رمز التحقق', 'Verification code'),
+  Test: e('رسالة اختبار', 'Test message'),
+}
+
+export const WhatsAppSkipReason: EnumMap<T.WhatsAppSkipReason> = {
+  QuotaExceeded: e('انتهت الحصة', 'Quota used up'),
+  NoPhone: e('لا جوال', 'No phone'),
+  SenderNotConfigured: e('لا رقم مرسل', 'No sender number'),
+  GlobalDisabled: e('أوقفته المنصة', 'Turned off by the platform'),
+  Outdated: e('لم تعد صحيحة', 'No longer valid'),
+}
+
+export const TrackingStage: EnumMap<T.TrackingStage> = {
+  Received: e('استُلم', 'Received'),
+  Diagnosing: e('قيد الفحص', 'Diagnosing'),
+  AwaitingApproval: e('بانتظار موافقتك', 'Awaiting your approval'),
+  InRepair: e('قيد الإصلاح', 'In repair'),
+  Ready: e('جاهز للاستلام', 'Ready for pickup'),
+  Delivered: e('سُلّم', 'Delivered'),
+  NotRepairable: e('تعذّر الإصلاح', 'Not repairable'),
+  Cancelled: e('ملغى', 'Cancelled'),
+}
+
+export const ReworkRootCause: EnumMap<T.ReworkRootCause> = {
+  SameFault: e('نفس العطل', 'Same fault'),
+  NewFault: e('عطل جديد', 'New fault'),
+  DefectivePart: e('قطعة معيبة', 'Defective part'),
+  TechnicianError: e('خطأ فني', 'Technician error'),
+  CustomerMisuse: e('سوء استخدام من العميل', 'Customer misuse'),
+}
+
+export const BranchTransferStatus: EnumMap<T.BranchTransferStatus> = {
+  Requested: e('مطلوب', 'Requested', 'waiting'),
+  InTransit: e('في الطريق', 'In transit', 'active'),
+  Received: e('وصل', 'Received', 'success'),
+  Cancelled: e('ملغى', 'Cancelled', 'muted'),
+}
+
+export const AgingBucket: EnumMap<T.AgingBucket> = {
+  Days0To2: e('0–2 يوم', '0–2 days', 'success'),
+  Days3To7: e('3–7 أيام', '3–7 days', 'attention'),
+  Over7Days: e('أكثر من 7', 'Over 7 days', 'danger'),
+}
+
+export const BranchBoardStage: EnumMap<T.BranchBoardStage> = {
+  Received: e('مستلم', 'Received'),
+  Diagnosing: e('قيد الفحص', 'Diagnosing'),
+  AwaitingCustomer: e('بانتظار العميل', 'Awaiting the customer'),
+  InRepair: e('قيد الإصلاح', 'In repair'),
+  OnHold: e('معلّق', 'On hold'),
+  Ready: e('جاهز', 'Ready'),
+  InTransit: e('في الطريق لفرع آخر', 'To another branch'),
+}
+
+export const CashCloseStatus: EnumMap<T.CashCloseStatus> = {
+  Closed: e('مغلق', 'Closed', 'success'),
+  Reopened: e('أُعيد فتحه', 'Reopened', 'attention'),
+}
+
+export const StockMovementKind: EnumMap<T.StockMovementKind> = {
+  Receive: e('استلام', 'Received'),
+  Issue: e('صرف على خدمة', 'Issued to a service'),
+  Return: e('إرجاع من خدمة', 'Returned from a service'),
+  Adjust: e('تعديل جرد', 'Stock adjustment'),
+  TransferOut: e('تحويل صادر', 'Transfer out'),
+  TransferIn: e('تحويل وارد', 'Transfer in'),
+  ReturnToSupplier: e('مرتجع للمورد', 'Returned to supplier'),
+}
+
+export const SupplierReturnStatus: EnumMap<T.SupplierReturnStatus> = {
+  Draft: e('مسودة', 'Draft', 'neutral'),
+  Sent: e('أُرسل للمورد', 'Sent to supplier', 'info'),
+  Credited: e('تم التعويض', 'Credited', 'success'),
+  Rejected: e('مرفوض', 'Rejected', 'danger'),
+}
+
+export const WarrantyLineKind: EnumMap<T.WarrantyLineKind> = {
+  Part: e('قطعة', 'Part'),
+  Labor: e('عمل', 'Labour'),
+}
+
+export const StockReservationStatus: EnumMap<T.StockReservationStatus> = {
+  Active: e('محجوز', 'Reserved', 'waiting'),
+  Consumed: e('صُرف', 'Consumed', 'success'),
+  Released: e('فُك الحجز', 'Released', 'muted'),
+}
+
 export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
@@ -607,6 +860,12 @@ export const enumMaps = {
   SupportTicketKind, SupportChannel, SupportTicketCategory, SupportTicketPriority, SupportTicketStatus, SupportMessageSide,
   SupportTicketEventType, StoreProductImageStatus, StoreOptionKind, HomeInspectionStatus, HomeInspectionResult,
   JourneyStage, QualityGrade, QualitySignalKind,
+  FulfillmentChannel, HoldReason, RepairOutcome, IntakeAccessory, IntakeCondition, PowersOnState, IntakeEstimateType, IntakeKind,
+  CustomerApprovalDecision, CustomerApprovalMethod, CallOutcome, CounterPaymentKind, CounterTab, HandoverProof,
+  SubscriptionBillingCycle, ProviderSubscriptionStatus, SubscriptionInvoiceStatus, SubscriptionPaymentMethod, WalletItemKind, WalletDeductionKind,
+  WhatsAppMessageStatus, WhatsAppSenderKind, WhatsAppTemplateKind, WhatsAppSkipReason, TrackingStage,
+  ReworkRootCause, BranchTransferStatus, AgingBucket, BranchBoardStage, CashCloseStatus,
+  StockMovementKind, SupplierReturnStatus, WarrantyLineKind, StockReservationStatus,
 } as const
 
 export type EnumName = keyof typeof enumMaps

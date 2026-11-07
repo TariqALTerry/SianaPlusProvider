@@ -24,6 +24,9 @@ import {
   supervisorsOf,
   validateExecutor,
   validatePerson,
+  branchNames,
+  frontDeskBody,
+  frontDeskOf,
 } from './utils'
 
 const executor: ExecutorResponse = {
@@ -35,6 +38,8 @@ const executor: ExecutorResponse = {
   email: null,
   specialization: 'تكييف',
   availability: 'Available',
+  homeBranchId: null,
+  homeBranchName: null,
   canRepair: true,
   canDeliver: false,
   maxConcurrentJobs: 3,
@@ -57,6 +62,7 @@ const member = (over: Partial<TeamMemberResponse>): TeamMemberResponse => ({
   phone: null,
   email: null,
   role: 'Executor',
+  branchIds: [],
   isActive: true,
   joinedAt: '2026-01-01T00:00:00Z',
   executorId: null,
@@ -203,5 +209,21 @@ describe('tabs and members', () => {
     expect([...ownerUserIds(list)]).toEqual(['o'])
     expect(supervisorsOf(list).map((m) => m.id)).toEqual(['2'])
     expect(supervisorsOf(undefined)).toEqual([])
+  })
+})
+
+describe('front desk (PROVIDER-BRANCHES phase 2 §2)', () => {
+  it('builds the create body with distinct branches and lists front-desk members', () => {
+    expect(frontDeskBody({ fullName: ' ريم ', phone: '501234567', email: '' }, ['b1', 'b1', 'b2'])).toEqual({ fullName: 'ريم', phone: '+966501234567', email: null, branchIds: ['b1', 'b2'] })
+    expect(frontDeskOf([member({ id: 'a', role: 'FrontDesk' }), member({ id: 'b', role: 'Supervisor' })]).map((m) => m.id)).toEqual(['a'])
+  })
+
+  it('names linked branches in the switcher order', () => {
+    expect(branchNames(['b2', 'x'], [{ id: 'b1', name: 'الرئيسي' }, { id: 'b2', name: 'الملز' }])).toEqual(['الملز'])
+  })
+
+  it('opens the front-desk tab for the owner and supervisors', () => {
+    expect(resolveTab('frontDesk', false)).toBe('frontDesk')
+    expect(resolveTab('frontDesk', true)).toBe('frontDesk')
   })
 })

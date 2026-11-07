@@ -22,4 +22,11 @@ export const qk = {
   messages: ['messages'],
   support: ['support'],
   insights: ['insights'],
+  branches: ['branches'],
+  counter: ['counter'],
+  subscription: ['subscription'],
+  whatsapp: ['whatsapp'],
+  transfers: ['transfers'],
+  cashClose: ['cashClose'],
+  inventory: ['inventory'],
 } as const satisfies Record<string, readonly string[]>

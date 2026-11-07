@@ -1,7 +1,8 @@
 # صيانة بلس — منصة المزود: architecture and conventions
 
 The product brief is `../Siana/docs/PROVIDER-PLATFORM-PROMPT.md` in the backend repo. It defines every
-screen, endpoint, field and error code.
+screen, endpoint, field and error code. Branches, the counter, its subscription and "counter only" shops follow
+`../Siana/docs/PROVIDER-BRANCHES-PROVIDER-PLATFORM-PROMPT.md` (see [Branches and the counter](#branches-and-the-counter)).
 
 - **Never invent an endpoint, field, status or error code.** If the brief or `src/api/types.gen.ts`
   doesn't have it, the backend doesn't either.
@@ -21,7 +22,10 @@ copied from there and then adapted.
 - i18next: Arabic is the default and RTL; English is LTR.
 - dayjs, converting UTC to Asia/Riyadh.
 - sonner for toasts, zustand for the auth and theme stores.
-- Leaflet + leaflet-geoman + individual `@turf/*` modules, for coverage only.
+- Leaflet + leaflet-geoman + individual `@turf/*` modules, for coverage; plain Leaflet for maps and the branch
+  location picker (`components/map/LazyPointPicker`).
+- `@zxing/browser` (+ `@zxing/library`) reads the counter's labels and receipt QR codes from the webcam. It is
+  imported dynamically inside the scan dialog only.
 - Recharts is allowed only on the home page. Other small charts are plain bars (the technician report).
 
 ## Brand (§3 of the brief)
@@ -58,7 +62,7 @@ src/
                 useDebouncedValue, useMediaQuery
   i18n/         index.ts, ar.json/en.json (common namespace ONLY), enums.ts (all enum labels, provider wording §9)
   lib/          format.ts, phone.ts (Saudi mobile helpers), cities.ts, csv.ts, storage.ts, env.ts, utils.ts,
-                monitoring.ts (+ lazy monitoringSdk.ts)
+                pdf.ts (print / open PDFs fetched with the session), monitoring.ts (+ lazy monitoringSdk.ts)
 ```
 
 A feature folder never edits another feature's files, `ar.json`/`en.json`, the router or `app/`.
@@ -118,6 +122,13 @@ dashboard uses.
   toasts and refetches.
 - **Session-ending codes are handled in `http.ts`** (§4): `AccountSuspended`, `TenantSuspended`,
   `ProviderOrganizationNotFound`, …. Don't handle them in features.
+- **Three roles sign in** (`PROVIDER_ROLES` in `features/auth/authStore.ts`): `ProviderOwner`, `ProviderSupervisor`
+  and `ProviderFrontDesk`. `useRoleKind()` returns `owner` | `supervisor` | `frontDesk`.
+  - A front-desk account **cannot read the organization** (`api/provider/organization` is the management's), so
+    `ProviderGate` lets it through without one. Shell parts read `useShellContext()`, which is either the
+    `ProviderContext` (`kind: 'management'`) or `FRONT_DESK_CONTEXT` (`kind: 'frontDesk'`). Management pages keep
+    `useProvider()`; `RouteGuard` keeps the front desk away from them.
+  - `ProviderContext.counterOnly`: the organization's `businessModel` is `CounterOnly`.
 
 ## Rules
 
@@ -173,6 +184,109 @@ dashboard uses.
 14. **RTL uses logical classes:** `ms-`, `me-`, `ps-`, `pe-`, `start-`, `end-`, `text-start`, `text-end`.
 15. **Accessibility:** real buttons and links, labels on inputs (`Field`), and Radix dialogs (focus
     trap and Esc).
+
+## Branches and the counter
+
+The contract is `../Siana/docs/PROVIDER-BRANCHES-PROVIDER-PLATFORM-PROMPT.md`, phases 1–6.
+
+- **Branch switcher** (`features/branches/scope.ts`, `BranchSwitcher.tsx` in the top bar). The choice is kept on
+  this device per account (`localStorage` `branch.<userId>`), as the contract asks. `useBranchParam()` gives the
+  `branchId` to send; it is part of the query keys of the work list, technician items, incoming, board, shelf,
+  team performance, punctuality, quality and cash pages, and the counter.
+  - Modes from `GET me/branches`: `all` (owner, unlinked supervisor: "كل الفروع" first), `fixed` (one linked branch:
+    a label, nothing sent), `pick` (several linked branches, never "all"), `none` (unlinked front desk).
+  - A read refused with `BranchNotFound` for its `branchId` clears the choice (`setBranchRejectedHandler` in
+    `http.ts`).
+  - `BranchSelect` is the picker over the caller's own active branches (service branch, technician home branch,
+    custody arrival, intake branch).
+- **Branches tab** (`features/branches/BranchesTab.tsx`, shown in ملف المنشأة). Reads for owner and supervisors;
+  every write is the owner's. Dialogs: form with map picker and receipt settings, opening hours, closures, staff
+  links, set main, stop / restart.
+- **Front desk.** `FRONT_DESK_NAV` (counter, branch board, transfers, warranty, cash close, shelf, inventory,
+  notifications). Routes open to it declare
+  `handle: { frontDesk: true }`; every other route is "not available" for it. The team page has a الاستقبال tab
+  (`team/components/FrontDeskTab.tsx`).
+- **Counter** (`features/counter/`):
+  - `CounterPage` (`/counter`): big actions (new intake, find, scan), the gate banner, tabs with counts.
+  - `NewIntakePage` (`/counter/new`): the wizard (customer, device, condition, money, terms + signature).
+  - `IntakeDonePage` (`/counter/items/:id/done`): photos (two at least, "ناقص" until then), print A5 / 80 mm,
+    label, WhatsApp share.
+  - `CounterItemPage` (`/counter/items/:id`): intake, devices, quotations and the call / decision log, money,
+    handover, documents, timeline. Buttons follow `availableActions`.
+  - `logic.ts`: tabs, the gate (`counterGate`), wizard checks and request, discount and balance rules (tested).
+  - The gate is **never computed** for the subscription half: it is `counterAvailable` / `counterBlockedReason` from
+    `GET api/provider/subscription`. A front-desk account cannot read that endpoint and reads the same gate from
+    `GET me/branches` (`counter.available` / `counter.reason`, `accessAsOverview`). The wizard's terms step shows the
+    branch terms from `me/branches` (`termsText` / `termsVersion`), so the front desk sees them too. The wizard also
+    accepts `location.state.prefill` (`draftFromPrefill`): an out-of-warranty claim opens a paid intake filled in.
+  - PDFs go through `lib/pdf.ts` (`printPdf` hidden iframe, `openPdf` new tab) and each print / WhatsApp share
+    writes `share-log`.
+  - `components/PlatformIntakeDialog.tsx`: the arrival receipt and label of a platform device at a branch, used on
+    the work item page.
+  - **Phase 4–5 on the item page** (strings in `counter/opsI18n.ts`, namespace `counterOps`; parts in
+    `components/OpsParts.tsx` and `components/OpsDialogs.tsx`): the WhatsApp log with retry / manual send
+    (`messages`, `messages/resend`), the "تُرسل تلقائيًا" note (`whatsAppAutoSend`; the wa.me buttons step back to
+    outline), the tracking link card (copy, share, open), hold banner and pause / resume (`work/items/{id}/pause|resume`,
+    owner and supervisors, device at a branch: `holdActions`), the storage card with waive and abandon (two-step,
+    reason required under 3 reminders), the open-transfer banner and "تحويل لفرع آخر" (`CreateTransferDialog` from
+    `features/branchOps`), the rework badge, root cause and internal cost, and warranty days / "من المخزون" on quotation
+    lines (phase 6 §10). `HoldButtons` also sits on `/work/:id` for a platform device at a branch.
+  - `BoardPage` (`/counter/board`): one branch (the switcher's, or `?branch=`), today's counts, stage bars split by
+    age, and the overdue / awaiting / ready / on hold / abandon lists. Polled every 60 s.
+- **Branch operations** (`features/branchOps/`, namespace `branchOps`): `/counter/transfers` and
+  `/counter/transfers/:id` (send / receive with an optional scanned code, cancel), `/counter/warranty` (lookup, lines,
+  history, claim with line selection; a claim lands on the new item's photo step), `/counter/cash-close` (preview,
+  close with the counted cash, owner reopen, history).
+- **Counter report** (`features/insights/CounterReportPage.tsx`, namespace `counterReport`, `/insights/counter`):
+  volume, speed and quality, quotes, money, and the parts section (phase 6 §12). Rates arrive as 0–100.
+- **WhatsApp** (`features/whatsapp/`, `/settings/whatsapp`): the active sender, the quota, the per-branch switch (saved
+  through the branch's full `PUT`), and the shop's own number (link, test, unlink; tokens are write-only, the page
+  shows `accessTokenMasked`). Writes are the owner's.
+- **Public tracking page** (`features/tracking/`, `/t/:token`, namespace `publicTracking`): a top-level route outside
+  `AuthGuard` / `ProviderGate` / `AppShell`. It calls `publicHttp` (in `api/http.ts`: no `Authorization`, no refresh,
+  429 → `TooManyRequests`) and stores nothing in `localStorage`; its language toggle is not persisted. `vercel.json`'s
+  SPA rewrite already covers `/t/*`.
+- **Inventory** (`features/inventory/`, namespace `inventory`): `/inventory` → `/inventory/stock`, plus `low-stock`,
+  `parts`, `suppliers`, `movements`, `supplier-returns`; the labor-warranty setting sits on the parts page. The front
+  desk reads stock and low stock with no costs and no write buttons.
+- **Subscription** (`features/subscription/`, `/subscription`): plans, subscribe / change / cancel / resume,
+  auto-pay, invoices, pay from the wallet, bank-transfer proof. Writes are the owner's. Before approval, a "counter
+  only" shop can open it to look at the plans (`RouteAccess.early`).
+- **"Counter only"** shops: no incoming, board or tenders in the menu, routes with `platform: true` are refused,
+  the capabilities and coverage tabs and onboarding steps follow `steps.capabilitiesRequired` /
+  `steps.coverageRequired`, and the business-model tab shows a pending upgrade request (`pendingBusinessModel`).
+
+## Routes
+
+| Route | Page | Access |
+|---|---|---|
+| `/` | dashboard, or the onboarding checklist before approval; the front desk is sent to `/counter` | all |
+| `/onboarding` | onboarding checklist | management |
+| `/organization?tab=` | ملف المنشأة: profile, documents, **branches**, capabilities, coverage, operations, model | management |
+| `/incoming` | incoming work | full, not "counter only" |
+| `/counter`, `/counter/new`, `/counter/items/:id`, `/counter/items/:id/done` | the counter | full + front desk |
+| `/counter/board` | branch board | full + front desk |
+| `/counter/transfers`, `/counter/transfers/:id` | transfers between branches | full + front desk |
+| `/counter/warranty` | counter warranty lookup and claim | full + front desk |
+| `/counter/cash-close` | daily cash close | full + front desk |
+| `/insights/counter` | counter report | full |
+| `/inventory`, `/inventory/stock`, `/inventory/low-stock`, `/inventory/parts`, `/inventory/suppliers`, `/inventory/movements`, `/inventory/supplier-returns` | workshop parts | full + front desk (read-only, no costs) |
+| `/settings/whatsapp` | WhatsApp sender, quota, branches, own number | full |
+| `/t/:token` | public tracking page (no sign-in, no shell) | public |
+| `/work`, `/work/:id` | services (branch card, platform arrival receipt) | full |
+| `/board` | operations board | full, not "counter only" |
+| `/workshop` | the shelf | full + front desk |
+| `/messages`, `/messages/:serviceItemId` | conversations | full |
+| `/team?tab=`, `/team/:executorId` | technicians, members, supervisors, **front desk**; technician page (home branch) | full |
+| `/team/performance`, `/team/map`, `/team/punctuality`, `/team/quality`, `/team/cash`, `/team/:executorId/report` | reports | full |
+| `/marketplace`, `/marketplace/:id` | tenders | full + marketplace model |
+| `/wallet`, `/settlements`, `/settlements/:id` | money | full |
+| `/subscription` | counter subscription | full, or a "counter only" shop before approval |
+| `/reviews`, `/disputes`, `/disputes/:id` | quality | full |
+| `/store`, `/store/products/new`, `/store/products/ai`, `/store/products/:id` | store | full + store module |
+| `/growth/demand` | demand near you | full |
+| `/support`, `/support/:id` | support tickets | management |
+| `/notifications`, `/n/:notificationId` | notifications | all |
 
 ## Monitoring
 

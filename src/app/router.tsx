@@ -18,7 +18,13 @@ import { walletRoutes } from '@/features/wallet/routes'
 import { messagesRoutes } from '@/features/messages/routes'
 import { insightsRoutes } from '@/features/insights/routes'
 import { pushRoutes } from '@/features/push/routes'
+import { counterRoutes } from '@/features/counter/routes'
+import { subscriptionRoutes } from '@/features/subscription/routes'
+import { branchOpsRoutes } from '@/features/branchOps/routes'
+import { inventoryRoutes } from '@/features/inventory/routes'
+import { whatsappRoutes } from '@/features/whatsapp/routes'
 import { AppShell } from './AppShell'
+import type { RouteAccess } from './nav'
 import { AuthGuard, ProviderGate, Splash } from './AuthGuard'
 import { HomeRoute } from './HomeRoute'
 import { RouteError } from './RouteError'
@@ -31,13 +37,18 @@ const featureRoutes: RouteObject[] = [
   ...homeRoutes,
   ...onboardingRoutes,
   ...incomingRoutes,
+  ...counterRoutes,
+  ...branchOpsRoutes,
   ...workRoutes,
   ...workshopRoutes,
+  ...inventoryRoutes,
   ...boardRoutes,
   ...insightsRoutes,
   ...teamRoutes,
   ...messagesRoutes,
   ...walletRoutes,
+  ...subscriptionRoutes,
+  ...whatsappRoutes,
   ...pushRoutes,
   ...marketplaceRoutes,
   ...settlementsRoutes,
@@ -53,6 +64,12 @@ export const router = createBrowserRouter([
   {
     path: '/login',
     lazy: () => import('@/features/auth/LoginPage').then((m) => ({ Component: m.LoginPage })),
+    hydrateFallbackElement: <Splash />,
+  },
+  // The public tracking page (phase 4 §6): no session, no shell, no branch switcher. Its links reach customers on WhatsApp.
+  {
+    path: '/t/:token',
+    lazy: () => import('@/features/tracking/PublicTrackingPage').then((m) => ({ Component: m.PublicTrackingPage })),
     hydrateFallbackElement: <Splash />,
   },
   {
@@ -75,7 +92,8 @@ export const router = createBrowserRouter([
         // Pathless layout: a page that fails to load/render shows its error inside the shell.
         errorElement: <RouteError />,
         children: [
-          { index: true, element: <HomeRoute /> },
+          // A front-desk account lands on the counter (HomeRoute redirects it).
+          { index: true, handle: { frontDesk: true } satisfies RouteAccess, element: <HomeRoute /> },
           ...featureRoutes,
           { path: '*', lazy: () => import('./NotFoundPage').then((m) => ({ Component: m.NotFoundPage })) },
         ],

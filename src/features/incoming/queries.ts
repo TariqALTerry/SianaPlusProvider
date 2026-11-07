@@ -4,9 +4,10 @@ import { qk } from '@/api/keys'
 import type { IncomingWorkItemResponse } from '@/api/types'
 import { usePollingInterval } from '@/hooks/usePageVisible'
 import { workApi, workKeys } from '@/features/work/api'
+import { useBranchParam } from '@/features/branches/scope'
 
 export const incomingApi = {
-  list: (signal?: AbortSignal) => http.get<IncomingWorkItemResponse[]>('/api/provider/work/incoming', undefined, signal),
+  list: (branchId: string | undefined, signal?: AbortSignal) => http.get<IncomingWorkItemResponse[]>('/api/provider/work/incoming', { branchId }, signal),
 }
 
 /**
@@ -16,9 +17,11 @@ export const incomingApi = {
  */
 export function useIncoming(enabled = true) {
   const interval = usePollingInterval(30_000)
+  // Scoped by the branch switcher (PROVIDER-BRANCHES phase 1 §5); every key stays under `qk.incoming`.
+  const branchId = useBranchParam()
   return useQuery({
-    queryKey: qk.incoming,
-    queryFn: ({ signal }) => incomingApi.list(signal),
+    queryKey: [...qk.incoming, branchId ?? 'all'],
+    queryFn: ({ signal }) => incomingApi.list(branchId, signal),
     enabled,
     refetchInterval: enabled ? interval : false,
     staleTime: 15_000,

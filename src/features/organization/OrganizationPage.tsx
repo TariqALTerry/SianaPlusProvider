@@ -14,7 +14,8 @@ import { CoverageTab } from './components/CoverageTab'
 import { DocumentsTab } from './components/DocumentsTab'
 import { OperationsTab } from './components/OperationsTab'
 import { ProfileTab } from './components/ProfileTab'
-import { ORGANIZATION_TABS, parseTab, type OrganizationTab } from './logic'
+import { BranchesTab } from '@/features/branches/BranchesTab'
+import { parseTab, visibleTabs, type OrganizationTab } from './logic'
 import './i18n'
 
 const urlSchema = { tab: 'profile' }
@@ -24,16 +25,19 @@ export function OrganizationPage() {
   const { t } = useTranslation('organization')
   const { org, mode } = useProvider()
   const { state, set } = useUrlState(urlSchema)
-  const tab = parseTab(state.tab)
+  const tabs = visibleTabs(org.steps)
+  const parsed = parseTab(state.tab)
+  const tab = tabs.includes(parsed) ? parsed : 'profile'
 
   // Before approval each tab doubles as an onboarding step; mark the ones still open.
   const steps = org.steps
   const incomplete: Record<OrganizationTab, boolean> =
     mode === 'full'
-      ? { profile: false, documents: false, capabilities: false, coverage: false, operations: false, model: false }
+      ? { profile: false, documents: false, branches: false, capabilities: false, coverage: false, operations: false, model: false }
       : {
           profile: !steps.profileComplete,
           documents: !steps.documentsUploaded,
+          branches: false,
           capabilities: !steps.capabilitiesSet,
           coverage: !steps.coverageSet,
           operations: !steps.capacitySet,
@@ -66,7 +70,7 @@ export function OrganizationPage() {
 
       <Tabs value={tab} onValueChange={(v) => set({ tab: v })}>
         <TabsList aria-label={t('title')}>
-          {ORGANIZATION_TABS.map((key) => (
+          {tabs.map((key) => (
             <TabsTrigger key={key} value={key}>
               {t(`tabs.${key}`)}
               {incomplete[key] && (
@@ -83,6 +87,9 @@ export function OrganizationPage() {
         </TabsContent>
         <TabsContent value="documents">
           <DocumentsTab />
+        </TabsContent>
+        <TabsContent value="branches">
+          <BranchesTab />
         </TabsContent>
         <TabsContent value="capabilities">
           <CapabilitiesTab />

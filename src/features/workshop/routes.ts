@@ -5,7 +5,8 @@ import type { RouteAccess } from '@/app/nav'
 export const workshopRoutes: RouteObject[] = [
   {
     path: 'workshop',
-    handle: { full: true } satisfies RouteAccess,
+    // The shelf is also the front desk's (PROVIDER-BRANCHES phase 2 §2), for its branches.
+    handle: { full: true, frontDesk: true } satisfies RouteAccess,
     lazy: () => import('./WorkshopPage').then((m) => ({ Component: m.WorkshopPage })),
   },
 ]

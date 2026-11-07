@@ -1,3 +1,4 @@
+import { useBranchParam } from '@/features/branches/scope'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowDown, ArrowUp, FileText, Info } from 'lucide-react'
 import { useMemo, useState } from 'react'
@@ -29,7 +30,8 @@ export function TeamPerformancePage() {
   const { t } = useTranslation('insights')
   const { state, set } = useUrlState(schema)
   const { period, range, ready } = resolvePeriod(state)
-  const params = { from: riyadhDateToIso(range.from, 'start') ?? undefined, to: riyadhDateToIso(range.to, 'end') ?? undefined, executorId: state.executorId || undefined }
+  const branchId = useBranchParam()
+  const params = { from: riyadhDateToIso(range.from, 'start') ?? undefined, to: riyadhDateToIso(range.to, 'end') ?? undefined, executorId: state.executorId || undefined, branchId }
   const query = useQuery({ queryKey: insightKeys.performance(params), queryFn: ({ signal }) => insightsApi.teamPerformance(params, signal), enabled: ready })
 
   return (

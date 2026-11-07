@@ -3,6 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { ArrowDownToLine, Banknote, CheckCircle2, Hourglass, Landmark, Loader, Pencil } from 'lucide-react'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 import type { WalletItemResponse, WalletResponse, WithdrawalResponse } from '@/api/types'
 import { listQueryOptions } from '@/api/queryClient'
 import { ActionDialog, ConfirmDialog } from '@/components/ActionDialog'
@@ -145,6 +146,14 @@ function Tiles({ wallet: w }: { wallet: WalletResponse }) {
           sub={w.lastPaidAt ? t('lastPaid', { date: formatDate(w.lastPaidAt, lang) }) : t('neverPaid')}
         />
       </div>
+      {w.deductionsAmount > 0 && (
+        <p className="text-xs text-tone-danger">
+          {t('deductions', { amount: formatMoney(w.deductionsAmount, lang) })}{' '}
+          <Link to="/subscription" className="underline">
+            {t('deductionsLink')}
+          </Link>
+        </p>
+      )}
       <p className="text-xs text-muted-foreground">
         {t('howItWorks', { days: w.holdDays })} {t('disputeNote')}
       </p>
@@ -337,17 +346,30 @@ function ItemsTable({
         id: 'service',
         header: t('col.service'),
         meta: { alwaysVisible: true },
-        cell: ({ row: { original: i } }) => (
-          <div>
-            <div className="font-medium">{pick(i.serviceNameAr, i.serviceNameEn)}</div>
-            {i.itemNumber && <EntityLink kind="workItem" id={i.serviceItemId} label={i.itemNumber} mono />}
-          </div>
-        ),
+        cell: ({ row: { original: i } }) =>
+          // A counter-subscription deduction (PROVIDER-BRANCHES phase 3 §6): no service; its link opens the invoice.
+          i.kind === 'CounterSubscription' ? (
+            <div>
+              <div className="flex items-center gap-2 font-medium text-tone-danger">
+                {pick(i.serviceNameAr, i.serviceNameEn)} <StatusBadge enum="WalletItemKind" value={i.kind} dot={false} />
+              </div>
+              {i.itemNumber && (
+                <Link to={i.referenceId ? `/subscription?invoice=${i.referenceId}` : '/subscription'} className="ltr-nums font-mono text-xs text-primary hover:underline">
+                  {i.itemNumber}
+                </Link>
+              )}
+            </div>
+          ) : (
+            <div>
+              <div className="font-medium">{pick(i.serviceNameAr, i.serviceNameEn)}</div>
+              {i.itemNumber && <EntityLink kind="workItem" id={i.serviceItemId} label={i.itemNumber} mono />}
+            </div>
+          ),
       },
       { id: 'completedAt', header: t('col.completedAt'), cell: ({ row: { original: i } }) => <DateTime value={i.completedAt} mode="date" /> },
       { id: 'gross', header: t('col.gross'), meta: { align: 'end' }, cell: ({ row: { original: i } }) => <Money value={i.grossAmount} /> },
       { id: 'commission', header: t('col.commission'), meta: { align: 'end' }, cell: ({ row: { original: i } }) => <Money value={-i.commissionAmount} /> },
-      { id: 'net', header: t('col.net'), meta: { align: 'end' }, cell: ({ row: { original: i } }) => <Money value={i.netAmount} className="font-semibold" /> },
+      { id: 'net', header: t('col.net'), meta: { align: 'end' }, cell: ({ row: { original: i } }) => <Money value={i.netAmount} signed className="font-semibold" /> },
       ...(bucket === 'OnHold'
         ? [{ id: 'availableAt', header: t('col.availableAt'), cell: ({ row: { original: i } }) => <DateTime value={i.availableAt} mode="date" /> } satisfies ColumnDef<WalletItemResponse, unknown>]
         : []),
@@ -363,7 +385,9 @@ function ItemsTable({
       pageSize={pageSize}
       onPageChange={onPage}
       onPageSizeChange={onPageSize}
-      getRowId={(i) => i.serviceItemId}
+      // Subscription rows share the empty service id: key them by their invoice.
+      getRowId={(i) => i.referenceId ?? i.serviceItemId}
+      rowClassName={(i) => (i.kind === 'CounterSubscription' ? 'bg-tone-danger-soft/30' : undefined)}
       emptyTitle={bucket === 'OnHold' ? t('emptyOnHold') : t('emptyAvailable')}
     />
   )

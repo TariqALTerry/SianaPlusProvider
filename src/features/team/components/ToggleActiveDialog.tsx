@@ -7,7 +7,7 @@ import { teamApi, teamInvalidation } from '../api'
 import '../i18n'
 
 export interface ToggleTarget {
-  kind: 'executor' | 'supervisor'
+  kind: 'executor' | 'supervisor' | 'frontDesk'
   /** Executor id, or the supervisor's member id. */
   id: string
   name: string
@@ -27,9 +27,10 @@ export function ToggleActiveDialog({ target, onOpenChange }: { target: ToggleTar
   const toggle = useAction({
     mutationFn: async (v: ToggleTarget): Promise<void> => {
       if (v.kind === 'executor') await teamApi.setExecutorActive(v.id, !v.isActive)
+      else if (v.kind === 'frontDesk') await teamApi.setFrontDeskActive(v.id, !v.isActive)
       else await teamApi.setSupervisorActive(v.id, !v.isActive)
     },
-    invalidate: (_r, v) => (v.kind === 'executor' ? teamInvalidation.executor : teamInvalidation.supervisor),
+    invalidate: (_r, v) => (v.kind === 'executor' ? teamInvalidation.executor : v.kind === 'frontDesk' ? teamInvalidation.frontDesk : teamInvalidation.supervisor),
     success: (_r, v) => (v.isActive ? t('toggle.deactivated') : t('toggle.activated')),
     onSuccess: () => onOpenChange(false),
   })
@@ -46,7 +47,11 @@ export function ToggleActiveDialog({ target, onOpenChange }: { target: ToggleTar
       ? off
         ? t('toggle.deactivateExecutor')
         : t('toggle.activateExecutor')
-      : off
+      : target.kind === 'frontDesk'
+        ? off
+          ? t('frontDesk.deactivate')
+          : t('frontDesk.activate')
+        : off
         ? t('toggle.deactivateSupervisor')
         : t('toggle.activateSupervisor')
   const changes = !target
@@ -55,7 +60,11 @@ export function ToggleActiveDialog({ target, onOpenChange }: { target: ToggleTar
       ? off
         ? t('toggle.executorOff')
         : t('toggle.executorOn')
-      : off
+      : target.kind === 'frontDesk'
+        ? off
+          ? t('frontDesk.off')
+          : t('frontDesk.on')
+        : off
         ? t('toggle.supervisorOff')
         : t('toggle.supervisorOn')
 

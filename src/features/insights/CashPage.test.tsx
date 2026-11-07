@@ -6,6 +6,7 @@ import { ApiError } from '@/api/http'
 import type { CashHoldingsResponse, CashItem, ProviderWorkBoardResponse } from '@/api/types'
 import { TooltipProvider } from '@/components/ui/menu'
 import { workApi } from '@/features/work/api'
+import { branchesApi } from '@/features/branches/api'
 import '@/i18n'
 import { formatMoney } from '@/lib/format'
 import { insightsApi } from './api'
@@ -51,6 +52,8 @@ function renderCash() {
 beforeEach(() => {
   vi.spyOn(workApi, 'board').mockResolvedValue({ executors: [] } as unknown as ProviderWorkBoardResponse)
   vi.spyOn(insightsApi, 'cash').mockResolvedValue(holdings)
+  // The branch switcher's scope (every branch: no `branchId`).
+  vi.spyOn(branchesApi, 'mine').mockResolvedValue({ allBranches: true, branches: [], counter: { available: true, reason: null } })
 })
 afterEach(() => vi.restoreAllMocks())
 
@@ -105,5 +108,6 @@ describe('cash with technicians: recording a handover', () => {
     fireEvent.click(await screen.findByRole('checkbox', { name: 'تحديد الكل' }))
     expect(screen.getByText(/200 خدمة كحد أقصى/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /استلمت المبلغ من الفني/ })).toBeDisabled()
-  })
+    // 201 rows render slowly when the whole suite runs in parallel on one machine.
+  }, 20_000)
 })

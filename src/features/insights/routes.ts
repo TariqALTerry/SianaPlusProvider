@@ -5,7 +5,8 @@ const handle: RouteAccess = { full: true }
 
 /**
  * PHASE2 §3, §4, §6: demand near you, team performance, one technician's report and the live team map; then the
- * tracking pages: punctuality, quality signals and cash still with technicians.
+ * tracking pages: punctuality, quality signals and cash still with technicians. The counter report (PROVIDER-BRANCHES
+ * phases 5 §8 and 6 §12) is the owner's and supervisors'.
  */
 export const insightsRoutes: RouteObject[] = [
   { path: 'growth/demand', handle, lazy: () => import('./DemandPage').then((m) => ({ Component: m.DemandPage })) },
@@ -15,4 +16,5 @@ export const insightsRoutes: RouteObject[] = [
   { path: 'team/punctuality', handle, lazy: () => import('./PunctualityPage').then((m) => ({ Component: m.PunctualityPage })) },
   { path: 'team/quality', handle, lazy: () => import('./QualityPage').then((m) => ({ Component: m.QualityPage })) },
   { path: 'team/cash', handle, lazy: () => import('./CashPage').then((m) => ({ Component: m.CashPage })) },
+  { path: 'insights/counter', handle, lazy: () => import('./CounterReportPage').then((m) => ({ Component: m.CounterReportPage })) },
 ]

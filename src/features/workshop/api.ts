@@ -24,6 +24,8 @@ export interface MoveDeviceForm {
   code: string | null
   note: string | null
   file: File | null
+  /** Only with `AtWorkshop`: the branch the device reached (default: the responsible branch). */
+  branchId?: string | null
 }
 
 /**
@@ -35,21 +37,25 @@ export const trackingApi = {
   postUpdate: (id: string, f: ProgressUpdateForm) =>
     http.form<ProgressUpdateResponse>(`${base}/work/items/${id}/updates`, { kind: f.kind, note: f.note, expectedReadyAt: f.expectedReadyAt }, f.file),
   moveDevice: (id: string, deviceId: string, f: MoveDeviceForm) =>
-    http.form<ServiceTrackingResponse>(`${base}/work/items/${id}/devices/${deviceId}/custody`, { stage: f.stage, code: f.code, note: f.note }, f.file),
+    http.form<ServiceTrackingResponse>(
+      `${base}/work/items/${id}/devices/${deviceId}/custody`,
+      { stage: f.stage, code: f.code, note: f.note, branchId: f.stage === 'AtWorkshop' ? f.branchId : null },
+      f.file,
+    ),
   planTrip: (id: string, body: PlanLegRequest) => http.post<ServiceTrackingResponse>(`${base}/work/items/${id}/trips`, body),
   cancelTrip: (id: string, tripId: string) => http.delete<ServiceTrackingResponse>(`${base}/work/items/${id}/trips/${tripId}`),
-  board: (stage: DeviceCustodyStage | undefined, signal?: AbortSignal) =>
-    http.get<WorkshopBoardResponse>(`${base}/workshop`, { stage }, signal),
+  board: (stage: DeviceCustodyStage | undefined, branchId: string | undefined, signal?: AbortSignal) =>
+    http.get<WorkshopBoardResponse>(`${base}/workshop`, { stage, branchId }, signal),
 }
 
 export const trackingKeys = {
   /** Under the work item's own keys, so every work write refreshes it too. */
   tracking: (id: string) => [...workKeys.detail(id), 'tracking'] as const,
-  board: (stage: DeviceCustodyStage | undefined) => [...qk.workshop, 'board', stage ?? 'all'] as const,
+  board: (stage: DeviceCustodyStage | undefined, branchId?: string) => [...qk.workshop, 'board', stage ?? 'all', branchId ?? 'all'] as const,
 }
 
 /**
  * What a tracking write changes: the item (detail, timeline, status — reaching the workshop moves it to
  * Arrived), the workshop board, and the counts on the board and dashboard.
  */
-export const TRACKING_INVALIDATION = [qk.work, qk.workshop, qk.board, qk.dashboard] as const
+export const TRACKING_INVALIDATION = [qk.work, qk.workshop, qk.board, qk.dashboard, qk.branches] as const

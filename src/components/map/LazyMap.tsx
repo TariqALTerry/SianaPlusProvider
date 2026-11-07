@@ -32,3 +32,18 @@ export function toneColor(tone: string): string {
   const raw = getComputedStyle(document.documentElement).getPropertyValue(`--tone-${tone}`).trim()
   return raw ? `hsl(${raw.replace(/\s+/g, ', ').replace(/,\s*,/g, ',')})` : '#2563eb'
 }
+
+const PointPickerView = lazy(() => import('./PointPickerView'))
+
+export type { PointPickerProps } from './PointPickerView'
+
+/** Click-to-pick a single point (a branch location); Leaflet loads only when this renders. */
+export function LazyPointPicker({ className, ...props }: import('./PointPickerView').PointPickerProps & { className?: string }) {
+  return (
+    <div className={cn('relative isolate h-64 overflow-hidden rounded-md border', className)}>
+      <Suspense fallback={<Skeleton className="absolute inset-0 rounded-none" />}>
+        <PointPickerView {...props} />
+      </Suspense>
+    </div>
+  )
+}

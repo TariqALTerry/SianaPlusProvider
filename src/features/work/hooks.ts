@@ -16,6 +16,8 @@ export interface WorkTarget {
   itemNumber: string | null
   serviceNameAr: string
   serviceNameEn: string
+  /** The responsible branch, when known (the default arrival branch in custody, PROVIDER-BRANCHES phase 1 §8). */
+  branchId?: string | null
 }
 
 /** `SI-10053-2 · صيانة غسالة` — the target restated in every action dialog. */

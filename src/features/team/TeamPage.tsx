@@ -9,8 +9,9 @@ import { useProvider } from '@/app/provider'
 import { useMembers } from './api'
 import { MembersTab } from './components/MembersTab'
 import { SupervisorsTab } from './components/SupervisorsTab'
+import { FrontDeskTab } from './components/FrontDeskTab'
 import { TechniciansTab } from './components/TechniciansTab'
-import { TEAM_URL_SCHEMA, resolveTab, supervisorsOf, type TeamTab } from './utils'
+import { TEAM_URL_SCHEMA, frontDeskOf, resolveTab, supervisorsOf, type TeamTab } from './utils'
 import './i18n'
 
 /**
@@ -32,6 +33,7 @@ export function TeamPage() {
     technicians: org.executorsCount,
     members: members.data?.length ?? org.membersCount,
     supervisors: members.data ? supervisorsOf(members.data).length : null,
+    frontDesk: members.data ? frontDeskOf(members.data).length : null,
   }
 
   const trigger = (key: TeamTab) => (
@@ -53,6 +55,7 @@ export function TeamPage() {
           {trigger('technicians')}
           {trigger('members')}
           {isOwner && trigger('supervisors')}
+          {trigger('frontDesk')}
         </TabsList>
         <TabsContent value="technicians">
           <TechniciansTab />
@@ -65,6 +68,9 @@ export function TeamPage() {
             <SupervisorsTab />
           </TabsContent>
         )}
+        <TabsContent value="frontDesk">
+          <FrontDeskTab />
+        </TabsContent>
       </Tabs>
     </div>
   )

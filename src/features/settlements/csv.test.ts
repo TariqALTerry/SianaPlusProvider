@@ -17,6 +17,7 @@ const settlement: SettlementResponse = {
   periodEnd: '2026-09-30T20:59:59Z',
   grossAmount: 1000,
   commissionAmount: 150.5,
+  deductionsAmount: 0,
   netAmount: 849.5,
   status: 'Paid',
   linesCount: 3,

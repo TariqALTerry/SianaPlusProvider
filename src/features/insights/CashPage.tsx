@@ -24,7 +24,8 @@ import { useIsDesktopTable } from '@/hooks/useMediaQuery'
 import { useUrlState } from '@/hooks/useUrlState'
 import { formatMoney, formatNumber, toRiyadh } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { boardQueryOptions } from '@/features/work/api'
+import { useBranchParam } from '@/features/branches/scope'
+import { boardQuery } from '@/features/work/api'
 import { insightKeys, insightsApi } from './api'
 import { TechnicianFilter } from './TechnicianFilter'
 import { CASH_DAYS_ATTENTION, CASH_DAYS_DANGER, daysHeldFlag, MAX_HANDOVER, pruneSelection, selectAllState, selectionTotal, wholeDaysSince } from './trackingLogic'
@@ -45,7 +46,8 @@ export function CashPage() {
   const { lang } = useLang()
   const { state, set } = useUrlState(schema)
   const view: View = (VIEWS as readonly string[]).includes(state.view) ? (state.view as View) : 'held'
-  const holdings = useQuery({ queryKey: insightKeys.cash, queryFn: ({ signal }) => insightsApi.cash(signal), refetchOnWindowFocus: true })
+  const branchId = useBranchParam()
+  const holdings = useQuery({ queryKey: insightKeys.cashHoldings(branchId), queryFn: ({ signal }) => insightsApi.cash(branchId, signal), refetchOnWindowFocus: true })
   const selected = holdings.data?.technicians.find((h) => h.executorId === state.executorId) ?? null
   const panel = useRef<HTMLDivElement>(null)
   const desktop = useIsDesktopTable()
@@ -201,10 +203,11 @@ function TechnicianCash({
   onClose: () => void
 }) {
   const { t } = useTranslation('tracking')
-  const held = useQuery({ queryKey: insightKeys.cashItems(executorId, false), queryFn: ({ signal }) => insightsApi.cashItems(executorId, false, signal) })
+  const branchId = useBranchParam()
+  const held = useQuery({ queryKey: insightKeys.cashItems(executorId, false, branchId), queryFn: ({ signal }) => insightsApi.cashItems(executorId, false, branchId, signal) })
   const handed = useQuery({
-    queryKey: insightKeys.cashItems(executorId, true),
-    queryFn: ({ signal }) => insightsApi.cashItems(executorId, true, signal),
+    queryKey: insightKeys.cashItems(executorId, true, branchId),
+    queryFn: ({ signal }) => insightsApi.cashItems(executorId, true, branchId, signal),
     enabled: view === 'handedOver',
   })
   const teamName = useTeamName(executorId)
@@ -249,7 +252,8 @@ function TechnicianCash({
 
 /** The technician's name from the team list, for one who holds nothing now (picked from the filter). */
 function useTeamName(executorId: string): string | undefined {
-  const board = useQuery({ ...boardQueryOptions, staleTime: LOOKUP_STALE_TIME })
+  const branchId = useBranchParam()
+  const board = useQuery({ ...boardQuery(branchId), staleTime: LOOKUP_STALE_TIME })
   return board.data?.executors.find((e) => e.executorId === executorId)?.fullName
 }
 

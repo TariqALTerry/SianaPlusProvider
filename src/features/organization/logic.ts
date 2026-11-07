@@ -3,11 +3,19 @@ import { parseUtc } from '@/lib/format'
 
 // ── Tabs (§8.9) ─────────────────────────────────────────────────────────────
 
-export const ORGANIZATION_TABS = ['profile', 'documents', 'capabilities', 'coverage', 'operations', 'model'] as const
+export const ORGANIZATION_TABS = ['profile', 'documents', 'branches', 'capabilities', 'coverage', 'operations', 'model'] as const
 export type OrganizationTab = (typeof ORGANIZATION_TABS)[number]
 
 export function parseTab(raw: string | null | undefined): OrganizationTab {
   return (ORGANIZATION_TABS as readonly string[]).includes(raw ?? '') ? (raw as OrganizationTab) : 'profile'
+}
+
+/**
+ * The tabs this organization shows: a "counter only" shop has no capabilities or coverage areas (PROVIDER-BRANCHES
+ * phase 3 §7). The server says so through `steps.capabilitiesRequired` / `steps.coverageRequired`.
+ */
+export function visibleTabs(steps: { capabilitiesRequired: boolean; coverageRequired: boolean }): OrganizationTab[] {
+  return ORGANIZATION_TABS.filter((tab) => (tab !== 'capabilities' || steps.capabilitiesRequired) && (tab !== 'coverage' || steps.coverageRequired))
 }
 
 /** Deep link to one section of ملف المنشأة. */

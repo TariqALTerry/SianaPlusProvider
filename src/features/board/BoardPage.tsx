@@ -16,7 +16,8 @@ import { usePollingInterval } from '@/hooks/usePageVisible'
 import { enumLabel, enumTone, type Tone } from '@/i18n/enums'
 import { formatNumber, formatTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
-import { boardQueryOptions } from '@/features/work/api'
+import { useBranchParam } from '@/features/branches/scope'
+import { boardQuery } from '@/features/work/api'
 import { Avatar, LoadBar } from '@/features/work/components/widgets'
 import './i18n'
 import { ExecutorItemsSheet } from './components/ExecutorItemsSheet'
@@ -39,7 +40,8 @@ export function BoardPage() {
   const { lang } = useLang()
   const interval = usePollingInterval(60_000)
   const [params, setParams] = useSearchParams()
-  const query = useQuery({ ...boardQueryOptions, refetchInterval: interval, refetchOnWindowFocus: true })
+  const branchId = useBranchParam()
+  const query = useQuery({ ...boardQuery(branchId), refetchInterval: interval, refetchOnWindowFocus: true })
 
   if (query.isPending) return <PageSkeleton />
   if (query.isError) return <ErrorState error={query.error} onRetry={() => void query.refetch()} />

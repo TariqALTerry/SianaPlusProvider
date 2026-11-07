@@ -38,7 +38,7 @@ export function Splash({ label }: { label?: string }) {
 
 /**
  * Validates a restored session with `GET /api/auth/me` (§5.1), enforces the idle timeout, and lets
- * only owners and supervisors through: a role change on the server signs the user out here.
+ * only owners, supervisors and front-desk accounts through: a role change on the server signs the user out here.
  */
 export function AuthGuard({ children }: { children: ReactNode }) {
   const location = useLocation()
@@ -87,9 +87,11 @@ export function AuthGuard({ children }: { children: ReactNode }) {
 export function ProviderGate({ children }: { children: ReactNode }) {
   const { t } = useTranslation()
   const client = useQueryClient()
-  const org = useOrganizationQuery()
+  // A front-desk account cannot read the organization (PROVIDER-BRANCHES phase 2 §2): its shell starts without it.
+  const frontDesk = useAuthStore((s) => s.user?.role === 'ProviderFrontDesk')
+  const org = useOrganizationQuery(!frontDesk)
 
-  if (org.data) return <>{children}</>
+  if (frontDesk || org.data) return <>{children}</>
   if (org.isError) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-4">

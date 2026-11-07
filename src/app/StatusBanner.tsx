@@ -5,14 +5,20 @@ import { Button } from '@/components/ui/button'
 import { formatDate } from '@/lib/format'
 import { useLang } from '@/hooks/useLang'
 import { cn } from '@/lib/utils'
-import { useProvider } from './provider'
+import { useProvider, useShellContext } from './provider'
 
 /**
  * The verification banner under the top bar (§6): Draft → complete and submit; Submitted /
  * UnderReview → waiting (yellow); Rejected → red with the review notes; Trial → until when, or
  * that it has ended. Approved shows nothing.
  */
+/** The verification banner is the organization's; a front-desk account has none. */
 export function StatusBanner() {
+  const ctx = useShellContext()
+  return ctx.kind === 'management' ? <OrganizationBanner /> : null
+}
+
+function OrganizationBanner() {
   const { t } = useTranslation()
   const { lang } = useLang()
   const { pathname } = useLocation()

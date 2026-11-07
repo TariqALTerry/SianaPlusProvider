@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { OnboardingStepsResponse } from '@/api/types'
-import { isHighlighted, missingStepsFrom, ONBOARDING_STEPS, stepProgress, stepTab } from './steps'
+import { isHighlighted, missingStepsFrom, ONBOARDING_STEPS, stepProgress, stepTab, visibleSteps } from './steps'
 
 const steps = (over: Partial<OnboardingStepsResponse> = {}): OnboardingStepsResponse => ({
   profileComplete: false,
@@ -9,6 +9,8 @@ const steps = (over: Partial<OnboardingStepsResponse> = {}): OnboardingStepsResp
   coverageSet: false,
   capacitySet: false,
   businessModelSet: true,
+  capabilitiesRequired: true,
+  coverageRequired: true,
   canSubmit: false,
   ...over,
 })
@@ -27,6 +29,12 @@ describe('onboarding steps', () => {
     expect(stepProgress(steps())).toEqual({ done: 0, total: 5 })
     // A fresh company: capacity defaults to 3 and the profile is filled at registration.
     expect(stepProgress(steps({ profileComplete: true, capacitySet: true }))).toEqual({ done: 2, total: 5 })
+  })
+
+  it('drops capabilities and coverage for a counter-only shop', () => {
+    const counterOnly = steps({ capabilitiesRequired: false, coverageRequired: false, profileComplete: true })
+    expect(visibleSteps(counterOnly).map((s) => s.key)).toEqual(['profileComplete', 'documentsUploaded', 'capacitySet'])
+    expect(stepProgress(counterOnly)).toEqual({ done: 1, total: 3 })
   })
 
   it('maps ProviderSubmissionIncomplete missingSteps to cards', () => {

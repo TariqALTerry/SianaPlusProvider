@@ -1,3 +1,5 @@
+import { useIsFrontDesk } from '@/features/auth/authStore'
+import { useBranchParam } from '@/features/branches/scope'
 import { useQuery } from '@tanstack/react-query'
 import { AlertTriangle, CalendarClock, Truck, User } from 'lucide-react'
 import { useState } from 'react'
@@ -9,6 +11,7 @@ import { SearchInput } from '@/components/Filters'
 import { DateTime } from '@/components/Format'
 import { PageHeader } from '@/components/PageHeader'
 import { EmptyState, ErrorState } from '@/components/States'
+import { StatusBadge } from '@/components/StatusBadge'
 import { Badge, toneDot } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -39,9 +42,10 @@ export function WorkshopPage() {
   const [returnFor, setReturnFor] = useState<WorkshopDevice | null>(null)
   const [returnOpen, setReturnOpen] = useState(false)
 
+  const branchId = useBranchParam()
   const query = useQuery({
-    queryKey: trackingKeys.board(stage),
-    queryFn: ({ signal }) => trackingApi.board(stage, signal),
+    queryKey: trackingKeys.board(stage, branchId),
+    queryFn: ({ signal }) => trackingApi.board(stage, branchId, signal),
   })
 
   const devices = (query.data?.devices ?? []).filter((d) => matchesSearch(d, state.q))
@@ -145,14 +149,24 @@ export function WorkshopPage() {
 function DeviceCard({ device: d, onArrangeReturn }: { device: WorkshopDevice; onArrangeReturn: () => void }) {
   const { t } = useTranslation('workshop')
   const { lang, pick } = useLang()
-  const href = `/work/${d.serviceItemId}?tab=tracking`
+  const frontDesk = useIsFrontDesk()
+  // A walk-in device opens its counter page; a platform device its tracking tab (not for the front desk, which
+  // reaches neither the work list nor trips: PROVIDER-BRANCHES phase 2 §2).
+  const href = d.fulfillmentChannel === 'WalkIn' ? `/counter/items/${d.serviceItemId}` : frontDesk ? null : `/work/${d.serviceItemId}?tab=tracking`
   return (
-    <li className={cn('rounded-lg border bg-surface p-3 text-sm shadow-sm', d.needsUpdate && 'border-tone-danger/40')}>
+    <li className={cn('rounded-lg border bg-surface p-3 text-sm shadow-sm', (d.needsUpdate || d.isOverdue) && 'border-tone-danger/40')}>
       <div className="flex items-start justify-between gap-2">
-        <Link to={href} className="min-w-0 hover:underline">
-          <span className="ltr-nums block font-mono text-xs font-semibold text-primary">{d.tagCode ?? '—'}</span>
-          <span className="block truncate font-medium">{[d.name, d.brand, d.model].filter(Boolean).join(' · ')}</span>
-        </Link>
+        {href ? (
+          <Link to={href} className="min-w-0 hover:underline">
+            <span className="ltr-nums block font-mono text-xs font-semibold text-primary">{d.tagCode ?? '—'}</span>
+            <span className="block truncate font-medium">{[d.name, d.brand, d.model].filter(Boolean).join(' · ')}</span>
+          </Link>
+        ) : (
+          <span className="min-w-0">
+            <span className="ltr-nums block font-mono text-xs font-semibold">{d.tagCode ?? '—'}</span>
+            <span className="block truncate font-medium">{[d.name, d.brand, d.model].filter(Boolean).join(' · ')}</span>
+          </span>
+        )}
         {d.stageAt && (
           <span className="shrink-0 text-xs text-muted-foreground" title={t('since')}>
             <DateTime value={d.stageAt} />
@@ -162,6 +176,7 @@ function DeviceCard({ device: d, onArrangeReturn }: { device: WorkshopDevice; on
       <p className="mt-1 text-xs text-muted-foreground">
         <span className="block truncate">{pick(d.serviceNameAr, d.serviceNameEn)}</span>
         <HumanNumber value={d.itemNumber} />
+        {d.branchName && <span className="ms-2">· {d.branchName}</span>}
       </p>
       <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
         {d.technicianName && (
@@ -180,6 +195,17 @@ function DeviceCard({ device: d, onArrangeReturn }: { device: WorkshopDevice; on
           </span>
         )}
       </div>
+      {(d.aging || d.isOverdue || d.holdReason) && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          {d.aging && (
+            <span title={d.daysInStage !== null ? t('daysInStage', { count: d.daysInStage }) : undefined}>
+              <StatusBadge enum="AgingBucket" value={d.aging} />
+            </span>
+          )}
+          {d.isOverdue && <Badge tone="danger">{t('overdue')}</Badge>}
+          {d.holdReason && <StatusBadge enum="HoldReason" value={d.holdReason} dot={false} />}
+        </div>
+      )}
       {(d.needsUpdate || d.needsReturnTrip) && (
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           {d.needsUpdate && (
@@ -187,16 +213,18 @@ function DeviceCard({ device: d, onArrangeReturn }: { device: WorkshopDevice; on
               {t('needsUpdate')}
             </Badge>
           )}
-          {d.needsReturnTrip && (
+          {d.needsReturnTrip && !frontDesk && (
             <Button size="sm" variant="outline" className="h-6 border-tone-attention/40 bg-tone-attention-soft px-2 text-xs text-tone-attention" title={t('needsReturnHint')} onClick={onArrangeReturn}>
               <Truck className="size-3" /> {t('needsReturn')}
             </Button>
           )}
         </div>
       )}
-      <Link to={href} className="mt-2 inline-block text-xs text-primary hover:underline">
-        {t('openTracking')}
-      </Link>
+      {href && (
+        <Link to={href} className="mt-2 inline-block text-xs text-primary hover:underline">
+          {d.fulfillmentChannel === 'WalkIn' ? t('openCounter') : t('openTracking')}
+        </Link>
+      )}
     </li>
   )
 }

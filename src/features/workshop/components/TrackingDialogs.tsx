@@ -21,6 +21,8 @@ import { TRACKING_INVALIDATION, trackingApi } from '../api'
 import { useTrackingError } from '../hooks'
 import { isHandover, isValidCode, normalizeCode, NOTE_MAX, noteRequired, READY_MAX_DAYS, tripCandidates, updateProblems } from '../logic'
 import { ImagePicker } from './ImagePicker'
+import { BranchSelect } from '@/features/branches/BranchSelect'
+import '@/features/branches/i18n'
 import '../i18n'
 
 const INPUT_FORMAT = 'YYYY-MM-DDTHH:mm'
@@ -150,17 +152,20 @@ export function MoveDeviceDialog({
   onOpenChange,
 }: DialogProps & { device: TrackedDevice; to: DeviceCustodyStage | null }) {
   const { t } = useTranslation('workshop')
+  const { t: tb } = useTranslation('branches')
   const { lang } = useLang()
   const targetLabel = useTargetLabel()
-  const ids = { code: useId(), note: useId() }
+  const ids = { code: useId(), note: useId(), branch: useId() }
   const [code, setCode] = useState('')
   const [note, setNote] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  // Reaching the workshop = reaching a branch (PROVIDER-BRANCHES phase 1 §8): the responsible branch by default.
+  const [branchId, setBranchId] = useState<string | null>(item.branchId ?? null)
   const handover = !!to && isHandover(to)
 
   const action = useAction({
     mutationFn: (stage: DeviceCustodyStage) =>
-      trackingApi.moveDevice(item.id, device.deviceId, { stage, code: handover ? code : null, note: note.trim() || null, file }),
+      trackingApi.moveDevice(item.id, device.deviceId, { stage, code: handover ? code : null, note: note.trim() || null, file, branchId: stage === 'AtWorkshop' ? branchId : null }),
     invalidate: TRACKING_INVALIDATION,
     success: t('tracking.success.move'),
     onSuccess: () => onOpenChange(false),
@@ -172,6 +177,7 @@ export function MoveDeviceDialog({
       setCode('')
       setNote('')
       setFile(null)
+      setBranchId(item.branchId ?? null)
       action.reset()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -213,6 +219,11 @@ export function MoveDeviceDialog({
       error={error}
       onSubmit={() => action.mutate(to)}
     >
+      {to === 'AtWorkshop' && (
+        <Field label={tb('custody.branch')} htmlFor={ids.branch} hint={tb('custody.hint')}>
+          <BranchSelect id={ids.branch} value={branchId} onChange={setBranchId} emptyLabel={tb('item.none')} />
+        </Field>
+      )}
       {handover && (
         <Field label={t('tracking.handoverCode')} htmlFor={ids.code} required hint={t('tracking.handoverCodeHint')}>
           <Input

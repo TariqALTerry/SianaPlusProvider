@@ -3,7 +3,8 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LOOKUP_STALE_TIME } from '@/api/queryClient'
 import { Select } from '@/components/ui/input'
-import { boardQueryOptions } from '@/features/work/api'
+import { useBranchParam } from '@/features/branches/scope'
+import { boardQuery } from '@/features/work/api'
 import './i18n'
 
 /**
@@ -12,7 +13,8 @@ import './i18n'
  */
 export function TechnicianFilter({ value, onChange }: { value: string; onChange: (executorId: string) => void }) {
   const { t } = useTranslation('insights')
-  const board = useQuery({ ...boardQueryOptions, staleTime: LOOKUP_STALE_TIME })
+  const branchId = useBranchParam()
+  const board = useQuery({ ...boardQuery(branchId), staleTime: LOOKUP_STALE_TIME })
   const executors = useMemo(
     () => [...(board.data?.executors ?? [])].sort((a, b) => Number(b.isActive) - Number(a.isActive) || a.fullName.localeCompare(b.fullName)),
     [board.data],

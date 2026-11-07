@@ -52,6 +52,8 @@ export function SettlementDetailPage() {
   const kpis = [
     { key: 'gross', label: t('columns.gross'), value: <Money value={s.grossAmount} /> },
     { key: 'commission', label: t('columns.commission'), value: <Money value={s.commissionAmount} /> },
+    // The counter subscription paid from the balance and taken from this payout (PROVIDER-BRANCHES phase 3 §6).
+    ...(s.deductionsAmount > 0 ? [{ key: 'deductions', label: t('columns.deductions'), value: <Money value={-s.deductionsAmount} signed /> }] : []),
     { key: 'net', label: t('columns.net'), value: <Money value={s.netAmount} />, strong: true },
     { key: 'lines', label: t('columns.lines'), value: <Num value={s.linesCount} /> },
   ]

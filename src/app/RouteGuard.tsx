@@ -4,7 +4,7 @@ import { Link, Outlet, useMatches } from 'react-router'
 import { EmptyState } from '@/components/States'
 import { Button } from '@/components/ui/button'
 import { routeDenial, type RouteAccess } from './nav'
-import { useProvider } from './provider'
+import { useShellContext } from './provider'
 
 /**
  * Enforces each route's `handle` (`RouteAccess`) before the page mounts, so a page that is not
@@ -14,7 +14,7 @@ import { useProvider } from './provider'
 export function RouteGuard() {
   const { t } = useTranslation()
   const matches = useMatches()
-  const ctx = useProvider()
+  const ctx = useShellContext()
 
   const rule = [...matches].reverse().find((m) => m.handle && typeof m.handle === 'object')?.handle as RouteAccess | undefined
   const denial = routeDenial(rule, ctx)

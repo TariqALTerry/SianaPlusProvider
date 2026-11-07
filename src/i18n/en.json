@@ -26,7 +26,16 @@
     "teamQuality": "Quality",
     "teamCash": "Cash with technicians",
     "wallet": "Wallet",
-    "growthDemand": "Growth: demand near you"
+    "growthDemand": "Growth: demand near you",
+    "counter": "Counter",
+    "subscription": "Subscription",
+    "counterBoard": "Branch board",
+    "transfers": "Transfers",
+    "counterWarranty": "Warranty",
+    "cashClose": "Cash close",
+    "counterReport": "Counter report",
+    "whatsapp": "WhatsApp",
+    "inventory": "Inventory"
   },
   "shell": {
     "language": "Language",
@@ -61,7 +70,8 @@
     "workHidden": "This page becomes available once your organization is approved.",
     "storeUnavailable": "The store isn’t available",
     "storeUnavailableHint": "The store module isn’t enabled for your organization right now. Contact the platform to turn it on.",
-    "support": "Contact support"
+    "support": "Contact support",
+    "frontDesk": "Front desk"
   },
   "actions": {
     "save": "Save",
@@ -257,7 +267,31 @@
     "RepairTested": "Repair tested",
     "ClosedAfterInspection": "Closed with the inspection fee",
     "QuotationExpired": "Quote expired",
-    "CompletedUnusuallyFast": "Finished unusually fast"
+    "CompletedUnusuallyFast": "Finished unusually fast",
+    "IntakeCreated": "Counter intake",
+    "IntakePhotosAdded": "Intake photos",
+    "IntakeSigned": "Customer signed",
+    "CustomerCallLogged": "Customer called",
+    "CustomerApprovalRecorded": "Customer answer recorded",
+    "CounterPaymentRecorded": "Counter payment",
+    "CounterDiscountGiven": "Discount",
+    "ReceiptShared": "Document shared",
+    "ExecutorAssigned": "Assigned to a technician",
+    "ExecutorUnassigned": "Technician unassigned",
+    "ClaimedByScan": "Claimed by scan",
+    "LockCodeViewed": "Lock code viewed",
+    "HandedOver": "Handed over",
+    "BranchChanged": "Branch changed",
+    "BranchTransferRequested": "Transfer requested",
+    "BranchTransferSent": "Sent to another branch",
+    "BranchTransferReceived": "Arrived at the other branch",
+    "BranchTransferCancelled": "Transfer cancelled",
+    "DeviceAbandoned": "Declared abandoned",
+    "StorageFeeWaived": "Storage fee waived",
+    "ReworkRootCauseRecorded": "Root cause recorded",
+    "PartsUsed": "Parts used",
+    "PartsReturned": "Parts returned",
+    "SupplierReturnDrafted": "Supplier return drafted"
   },
   "auth": {
     "title": "Sign in",
@@ -301,7 +335,8 @@
   },
   "roles": {
     "ProviderOwner": "Owner",
-    "ProviderSupervisor": "Supervisor"
+    "ProviderSupervisor": "Supervisor",
+    "ProviderFrontDesk": "Front desk"
   },
   "notifications": {
     "title": "Notifications",

@@ -30,6 +30,7 @@ import { cn } from '@/lib/utils'
 import { teamApi, teamKeys } from './api'
 import { RoleBadges } from './components/Bits'
 import { RolesCard } from './components/RolesCard'
+import { HomeBranchCard } from './components/HomeBranchCard'
 import { defaultWeek, invalidDays, toEntries, toRows, type DayRow } from './schedule'
 import './i18n'
 
@@ -76,6 +77,7 @@ export function ExecutorPage() {
       {executor.isError && <ErrorState error={executor.error} onRetry={() => void executor.refetch()} />}
       <div className="space-y-4">
         {e && <RolesCard executor={e} />}
+        {e && <HomeBranchCard executor={e} />}
         <PerformanceCards executorId={executorId} />
         <ScheduleSection executorId={executorId} query={schedule} />
       </div>

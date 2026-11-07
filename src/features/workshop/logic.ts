@@ -20,6 +20,9 @@ export const NEXT_STAGES: Record<DeviceCustodyStage, readonly DeviceCustodyStage
   ReadyForReturn: ['OutForReturn', 'Returned'],
   OutForReturn: ['Returned'],
   Returned: [],
+  // Branch transfers and abandoned devices are their own flows (PROVIDER-BRANCHES phase 5), not custody steps here.
+  InTransit: [],
+  Abandoned: [],
 }
 
 /** Taking a device from the customer, or giving it back, needs their 4-digit code and a photo. */

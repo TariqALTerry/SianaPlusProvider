@@ -19,7 +19,8 @@ import { paginationDefaults, useUrlState } from '@/hooks/useUrlState'
 import { enumLabel } from '@/i18n/enums'
 import { formatDateTime, formatTime, riyadhDateToIso } from '@/lib/format'
 import './i18n'
-import { boardQueryOptions, prefetchWorkItem, workApi, workKeys, type WorkListParams } from './api'
+import { useBranchParam } from '@/features/branches/scope'
+import { boardQuery, prefetchWorkItem, workApi, workKeys, type WorkListParams } from './api'
 import { statusesFor, WORK_TABS } from './logic'
 import { CoverageBadge, NetInline } from './components/widgets'
 
@@ -49,7 +50,9 @@ export function WorkPage() {
   const { state, set, reset, active } = useUrlState(schema)
   const interval = usePollingInterval(60_000)
 
+  const branchId = useBranchParam()
   const filters: WorkListParams = {
+    branchId,
     status: statusesFor(state.tab, state.status),
     executorId: state.executorId || undefined,
     timedOut: state.timedOut || undefined,
@@ -67,7 +70,7 @@ export function WorkPage() {
   })
 
   // The technician filter reads the board's executor list (every executor of the organization).
-  const board = useQuery({ ...boardQueryOptions, staleTime: LOOKUP_STALE_TIME })
+  const board = useQuery({ ...boardQuery(branchId), staleTime: LOOKUP_STALE_TIME })
   const executors = useMemo(() => [...(board.data?.executors ?? [])].sort((a, b) => Number(b.isActive) - Number(a.isActive) || a.fullName.localeCompare(b.fullName)), [board.data])
   const executorName = executors.find((e) => e.executorId === state.executorId)?.fullName
 

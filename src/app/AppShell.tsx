@@ -8,7 +8,7 @@ import { useNetStatus } from '@/api/netStatus'
 import { IncomingWatcher } from '@/features/incoming/IncomingWatcher'
 import { readItem, writeItem } from '@/lib/storage'
 import { cn } from '@/lib/utils'
-import { useProvider } from './provider'
+import { useShellContext } from './provider'
 import { RouteGuard } from './RouteGuard'
 import { Sidebar } from './Sidebar'
 import { StatusBanner } from './StatusBanner'
@@ -29,7 +29,8 @@ function RateLimitBanner() {
 
 export function AppShell() {
   const location = useLocation()
-  const { mode } = useProvider()
+  const ctx = useShellContext()
+  const { mode } = ctx
   const [collapsed, setCollapsed] = useState(() => readItem<boolean>('sidebarCollapsed', false))
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -66,7 +67,8 @@ export function AppShell() {
         </main>
       </div>
 
-      {mode === 'full' && <IncomingWatcher />}
+      {/* Incoming platform work: not for the front desk, nor for a "counter only" shop. */}
+      {ctx.kind === 'management' && mode === 'full' && !ctx.counterOnly && <IncomingWatcher />}
     </div>
   )
 }

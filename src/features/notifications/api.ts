@@ -68,12 +68,20 @@ export function isTrackingAlert(title: string | null | undefined, eventKey?: str
  * service alert (`QuotationRejectedTeam`, `QuotationRejectedRepeatedly`, `ServiceRescheduledTeam` …) opens the service,
  * where a rescheduled item waits for a technician like any other.
  */
+/**
+ * Counter alerts open the counter item (PROVIDER-BRANCHES phase 2 §14, phase 4 §7), which the front desk can reach. A
+ * device that reached another branch (phase 5 §10) may be a platform device too, so it opens the transfers list.
+ */
+const COUNTER_KEYS = new Set(['CounterQuotationAwaitingCall', 'CounterDeviceReady', 'CounterWhatsAppFailed', 'CounterQuotationApprovedOnline', 'CounterQuotationRejectedOnline'])
+
 export function notificationHref(
   n: Pick<NotificationResponse, 'referenceId' | 'referenceType'> & { title?: string | null; eventKey?: string | null },
 ): string | null {
   switch (n.referenceType) {
     case 'ServiceItem':
       if (!n.referenceId) return null
+      if (n.eventKey && COUNTER_KEYS.has(n.eventKey)) return `/counter/items/${n.referenceId}`
+      if (n.eventKey === 'BranchTransferReceived') return '/counter/transfers?openOnly=false'
       return isTrackingAlert(n.title, n.eventKey) ? `/work/${n.referenceId}?tab=tracking` : `/work/${n.referenceId}`
     case 'MarketplaceRequest':
       return n.referenceId ? `/marketplace/${n.referenceId}` : null
@@ -89,6 +97,11 @@ export function notificationHref(
       return n.referenceId ? `/disputes/${n.referenceId}` : '/disputes'
     case 'SupportTicket':
       return n.referenceId ? `/support/${n.referenceId}` : '/support'
+    // The counter subscription and its invoices (phase 3 §8).
+    case 'ProviderSubscriptionInvoice':
+      return n.referenceId ? `/subscription?invoice=${n.referenceId}` : '/subscription'
+    case 'ProviderSubscription':
+      return '/subscription'
     default:
       return null
   }

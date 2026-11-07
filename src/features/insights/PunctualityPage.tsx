@@ -1,3 +1,4 @@
+import { useBranchParam } from '@/features/branches/scope'
 import { useQuery } from '@tanstack/react-query'
 import { AlarmClock, CalendarCheck2, Clock, Gauge, Hourglass, Timer, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
@@ -36,9 +37,10 @@ export function PunctualityPage() {
   const { state, set } = useUrlState(schema)
   const { period, range, ready } = resolvePeriod(state)
   const executorId = state.executorId || undefined
-  const params: TrackingParams = { from: range.from, to: range.to, executorId }
+  const branchId = useBranchParam()
+  const params: TrackingParams = { from: range.from, to: range.to, executorId, branchId }
   const prevRange = previousRange(range)
-  const prevParams: TrackingParams = { ...prevRange, executorId }
+  const prevParams: TrackingParams = { ...prevRange, executorId, branchId }
 
   const query = useQuery({ queryKey: insightKeys.punctuality(params), queryFn: ({ signal }) => insightsApi.punctuality(params, signal), enabled: ready })
   // The comparison runs alongside; its failure only hides the change chips.
