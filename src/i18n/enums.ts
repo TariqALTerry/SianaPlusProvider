@@ -138,8 +138,8 @@ export const ExecutionMode: EnumMap<T.ExecutionMode> = {
   DirectRepair: e('إصلاح مباشر', 'Direct repair'),
   ScheduledService: e('خدمة مجدولة', 'Scheduled service'),
   ProjectService: e('مشروع', 'Project'),
-  Delivery: e('توصيل', 'Delivery'),
-  Workshop: e('ورشة', 'Workshop'),
+  Delivery: e('نقل من نقطة لنقطة', 'Point-to-point transport'),
+  Workshop: e('ورشة (استلام وإصلاح وإرجاع)', 'Workshop (collect, repair, return)'),
 }
 
 export const PricingType: EnumMap<T.PricingType> = {
