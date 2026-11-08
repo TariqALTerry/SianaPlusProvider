@@ -38,7 +38,8 @@ function SectionEmpty({ children }: { children: ReactNode }) {
 }
 
 /** Customer and address, with the privacy rule (§8.4) spelled out while details are withheld. */
-export function CustomerCard({ item }: { item: ServiceItemProviderView }) {
+/** `labels`: the detail's `dynamicFieldLabels` (key → label), so answers never show under their field key. */
+export function CustomerCard({ item, labels }: { item: ServiceItemProviderView; labels?: Record<string, string> }) {
   const { t } = useTranslation('work')
   const { phone, door, directionsUrl, note } = customerContact(item)
   const { address } = item
@@ -86,7 +87,7 @@ export function CustomerCard({ item }: { item: ServiceItemProviderView }) {
         {item.dynamicFieldsJson && (
           <div>
             <p className="mb-1 text-xs text-muted-foreground">{t('detail.dynamicFields')}</p>
-            <DynamicFieldsView json={item.dynamicFieldsJson} />
+            <DynamicFieldsView json={item.dynamicFieldsJson} labels={labels} />
           </div>
         )}
       </CardBody>

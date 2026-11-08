@@ -76,7 +76,7 @@ export function WorkItemPage() {
   if (query.isPending) return <PageSkeleton />
   if (query.isError) return <ErrorState error={query.error} onRetry={() => void query.refetch()} />
 
-  const { item, timeline, evidence, quotations, assignments, schedules, workflow } = query.data
+  const { item, timeline, evidence, quotations, assignments, schedules, workflow, dynamicFieldLabels } = query.data
   const live = isLiveStatus(item.status)
   const inReview = quotations.find((q) => q.status === 'PendingReview')
   const counts: Partial<Record<Tab, number>> = {
@@ -198,7 +198,7 @@ export function WorkItemPage() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="min-w-0 space-y-4 lg:col-span-2">
-          <CustomerCard item={item} />
+          <CustomerCard item={item} labels={dynamicFieldLabels} />
           <DevicesCard
             item={item}
             // A platform device collected to a branch: its arrival receipt and label (PROVIDER-BRANCHES phase 2 §12).

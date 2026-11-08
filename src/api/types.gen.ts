@@ -2946,6 +2946,8 @@ export interface PublicTrackingQuotationResponse {
   discountAmount: number
   total: number
   amountIfApproved: number
+  alreadyPaid: number
+  remainingIfApproved: number
   amountIfRejected: number
   notes: string | null
   sentAt: string | null
@@ -3876,6 +3878,7 @@ export interface JobDetailResponse extends JobSummaryResponse {
   cancelledAt: string | null
   customer: JobCustomerResponse
   dynamicFields: Record<string, unknown> | null
+  dynamicFieldLabels: Record<string, string>
   customerDescription: string | null
   completionNotes: string | null
   isMarketplace: boolean
@@ -4973,6 +4976,7 @@ export interface AdminOrderDetailResponse {
 }
 export interface ServiceItemAdminDetailResponse {
   item: ServiceItemAdminView
+  dynamicFieldLabels: Record<string, string>
   timeline: TimelineEventResponse[]
   evidence: EvidenceResponse[]
   quotations: QuotationResponse[]
@@ -5318,6 +5322,7 @@ export interface ServiceItemProviderView {
 }
 export interface ServiceItemProviderDetailResponse {
   item: ServiceItemProviderView
+  dynamicFieldLabels: Record<string, string>
   timeline: TimelineEventResponse[]
   evidence: EvidenceResponse[]
   quotations: QuotationResponse[]

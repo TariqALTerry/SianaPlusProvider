@@ -155,7 +155,15 @@ export function QuotationCard({ token, quotation: q, branchPhone, onDecided, onS
           <Money value={q.total} className="text-lg font-bold" />
         </div>
         {q.notes && <p className="whitespace-pre-wrap text-sm text-muted-foreground">{q.notes}</p>}
-        <p className="text-sm font-medium">{t('quote.ifApproved', { amount: formatMoney(q.amountIfApproved, lang) })}</p>
+        <p className="text-sm font-medium">
+          {q.alreadyPaid > 0
+            ? t('quote.ifApprovedPaid', {
+                amount: formatMoney(q.amountIfApproved, lang),
+                paid: formatMoney(q.alreadyPaid, lang),
+                remaining: formatMoney(q.remainingIfApproved, lang),
+              })
+            : t('quote.ifApproved', { amount: formatMoney(q.amountIfApproved, lang) })}
+        </p>
         {q.amountIfRejected > 0 && <p className="text-sm text-muted-foreground">{t('quote.ifRejected', { amount: formatMoney(q.amountIfRejected, lang) })}</p>}
       </div>
 

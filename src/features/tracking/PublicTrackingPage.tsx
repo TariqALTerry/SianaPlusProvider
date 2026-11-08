@@ -17,7 +17,7 @@ import { trackingApi, trackingKeys } from './api'
 import { BranchCard, OpeningHours } from './components/BranchCard'
 import { QuotationCard } from './components/QuotationCard'
 import { StageBar } from './components/StageBar'
-import { isReadyStage, isTokenShaped, pageFailure } from './logic'
+import { isReadyStage, isTokenShaped, pageFailure, shopInitial } from './logic'
 import './i18n'
 
 type Notice = 'approved' | 'rejected' | 'changed' | null
@@ -180,7 +180,7 @@ function TrackingBody({
           <img src={logo} alt="" className="size-14 shrink-0 rounded-xl border bg-white object-contain p-1" />
         ) : (
           <span className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-primary text-xl font-bold text-primary-foreground" aria-hidden>
-            {d.shopName.trim().charAt(0)}
+            {shopInitial(d.shopName)}
           </span>
         )}
         <div className="min-w-0">

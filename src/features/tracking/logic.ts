@@ -124,3 +124,8 @@ export function ownWordsError(code: string | null | undefined): OwnWordsError | 
 export function needsNewCode(code: string | null | undefined): boolean {
   return code === 'OtpExpired' || code === 'OtpAttemptsExceeded'
 }
+
+/** The first letter or digit of the shop name: "(تجريبي) صيانة…" shows "ت", not "(". */
+export function shopInitial(name: string): string {
+  return name.match(/[\p{L}\p{N}]/u)?.[0] ?? '•'
+}

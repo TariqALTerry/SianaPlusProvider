@@ -8,6 +8,7 @@ import {
   pageFailure,
   saturdayFirst,
   secondsUntil,
+  shopInitial,
   stepper,
   telHref,
   waDigits,
@@ -91,5 +92,14 @@ describe('one-time code', () => {
     expect(isTokenShaped('a'.repeat(65))).toBe(false)
     expect(isTokenShaped('a/b')).toBe(false)
     expect(isTokenShaped(undefined)).toBe(false)
+  })
+})
+
+describe('shopInitial', () => {
+  it('skips brackets and spaces to the first letter', () => {
+    expect(shopInitial('(تجريبي) صيانة الأجهزة')).toBe('ت')
+    expect(shopInitial('  صيانة')).toBe('ص')
+    expect(shopInitial('24/7 Fix')).toBe('2')
+    expect(shopInitial('()')).toBe('•')
   })
 })
