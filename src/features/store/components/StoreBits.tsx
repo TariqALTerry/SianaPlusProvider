@@ -1,6 +1,6 @@
 import { ImageOff, Sparkles, Store } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router'
+import { Link, NavLink } from 'react-router'
 import { EmptyState } from '@/components/States'
 import { Button } from '@/components/ui/button'
 import { fileUrl } from '@/api/files'
@@ -67,4 +67,33 @@ export function StoreUnavailable({ error }: { error: unknown }) {
 export function NotOperationalNote() {
   const { t } = useTranslation('store')
   return <p className="mb-3 rounded-md bg-tone-attention-soft px-3 py-2 text-sm text-tone-attention">{t('notOperational')}</p>
+}
+
+const AREAS = [
+  { key: 'products', to: '/store', end: true },
+  { key: 'warehouses', to: '/store/warehouses', end: false },
+] as const
+
+/** المنتجات | المستودعات: the store's two areas, as links so each keeps its own URL. */
+export function StoreTabs({ className }: { className?: string }) {
+  const { t } = useTranslation('store')
+  return (
+    <nav aria-label={t('areas.label')} className={cn('mb-4 flex items-center gap-1 overflow-x-auto border-b [scrollbar-width:none]', className)}>
+      {AREAS.map((a) => (
+        <NavLink
+          key={a.key}
+          to={a.to}
+          end={a.end}
+          className={({ isActive }) =>
+            cn(
+              '-mb-px inline-flex h-11 shrink-0 items-center border-b-2 px-3 text-sm font-medium transition-colors',
+              isActive ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground',
+            )
+          }
+        >
+          {t(`areas.${a.key}`)}
+        </NavLink>
+      ))}
+    </nav>
+  )
 }

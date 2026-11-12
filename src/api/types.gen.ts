@@ -3898,6 +3898,7 @@ export interface JobDetailResponse extends JobSummaryResponse {
   crew: CrewMemberResponse[]
   isCrewMember: boolean
   canManageCrew: boolean
+  canRateCrew: boolean
   goodsPickedUpAt: string | null
   goodsDeliveredAt: string | null
   destination: string | null
@@ -3905,6 +3906,7 @@ export interface JobDetailResponse extends JobSummaryResponse {
   pickupPlace: string | null
   pickupLatitude: number | null
   pickupLongitude: number | null
+  pickupStops: StorePickupStopResponse[]
   cancellationReason: string | null
   cancelledBy: CancellationInitiator | null
   cancelledAt: string | null
@@ -5443,6 +5445,17 @@ export interface CrewMemberResponse {
   phone: string | null
   isLead: boolean
   specialization: string | null
+  rating: number | null
+  ratingNote: string | null
+  ratedAt: string | null
+}
+export interface RateCrewRequest {
+  ratings: CrewRatingEntry[]
+}
+export interface CrewRatingEntry {
+  executorId: string
+  rating: number
+  note: string | null
 }
 export interface SetCrewRequest {
   executorIds: string[]
@@ -7020,6 +7033,7 @@ export interface UpdateStoreProductRequest {
   requiresInstallation: boolean
   installationServiceId?: string | null
   deliveryServiceId?: string | null
+  warehouseId?: string | null
   categoryId?: string | null
   brand?: string | null
   compareAtPrice?: number | null
@@ -7093,6 +7107,8 @@ export interface StoreProductResponse {
   requiresInstallation: boolean
   installationServiceId: string | null
   deliveryServiceId: string | null
+  warehouseId: string | null
+  warehouseName: string | null
   isActive: boolean
   createdAt: string
   updatedAt: string | null
@@ -7221,6 +7237,53 @@ export interface StoreFulfillmentItemResponse {
   scheduledStart: string | null
   scheduledEnd: string | null
   completedAt: string | null
+}
+
+// ── Store/StoreWarehouseDtos.cs
+export interface StoreWarehouseRequest {
+  name: string
+  city: string
+  district?: string | null
+  addressLine?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  contactName?: string | null
+  contactPhone?: string | null
+  notes?: string | null
+  isActive: boolean
+}
+export interface StoreWarehouseListRequest {
+  providerOrganizationId?: string | null
+  platformOnly?: boolean
+  includeInactive?: boolean
+}
+export interface StoreWarehouseResponse {
+  id: string
+  providerOrganizationId: string | null
+  providerName: string | null
+  name: string
+  city: string
+  district: string | null
+  addressLine: string | null
+  latitude: number
+  longitude: number
+  contactName: string | null
+  contactPhone: string | null
+  notes: string | null
+  isActive: boolean
+  productCount: number
+  createdAt: string
+  updatedAt: string | null
+}
+export interface StorePickupStopResponse {
+  warehouseId: string | null
+  place: string
+  latitude: number | null
+  longitude: number | null
+  contactName: string | null
+  contactPhone: string | null
+  notes: string | null
+  items: string[]
 }
 
 // ── Subscriptions/HomeInspectionDtos.cs

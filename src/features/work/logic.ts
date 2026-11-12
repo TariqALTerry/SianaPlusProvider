@@ -1,5 +1,5 @@
 import { toApiError, ApiError } from '@/api/http'
-import type { AssignmentResponse, CrewCandidateResponse, ExecutorCandidateResponse, HomeInspectionCheckResponse, HomeInspectionStatus, ServiceItemProviderView, ServiceItemStatus } from '@/api/types'
+import type { AssignmentResponse, CrewCandidateResponse, CrewMemberResponse, ExecutorCandidateResponse, HomeInspectionCheckResponse, HomeInspectionStatus, ServiceItemProviderView, ServiceItemStatus } from '@/api/types'
 import { isoToRiyadhInput, nowRiyadh, parseUtc } from '@/lib/format'
 
 /** Quick tabs above the work list (§8.4), in the brief's order. */
@@ -303,6 +303,25 @@ export function crewCandidateSelectable(
   if (checked) return true
   if (selectedCount >= MAX_CREW) return false
   return c.isInCrew || c.hasCapacity
+}
+
+export interface CrewRating {
+  /** 1–5, whole stars. */
+  rating: number
+  note: string | null
+  ratedAt: string | null
+}
+
+/**
+ * The lead technician's rating of a teammate after the job (read-only here). Null for the lead's own row and until the
+ * teammate is rated; a value outside 1–5 is not shown.
+ */
+export function crewRatingOf(m: Pick<CrewMemberResponse, 'isLead' | 'rating' | 'ratingNote' | 'ratedAt'>): CrewRating | null {
+  if (m.isLead || m.rating === null || m.rating === undefined) return null
+  const rating = Math.round(m.rating)
+  if (rating < 1 || rating > 5) return null
+  const note = m.ratingNote?.trim()
+  return { rating, note: note ? note : null, ratedAt: m.ratedAt ?? null }
 }
 
 /** True when the picked ids differ from the saved crew (the save button stays off otherwise). */

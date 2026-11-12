@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next'
 import { toApiError } from '@/api/http'
 import type { CrewCandidateResponse, CrewMemberResponse, ServiceItemProviderView } from '@/api/types'
 import { ActionDialog } from '@/components/ActionDialog'
+import { DateTime } from '@/components/Format'
 import { PhoneText } from '@/components/PhoneText'
+import { Stars } from '@/components/Stars'
 import { ErrorState, Spinner } from '@/components/States'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -15,7 +17,7 @@ import { useAction } from '@/hooks/useAction'
 import { cn } from '@/lib/utils'
 import { WORK_INVALIDATION, workApi, workKeys } from '../api'
 import { useTargetLabel, useWriteGate } from '../hooks'
-import { canManageCrew, crewCandidateSelectable, crewChanged, MAX_CREW } from '../logic'
+import { canManageCrew, crewCandidateSelectable, crewChanged, crewRatingOf, MAX_CREW } from '../logic'
 import { Avatar, LoadBar } from './widgets'
 import '../i18n'
 
@@ -51,19 +53,33 @@ export function CrewCard({ item, crew }: { item: ServiceItemProviderView; crew: 
           <p className="text-sm text-muted-foreground">{t('crew.noLead')}</p>
         ) : (
           <ul className="space-y-3">
-            {crew.map((m) => (
-              <li key={m.executorId} className="flex items-center gap-3">
-                <Avatar name={m.fullName} />
-                <div className="min-w-0">
-                  <p className="flex flex-wrap items-center gap-1.5">
-                    <span className="truncate font-medium">{m.fullName}</span>
-                    {m.isLead && <Badge tone="active">{t('crew.lead')}</Badge>}
-                  </p>
-                  {m.specialization && <p className="truncate text-xs text-muted-foreground">{m.specialization}</p>}
-                  {m.phone && <PhoneText phone={m.phone} className="text-xs" />}
-                </div>
-              </li>
-            ))}
+            {crew.map((m) => {
+              const rated = crewRatingOf(m)
+              return (
+                <li key={m.executorId} className="flex items-start gap-3">
+                  <Avatar name={m.fullName} />
+                  <div className="min-w-0 flex-1">
+                    <p className="flex flex-wrap items-center gap-1.5">
+                      <span className="truncate font-medium">{m.fullName}</span>
+                      {m.isLead && <Badge tone="active">{t('crew.lead')}</Badge>}
+                    </p>
+                    {m.specialization && <p className="truncate text-xs text-muted-foreground">{m.specialization}</p>}
+                    {m.phone && <PhoneText phone={m.phone} className="text-xs" />}
+                    {rated && (
+                      // The lead's rating of this teammate after the job (read-only).
+                      <div className="mt-1.5 rounded-md bg-muted/50 px-2 py-1.5 text-xs">
+                        <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                          <span className="text-muted-foreground">{t('crew.leadRating')}</span>
+                          <Stars value={rated.rating} showValue={false} />
+                          {rated.ratedAt && <DateTime value={rated.ratedAt} mode="absolute" className="text-muted-foreground" />}
+                        </p>
+                        {rated.note && <p className="mt-0.5 whitespace-pre-line break-words">{rated.note}</p>}
+                      </div>
+                    )}
+                  </div>
+                </li>
+              )
+            })}
           </ul>
         )}
         {crew.length > 0 && !hasCrew && <p className="text-xs text-muted-foreground">{t('crew.onlyLead')}</p>}

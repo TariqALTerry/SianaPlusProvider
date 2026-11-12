@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Check, CircleAlert, Info, Plus, RotateCcw, Trash2, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useBlocker, useNavigate } from 'react-router'
+import { Link, useBlocker, useNavigate } from 'react-router'
 import { ConfirmDialog } from '@/components/ActionDialog'
 import { Money, Num } from '@/components/Format'
 import { InlineError } from '@/components/States'
@@ -11,14 +11,14 @@ import { Button } from '@/components/ui/button'
 import { Card, CardBody, CardHeader } from '@/components/ui/card'
 import { Checkbox, CheckboxField, Switch } from '@/components/ui/checkbox'
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Input, Textarea } from '@/components/ui/input'
+import { Input, Select, Textarea } from '@/components/ui/input'
 import { Field } from '@/components/ui/label'
 import type { CreateStoreProductRequest, StoreProductResponse, UpdateStoreProductRequest } from '@/api/types'
 import { useAction } from '@/hooks/useAction'
 import { useLang } from '@/hooks/useLang'
 import { cn } from '@/lib/utils'
-import { errorCodeOf, missingOf, productActionInvalidation, storeCategoryKeys, storeProductKeys, storeProductsApi } from '../api'
-import { coverOf, readyCount, useGalleryImages } from '../hooks'
+import { errorCodeOf, missingOf, productActionInvalidation, storeCategoryKeys, storeProductKeys, storeProductsApi, storeWarehouseKeys } from '../api'
+import { coverOf, readyCount, useGalleryImages, useWarehouses } from '../hooks'
 import {
   displayPrice,
   draftFromProduct,
@@ -46,6 +46,7 @@ import { OptionsEditor } from './OptionsEditor'
 import { ProductPreview } from './ProductPreview'
 import { ServicePicker } from './ServicePicker'
 import { StockDialog } from './StockDialog'
+import { warehouseChoices } from '../warehouses'
 import { AiBadge } from './StoreBits'
 import { VariantsTable } from './VariantsTable'
 import '../i18n'
@@ -93,6 +94,8 @@ export function ProductEditor({ product, initialDraft, initialGallery, aiNotes, 
   const [confirmActive, setConfirmActive] = useState(false)
 
   const images = useGalleryImages(gallery)
+  const warehouses = useWarehouses()
+  const warehouseOptions = useMemo(() => warehouseChoices(warehouses.data, product), [warehouses.data, product])
   const imageIds = useMemo(() => idsOf(gallery), [gallery])
   const baseline = useRef(isCreate ? fingerprint(emptyDraft(), []) : fingerprint(initialDraft, initialGallery))
   const current = useMemo(() => fingerprint(draft, gallery), [draft, gallery])
@@ -187,6 +190,8 @@ export function ProductEditor({ product, initialDraft, initialGallery, aiNotes, 
     const missing = missingOf(save.error)
     if (missing.length) setHighlight(missing)
     if (saveCode === 'StoreCategoryNotFound') void queryClient.invalidateQueries({ queryKey: storeCategoryKeys.tree() })
+    // The warehouse was stopped meanwhile: reload the choices.
+    if (saveCode === 'StoreWarehouseNotUsable' || saveCode === 'StoreWarehouseNotFound') void queryClient.invalidateQueries({ queryKey: storeWarehouseKeys.list() })
     if (saveSection) scrollTo(saveSection)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [save.error])
@@ -527,6 +532,30 @@ export function ProductEditor({ product, initialDraft, initialGallery, aiNotes, 
                   />
                 </Field>
               )}
+              {/* 2026-11-12: where the courier picks the product up; none = the main branch. */}
+              <Field label={t('fields.warehouse')} htmlFor="p-warehouse" optional hint={t('editor.warehouseHint')}>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Select
+                    id="p-warehouse"
+                    className="min-w-0 flex-1 basis-56"
+                    value={draft.warehouseId ?? ''}
+                    onChange={(e) => update({ warehouseId: e.target.value || null })}
+                    aria-invalid={saveCode === 'StoreWarehouseNotUsable' || saveCode === 'StoreWarehouseNotFound' || undefined}
+                  >
+                    <option value="">{warehouses.isPending ? t('editor.warehousesLoading') : t('editor.noWarehouse')}</option>
+                    {warehouseOptions.map((w) => (
+                      <option key={w.id} value={w.id}>
+                        {w.isActive ? w.name : t('editor.warehouseInactive', { name: w.name })}
+                      </option>
+                    ))}
+                  </Select>
+                  {!readOnly && (
+                    <Button asChild size="xs" variant="link">
+                      <Link to="/store/warehouses">{t('editor.manageWarehouses')}</Link>
+                    </Button>
+                  )}
+                </div>
+              </Field>
             </div>
           </Section>
         </fieldset>

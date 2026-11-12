@@ -6,6 +6,7 @@ const handle: RouteAccess = { full: true, store: true }
 
 export const storeRoutes: RouteObject[] = [
   { path: 'store', handle, lazy: () => import('./StorePage').then((m) => ({ Component: m.StorePage })) },
+  { path: 'store/warehouses', handle, lazy: () => import('./WarehousesPage').then((m) => ({ Component: m.WarehousesPage })) },
   { path: 'store/products/new', handle, lazy: () => import('./ProductCreatePage').then((m) => ({ Component: m.ProductCreatePage })) },
   { path: 'store/products/ai', handle, lazy: () => import('./AiProductPage').then((m) => ({ Component: m.AiProductPage })) },
   { path: 'store/products/:id', handle, lazy: () => import('./ProductEditPage').then((m) => ({ Component: m.ProductEditPage })) },

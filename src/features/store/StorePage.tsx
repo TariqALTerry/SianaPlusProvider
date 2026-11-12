@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils'
 import './i18n'
 import { isStoreGateError, LOW_STOCK_THRESHOLD, prefetchStoreProduct, storeProductKeys, storeProductsApi, type StoreProductListParams } from './api'
 import { CategoryPicker } from './components/CategoryPicker'
-import { AiBadge, DraftBadge, NotOperationalNote, ProductThumb, StoreUnavailable } from './components/StoreBits'
+import { AiBadge, DraftBadge, NotOperationalNote, ProductThumb, StoreTabs, StoreUnavailable } from './components/StoreBits'
 import { useCategoryIndex, useCategoryTree } from './hooks'
 
 /** §3.1 tabs → `status`: the server lists on-sale products only when it is omitted. */
@@ -120,6 +120,13 @@ export function StorePage() {
         ),
       },
       {
+        // Where the courier picks it up (2026-11-12); none = the main branch.
+        id: 'warehouse',
+        header: t('products.columns.warehouse'),
+        cell: ({ row: { original: p } }) =>
+          p.warehouseName ? <span className="text-sm">{p.warehouseName}</span> : <span className="text-xs text-muted-foreground">{t('products.mainBranch')}</span>,
+      },
+      {
         id: 'sold',
         header: t('products.columns.sold'),
         meta: { align: 'end' },
@@ -184,6 +191,7 @@ export function StorePage() {
           )
         }
       />
+      <StoreTabs />
       {!operational && <NotOperationalNote />}
 
       <QuickTabs className="mb-3" value={state.tab} onChange={(tab) => set({ tab })} tabs={Object.keys(TABS).map((key) => ({ key, label: t(`products.tabs.${key}`) }))} />

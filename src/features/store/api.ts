@@ -14,6 +14,8 @@ import type {
   StoreProductImageResponse,
   StoreProductListRequest,
   StoreProductResponse,
+  StoreWarehouseRequest,
+  StoreWarehouseResponse,
   UpdateStoreProductRequest,
 } from '@/api/types'
 
@@ -25,6 +27,7 @@ import type {
 const productsBase = '/api/provider/store/products'
 const imagesBase = '/api/provider/store/images'
 const categoriesBase = '/api/provider/store/categories'
+const warehousesBase = '/api/provider/store/warehouses'
 
 /** `status`: omitted = active only, `Inactive`, or `All`. The provider endpoint has no provider filter. */
 export type StoreProductListParams = Omit<ListParams<StoreProductListRequest>, 'providerOrganizationId'>
@@ -137,6 +140,18 @@ export const storeImagesApi = {
   reprocess: (id: string, cleanWithAi: boolean) => worded(http.post<StoreProductImageResponse>(`${imagesBase}/${id}/reprocess`, { cleanWithAi })),
 }
 
+/**
+ * The organization's warehouses (2026-11-12): where its products are kept and the courier picks them up. Same gate as
+ * the products (`StoreModuleDisabled`). `StoreWarehouseNotFound` / `StoreWarehouseNotUsable` keep the server's message.
+ */
+export const storeWarehousesApi = {
+  /** Active first. */
+  list: (signal?: AbortSignal) => worded(http.get<StoreWarehouseResponse[]>(warehousesBase, undefined, signal)),
+  create: (body: StoreWarehouseRequest) => worded(http.post<StoreWarehouseResponse>(warehousesBase, body)),
+  /** A full replace. A stopped warehouse can't be picked for a product; its products keep it. */
+  update: (id: string, body: StoreWarehouseRequest) => worded(http.put<StoreWarehouseResponse>(`${warehousesBase}/${id}`, body)),
+}
+
 export const storeCategoriesApi = {
   /** Active sections with their active categories (`productsCount` is always 0 here: never shown). */
   tree: (signal?: AbortSignal) => worded(http.get<StoreCategoryResponse[]>(categoriesBase, undefined, signal)),
@@ -156,6 +171,13 @@ export const storeProductKeys = {
   detail: (id: string) => [...qk.store, 'products', 'detail', id] as const,
   image: (id: string) => [...qk.store, 'image', id] as const,
 }
+
+export const storeWarehouseKeys = {
+  list: () => [...qk.store, 'warehouses'] as const,
+}
+
+/** A warehouse write changes the list and the warehouse names the products carry. */
+export const warehouseActionInvalidation = [[...qk.store, 'warehouses'], [...qk.store, 'products']] as const
 
 export const storeCategoryKeys = {
   tree: () => [...qk.store, 'categories'] as const,

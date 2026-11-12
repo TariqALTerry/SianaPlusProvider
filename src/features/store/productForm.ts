@@ -104,10 +104,15 @@ export interface ProductDraft {
   requiresInstallation: boolean
   installationServiceId: string | null
   deliveryServiceId: string | null
+  /** Where the courier picks the product up; null = none (the organization's main branch). */
+  warehouseId: string | null
   options: OptionDraft[]
   variants: VariantDraft[]
   fromAiDraft: boolean
 }
+
+/** `warehouseId` on a save: null leaves the stored warehouse as it is, so "none" is sent as the empty Guid. */
+export const NO_WAREHOUSE = '00000000-0000-0000-0000-000000000000'
 
 let uidCounter = 0
 export function uid(prefix = 'u'): string {
@@ -157,6 +162,7 @@ export function emptyDraft(): ProductDraft {
     requiresInstallation: false,
     installationServiceId: null,
     deliveryServiceId: null,
+    warehouseId: null,
     options: [],
     variants: [],
     fromAiDraft: false,
@@ -214,6 +220,7 @@ export function draftFromProduct(p: StoreProductResponse): ProductDraft {
     requiresInstallation: p.requiresInstallation,
     installationServiceId: p.installationServiceId,
     deliveryServiceId: p.deliveryServiceId,
+    warehouseId: p.warehouseId,
     options,
     variants: p.variants.map((v) => ({
       id: v.id,
@@ -561,6 +568,8 @@ export function sectionOfError(code: string | null, hasVariantRows: boolean): Ed
       return 'basics'
     case 'InstallationServiceRequired':
     case 'CanonicalServiceNotFound':
+    case 'StoreWarehouseNotUsable':
+    case 'StoreWarehouseNotFound':
       return 'fulfilment'
     default:
       return null
@@ -624,6 +633,7 @@ export function toRequest(draft: ProductDraft, imageIds: string[]): CreateStoreP
     requiresInstallation: draft.requiresInstallation,
     installationServiceId: draft.requiresInstallation ? draft.installationServiceId : null,
     deliveryServiceId: draft.requiresDelivery ? draft.deliveryServiceId : null,
+    warehouseId: draft.warehouseId ?? NO_WAREHOUSE,
     categoryId: draft.categoryId,
     brand: draft.brand.trim(),
     compareAtPrice: variants ? null : was > 0 ? was : 0,

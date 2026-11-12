@@ -9,6 +9,7 @@ import {
   emptyDraft,
   keyFromName,
   localMissingForSale,
+  NO_WAREHOUSE,
   sectionOfError,
   swatches,
   syncVariants,
@@ -185,6 +186,8 @@ describe('toRequest', () => {
       requiresInstallation: false,
       installationServiceId: null,
       deliveryServiceId: null,
+      warehouseId: 'w1',
+      warehouseName: 'مستودع الشمال',
       isActive: false,
       createdAt: '2026-10-01T00:00:00Z',
       updatedAt: null,
@@ -217,6 +220,16 @@ describe('toRequest', () => {
       ['v1', '50-l', 80, 100, 0],
       ['v2', '80-l', 95, null, 0],
     ])
+    // The saved warehouse is sent back as it is.
+    expect(draft.warehouseId).toBe('w1')
+    expect(body.warehouseId).toBe('w1')
+  })
+
+  it('sends "no warehouse" as the empty Guid, since null would keep the stored one', () => {
+    expect(emptyDraft().warehouseId).toBeNull()
+    expect(toRequest(draftWith({}), []).warehouseId).toBe(NO_WAREHOUSE)
+    expect(NO_WAREHOUSE).toBe('00000000-0000-0000-0000-000000000000')
+    expect(toRequest(draftWith({ warehouseId: 'w2' }), []).warehouseId).toBe('w2')
   })
 })
 
@@ -226,6 +239,7 @@ describe('sectionOfError', () => {
     expect(sectionOfError('ProductPriceInvalid', true)).toBe('variants')
     expect(sectionOfError('ProductPriceInvalid', false)).toBe('pricing')
     expect(sectionOfError('ProductNotReadyForSale', false)).toBe('readiness')
+    expect(sectionOfError('StoreWarehouseNotUsable', false)).toBe('fulfilment')
     expect(sectionOfError('Whatever', false)).toBeNull()
   })
 })

@@ -283,7 +283,7 @@ The contract is `../Siana/docs/PROVIDER-BRANCHES-PROVIDER-PLATFORM-PROMPT.md`, p
 | `/wallet`, `/settlements`, `/settlements/:id` | money | full |
 | `/subscription` | counter subscription | full, or a "counter only" shop before approval |
 | `/reviews`, `/disputes`, `/disputes/:id` | quality | full |
-| `/store`, `/store/products/new`, `/store/products/ai`, `/store/products/:id` | store | full + store module |
+| `/store`, `/store/products/new`, `/store/products/ai`, `/store/products/:id`, `/store/warehouses` | store: products, and the warehouses the courier picks them up from | full + store module |
 | `/growth/demand` | demand near you | full |
 | `/support`, `/support/:id` | support tickets | management |
 | `/notifications`, `/n/:notificationId` | notifications | all |

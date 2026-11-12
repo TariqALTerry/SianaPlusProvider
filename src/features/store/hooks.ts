@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { LOOKUP_STALE_TIME } from '@/api/queryClient'
 import type { StoreCategoryResponse, StoreProductImageResponse } from '@/api/types'
 import { usePollingInterval } from '@/hooks/usePageVisible'
-import { storeCategoriesApi, storeCategoryKeys, storeImagesApi, storeProductKeys } from './api'
+import { storeCategoriesApi, storeCategoryKeys, storeImagesApi, storeProductKeys, storeWarehouseKeys, storeWarehousesApi } from './api'
 import type { GalleryItem } from './productForm'
 
 /** §4.4: ask every 5 s until the picture is Ready or Failed. */
@@ -15,6 +15,16 @@ export function useCategoryTree(enabled = true) {
     queryKey: storeCategoryKeys.tree(),
     queryFn: ({ signal }) => storeCategoriesApi.tree(signal),
     staleTime: LOOKUP_STALE_TIME,
+    enabled,
+  })
+}
+
+/** The organization's warehouses, active first: the warehouses page and the product form's picker. */
+export function useWarehouses(enabled = true) {
+  return useQuery({
+    queryKey: storeWarehouseKeys.list(),
+    queryFn: ({ signal }) => storeWarehousesApi.list(signal),
+    staleTime: 30_000,
     enabled,
   })
 }

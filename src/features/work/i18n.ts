@@ -269,6 +269,7 @@ const ar = {
     changes: '{{count}} مع المسؤول',
     cleared: 'المسؤول وحده',
     saved: 'حُفظ الفريق',
+    leadRating: 'تقييم المسؤول',
   },
   executorItems: {
     title: 'أعمال {{name}}',
@@ -547,6 +548,7 @@ const en: typeof ar = {
     changes: '{{count}} with the lead',
     cleared: 'The lead alone',
     saved: 'Crew saved',
+    leadRating: 'Lead’s rating',
   },
   executorItems: {
     title: '{{name}}’s work',

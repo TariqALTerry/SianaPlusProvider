@@ -9,6 +9,7 @@ import {
   CREW_LOCKED_STATUSES,
   crewCandidateSelectable,
   crewChanged,
+  crewRatingOf,
   MAX_CREW,
   bestCandidateId,
   declineBadge,
@@ -336,5 +337,19 @@ describe('crew (2026-11-12)', () => {
     expect(crewChanged(['a'], ['a', 'b'])).toBe(true)
     expect(crewChanged(['a'], [])).toBe(true)
     expect(crewChanged([], [])).toBe(false)
+  })
+
+  it('shows the lead’s rating of a teammate only once given, never on the lead’s own row', () => {
+    const member = { isLead: false, rating: null, ratingNote: null, ratedAt: null }
+    expect(crewRatingOf(member)).toBeNull()
+    expect(crewRatingOf({ ...member, isLead: true, rating: 5, ratedAt: '2026-11-12T10:00:00Z' })).toBeNull()
+    expect(crewRatingOf({ ...member, rating: 4, ratingNote: '  سريع ومتعاون ', ratedAt: '2026-11-12T10:00:00Z' })).toEqual({
+      rating: 4,
+      note: 'سريع ومتعاون',
+      ratedAt: '2026-11-12T10:00:00Z',
+    })
+    expect(crewRatingOf({ ...member, rating: 3, ratingNote: '   ' })).toEqual({ rating: 3, note: null, ratedAt: null })
+    expect(crewRatingOf({ ...member, rating: 0 })).toBeNull()
+    expect(crewRatingOf({ ...member, rating: 6 })).toBeNull()
   })
 })
