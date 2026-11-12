@@ -3,6 +3,8 @@ import { http } from '@/api/http'
 import { qk } from '@/api/keys'
 import type {
   AssignExecutorRequest,
+  CrewCandidateResponse,
+  CrewMemberResponse,
   ExecutorCandidateResponse,
   HomeInspectionResponse,
   ListParams,
@@ -13,6 +15,7 @@ import type {
   QuotationReviewResponse,
   ReviewQuotationRequest,
   ScheduleItemRequest,
+  SetCrewRequest,
   ServiceItemProviderDetailResponse,
   ServiceItemProviderView,
   UnassignRequest,
@@ -46,6 +49,10 @@ export const workApi = {
   approveQuotationReview: (id: string, quotationId: string, body: ReviewQuotationRequest) => http.post<string>(`${base}/items/${id}/quotations/${quotationId}/approve-review`, body),
   /** The quotation goes back to the technician as a draft; `note` is required (`QuotationReviewNoteRequired`). */
   rejectQuotationReview: (id: string, quotationId: string, body: ReviewQuotationRequest) => http.post<string>(`${base}/items/${id}/quotations/${quotationId}/reject-review`, body),
+  /** Crew (2026-11-12): the company's active members other than the lead, with their load. */
+  crewCandidates: (id: string, signal?: AbortSignal) => http.get<CrewCandidateResponse[]>(`${base}/items/${id}/crew/candidates`, undefined, signal),
+  /** Replaces the crew (at most 10, same company; empty clears it). Returns the lead first, then the crew. */
+  setCrew: (id: string, body: SetCrewRequest) => http.put<CrewMemberResponse[]>(`${base}/items/${id}/crew`, body),
 }
 
 export const workKeys = {
@@ -53,6 +60,7 @@ export const workKeys = {
   list: (params: WorkListParams) => [...qk.work, 'list', params] as const,
   detail: (id: string) => [...qk.work, 'detail', id] as const,
   candidates: (id: string) => [...qk.work, 'candidates', id] as const,
+  crewCandidates: (id: string) => [...qk.work, 'crew-candidates', id] as const,
   homeInspection: (id: string) => [...qk.work, 'home-inspection', id] as const,
   quotationReviews: () => [...qk.work, 'quotation-reviews'] as const,
   executorItems: (executorId: string, params: WorkListParams) => [...qk.work, 'list', 'executor', executorId, params] as const,

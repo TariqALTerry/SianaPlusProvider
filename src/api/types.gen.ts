@@ -3301,8 +3301,14 @@ export interface CartItemResponse {
   priceUnitAr: string | null
   priceUnitEn: string | null
   priceOnQuote: boolean
+  estimatedMinPrice: number | null
+  estimatedMaxPrice: number | null
+  estimatedPriceUnitAr: string | null
+  estimatedPriceUnitEn: string | null
+  estimatedQuantity: number | null
   customerDescription: string | null
   dynamicFields: Record<string, unknown>
+  dynamicFieldLabels: Record<string, string>
   devices: DeviceResponse[]
   mediaCount: number
 }
@@ -3442,6 +3448,9 @@ export interface QuotationDecisionRequest {
 export interface RejectQuotationRequest {
   note: string
 }
+export interface RequestDeviceReturnRequest {
+  note?: string | null
+}
 export interface ConfirmCompletionRequest {
   note?: string | null
 }
@@ -3546,6 +3555,8 @@ export interface ServiceItemCustomerView {
   pendingQuotationEffect: QuotationEffect | null
   pendingQuotationResultingAmount: number | null
   inspectionFee: number
+  canRequestDeviceReturn: boolean
+  deviceReturnFee: number | null
   homeInspectionId: string | null
   provider: LookupResponse | null
   executor: PersonLookupResponse | null
@@ -3570,6 +3581,10 @@ export interface ServiceItemCustomerView {
   canReview: boolean
   canReschedule: boolean
   cancelBlockedReason: string | null
+  destination: string | null
+  pickupPlace: string | null
+  goodsPickedUpAt: string | null
+  goodsDeliveredAt: string | null
   createdAt: string
 }
 export interface ServiceItemCustomerDetailResponse {
@@ -3579,6 +3594,7 @@ export interface ServiceItemCustomerDetailResponse {
   quotations: QuotationResponse[]
   schedules: ScheduleResponse[]
   workflow: ExecutionStepResponse[]
+  crew: CrewMemberResponse[]
 }
 export interface ServiceItemTrackingResponse {
   serviceItemId: string
@@ -3761,6 +3777,7 @@ export interface RejectJobRequest {
 export interface ArriveRequest {
   latitude?: number | null
   longitude?: number | null
+  confirmFarArrival: boolean
 }
 export interface PauseJobRequest {
   reason: string
@@ -3830,6 +3847,11 @@ export interface JobSummaryResponse {
   maxDiscountPercent: number
   requiresQuotation: boolean
   hasPendingQuotation: boolean
+  destination: string | null
+  isStoreDelivery: boolean
+  isCrewMember: boolean
+  crewSize: number
+  goodsPickedUpAt: string | null
   fulfillmentChannel: FulfillmentChannel
   branchName: string | null
   intakeNumber: string | null
@@ -3873,6 +3895,16 @@ export interface JobDetailResponse extends JobSummaryResponse {
   testResult: string | null
   cashCollectedAt: string | null
   startedAt: string | null
+  crew: CrewMemberResponse[]
+  isCrewMember: boolean
+  canManageCrew: boolean
+  goodsPickedUpAt: string | null
+  goodsDeliveredAt: string | null
+  destination: string | null
+  isStoreDelivery: boolean
+  pickupPlace: string | null
+  pickupLatitude: number | null
+  pickupLongitude: number | null
   cancellationReason: string | null
   cancelledBy: CancellationInitiator | null
   cancelledAt: string | null
@@ -4977,6 +5009,7 @@ export interface AdminOrderDetailResponse {
 export interface ServiceItemAdminDetailResponse {
   item: ServiceItemAdminView
   dynamicFieldLabels: Record<string, string>
+  crew: CrewMemberResponse[]
   timeline: TimelineEventResponse[]
   evidence: EvidenceResponse[]
   quotations: QuotationResponse[]
@@ -5323,6 +5356,7 @@ export interface ServiceItemProviderView {
 export interface ServiceItemProviderDetailResponse {
   item: ServiceItemProviderView
   dynamicFieldLabels: Record<string, string>
+  crew: CrewMemberResponse[]
   timeline: TimelineEventResponse[]
   evidence: EvidenceResponse[]
   quotations: QuotationResponse[]
@@ -5400,6 +5434,28 @@ export interface TestCustomerRemoveResponse {
   addressesRemoved: number
   favoritesRemoved: number
   subscriptionsRemoved: number
+}
+
+// ── Orders/CrewDtos.cs
+export interface CrewMemberResponse {
+  executorId: string
+  fullName: string
+  phone: string | null
+  isLead: boolean
+  specialization: string | null
+}
+export interface SetCrewRequest {
+  executorIds: string[]
+}
+export interface CrewCandidateResponse {
+  executorId: string
+  fullName: string
+  phone: string | null
+  specialization: string | null
+  activeJobs: number
+  maxConcurrentJobs: number
+  isInCrew: boolean
+  hasCapacity: boolean
 }
 
 // ── Orders/SharedOrderDtos.cs

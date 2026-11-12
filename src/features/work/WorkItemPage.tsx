@@ -42,6 +42,7 @@ import { HomeInspectionButton, HomeInspectionSheet, InspectionWarning } from './
 import { WorkActions } from './components/WorkActions'
 import { CoverageBadge, NetBlock } from './components/widgets'
 import { BranchCard } from './components/BranchCard'
+import { CrewCard } from './components/CrewCard'
 import { PlatformDeviceActions, PlatformIntakeDialog } from '@/features/counter/components/PlatformIntakeDialog'
 import type { DeviceResponse } from '@/api/types'
 
@@ -76,7 +77,7 @@ export function WorkItemPage() {
   if (query.isPending) return <PageSkeleton />
   if (query.isError) return <ErrorState error={query.error} onRetry={() => void query.refetch()} />
 
-  const { item, timeline, evidence, quotations, assignments, schedules, workflow, dynamicFieldLabels } = query.data
+  const { item, timeline, evidence, quotations, assignments, schedules, workflow, dynamicFieldLabels, crew } = query.data
   const live = isLiveStatus(item.status)
   const inReview = quotations.find((q) => q.status === 'PendingReview')
   const counts: Partial<Record<Tab, number>> = {
@@ -248,6 +249,8 @@ export function WorkItemPage() {
           <BranchCard item={item} />
           <NetBlock item={item} />
           <TechnicianCard item={item} />
+          {/* `crew` is new (2026-11-12): an API not yet carrying it reads as no crew. */}
+          <CrewCard item={item} crew={crew ?? []} />
           <ScheduleCard item={item} schedules={schedules} />
           <WorkflowCard steps={workflow} item={item} />
           <MilestonesCard item={item} />

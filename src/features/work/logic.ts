@@ -1,5 +1,5 @@
 import { toApiError, ApiError } from '@/api/http'
-import type { AssignmentResponse, ExecutorCandidateResponse, HomeInspectionCheckResponse, HomeInspectionStatus, ServiceItemProviderView, ServiceItemStatus } from '@/api/types'
+import type { AssignmentResponse, CrewCandidateResponse, ExecutorCandidateResponse, HomeInspectionCheckResponse, HomeInspectionStatus, ServiceItemProviderView, ServiceItemStatus } from '@/api/types'
 import { isoToRiyadhInput, nowRiyadh, parseUtc } from '@/lib/format'
 
 /** Quick tabs above the work list (§8.4), in the brief's order. */
@@ -273,4 +273,41 @@ export function showsInspectionWarning(itemStatus: ServiceItemStatus, inspection
 export function inspectionSuggestions<C extends Pick<HomeInspectionCheckResponse, 'result'>>(checks: readonly C[]): C[] {
   const rank = (c: C) => (c.result === 'Urgent' ? 0 : 1)
   return checks.filter((c) => c.result === 'Urgent' || c.result === 'NeedsAttention').sort((a, b) => rank(a) - rank(b))
+}
+
+// ── Crew (2026-11-12): the lead (the assigned technician) plus up to 10 teammates ──
+
+/** `ServiceCrew.MaxCrew`: the server answers `CrewTooLarge` above it (the lead does not count). */
+export const MAX_CREW = 10
+
+/** The crew is frozen once the service is closed or under a dispute (`CrewNotEditable`). */
+export const CREW_LOCKED_STATUSES: readonly ServiceItemStatus[] = [...TERMINAL_STATUSES, 'Disputed']
+
+/**
+ * "إدارة الفريق" shows while the item has a lead (else `CrewNeedsLead`) and is not closed. A UI hint
+ * only: the server decides, and its message is shown when it refuses.
+ */
+export function canManageCrew(item: Pick<ServiceItemProviderView, 'status' | 'executor'>): boolean {
+  return !!item.executor && !CREW_LOCKED_STATUSES.includes(item.status)
+}
+
+/**
+ * Whether a candidate's box can be ticked now. Someone already in the crew stays tickable even when full
+ * (their load already counts this service); a newcomer needs room, and the crew a free seat.
+ */
+export function crewCandidateSelectable(
+  c: Pick<CrewCandidateResponse, 'isInCrew' | 'hasCapacity'>,
+  checked: boolean,
+  selectedCount: number,
+): boolean {
+  if (checked) return true
+  if (selectedCount >= MAX_CREW) return false
+  return c.isInCrew || c.hasCapacity
+}
+
+/** True when the picked ids differ from the saved crew (the save button stays off otherwise). */
+export function crewChanged(saved: readonly string[], picked: readonly string[]): boolean {
+  const a = new Set(saved)
+  const b = new Set(picked)
+  return a.size !== b.size || [...a].some((id) => !b.has(id))
 }

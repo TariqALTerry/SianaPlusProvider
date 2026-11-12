@@ -5,6 +5,11 @@ import { dayjs, DISPLAY_TZ } from '@/lib/format'
 import {
   assignmentResponseDue,
   availableWorkActions,
+  canManageCrew,
+  CREW_LOCKED_STATUSES,
+  crewCandidateSelectable,
+  crewChanged,
+  MAX_CREW,
   bestCandidateId,
   declineBadge,
   canRejectIncoming,
@@ -298,5 +303,38 @@ describe('home inspection report (HOME-SUBSCRIPTIONS PHASE2 §2)', () => {
       { key: 'e', result: 'NotApplicable' as const },
     ]
     expect(inspectionSuggestions(checks).map((c) => c.key)).toEqual(['c', 'a'])
+  })
+})
+
+describe('crew (2026-11-12)', () => {
+  const lead = { id: 'e1', fullName: 'فهد', phoneNumber: null } as const
+
+  it('is managed only with a lead and while the service is open', () => {
+    expect(canManageCrew({ status: 'Scheduled', executor: lead } as never)).toBe(true)
+    expect(canManageCrew({ status: 'InProgress', executor: lead } as never)).toBe(true)
+    expect(canManageCrew({ status: 'AssignedToProvider', executor: null } as never)).toBe(false)
+    for (const status of ['Completed', 'Cancelled', 'Refunded', 'PartiallyRefunded', 'Disputed'] as ServiceItemStatus[]) {
+      expect(CREW_LOCKED_STATUSES).toContain(status)
+      expect(canManageCrew({ status, executor: lead } as never)).toBe(false)
+    }
+  })
+
+  it('keeps a full member who is already in the crew, but never newly ticks one without room', () => {
+    expect(crewCandidateSelectable({ isInCrew: true, hasCapacity: false }, true, 3)).toBe(true)
+    expect(crewCandidateSelectable({ isInCrew: true, hasCapacity: false }, false, 3)).toBe(true)
+    expect(crewCandidateSelectable({ isInCrew: false, hasCapacity: false }, false, 3)).toBe(false)
+    expect(crewCandidateSelectable({ isInCrew: false, hasCapacity: true }, false, 3)).toBe(true)
+  })
+
+  it('stops new ticks at the crew limit, while ticked boxes can still be cleared', () => {
+    expect(crewCandidateSelectable({ isInCrew: false, hasCapacity: true }, false, MAX_CREW)).toBe(false)
+    expect(crewCandidateSelectable({ isInCrew: true, hasCapacity: true }, true, MAX_CREW)).toBe(true)
+  })
+
+  it('compares the picked crew with the saved one regardless of order', () => {
+    expect(crewChanged(['a', 'b'], ['b', 'a'])).toBe(false)
+    expect(crewChanged(['a'], ['a', 'b'])).toBe(true)
+    expect(crewChanged(['a'], [])).toBe(true)
+    expect(crewChanged([], [])).toBe(false)
   })
 })
