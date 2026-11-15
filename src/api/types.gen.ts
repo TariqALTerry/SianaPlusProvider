@@ -3979,6 +3979,7 @@ export interface ServiceTrackingResponse {
   expectedReadyAt: string | null
   lastUpdateAt: string | null
   handoverCode: string | null
+  handoverCodePurpose: string | null
   hasCustody: boolean
   devices: TrackedDevice[]
   updates: ProgressUpdateResponse[]

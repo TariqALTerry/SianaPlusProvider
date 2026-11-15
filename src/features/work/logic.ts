@@ -1,5 +1,5 @@
 import { toApiError, ApiError } from '@/api/http'
-import type { AssignmentResponse, CrewCandidateResponse, CrewMemberResponse, ExecutorCandidateResponse, HomeInspectionCheckResponse, HomeInspectionStatus, ServiceItemProviderView, ServiceItemStatus } from '@/api/types'
+import type { AssignmentResponse, CrewCandidateResponse, CrewMemberResponse, ExecutorAvailability, ExecutorCandidateResponse, HomeInspectionCheckResponse, HomeInspectionStatus, ServiceItemProviderView, ServiceItemStatus } from '@/api/types'
 import { isoToRiyadhInput, nowRiyadh, parseUtc } from '@/lib/format'
 
 /** Quick tabs above the work list (§8.4), in the brief's order. */
@@ -124,9 +124,15 @@ export function delegateSkipped(view: Pick<ServiceItemProviderView, 'status' | '
 export type IneligibleReason = 'cannotRepair' | 'offDutyTimeOff' | 'offDutyHours' | 'capabilities' | 'unavailable' | 'maxJobs'
 
 /**
+ * Availability values that keep a technician from new work. "مشغول" (Busy) only means on a job: a technician
+ * under their limit can take another, so it never blocks on its own (the server's `isEligible`).
+ */
+const BLOCKING_AVAILABILITY: readonly ExecutorAvailability[] = ['Offline', 'OnLeave']
+
+/**
  * Why a candidate can't take the item (§8.5): قدرات ناقصة · غير متاح · وصل الحد الأقصى.
- * The server's `isEligible` also requires an active account; an inactive technician counts as
- * "غير متاح".
+ * "غير متاح" means offline or on leave; a busy technician is limited only by their job count. The server's
+ * `isEligible` also requires an active account; an inactive technician counts as "غير متاح".
  */
 export function ineligibleReasons(c: ExecutorCandidateResponse): IneligibleReason[] {
   if (c.isEligible) return []
@@ -136,10 +142,15 @@ export function ineligibleReasons(c: ExecutorCandidateResponse): IneligibleReaso
   // Off duty at the visit time (PHASE2 §5): on time off, or outside the weekly working hours.
   if (c.isOffDuty) r.push(c.offDutyReason === 'TimeOff' ? 'offDutyTimeOff' : 'offDutyHours')
   if (!c.hasAllCapabilities) r.push('capabilities')
-  if (c.availability !== 'Available') r.push('unavailable')
+  if (BLOCKING_AVAILABILITY.includes(c.availability)) r.push('unavailable')
   if (!c.hasCapacity) r.push('maxJobs')
   if (r.length === 0) r.push('unavailable')
   return r
+}
+
+/** "مشغول بمهمة": an informational tag for a technician on a job, never a reason they can't take this one. */
+export function isBusyWithJob(c: Pick<ExecutorCandidateResponse, 'availability'>): boolean {
+  return c.availability === 'Busy'
 }
 
 /** When the technician must answer by: only a technician assignment still waiting for them has a deadline. */

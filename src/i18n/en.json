@@ -265,7 +265,7 @@
     "PaymentRecorded": "Online payment recorded",
     "CashPaymentDue": "Cash amount due",
     "RepairTested": "Repair tested",
-    "ClosedAfterInspection": "Closed with the inspection fee",
+    "ClosedAfterInspection": "Closed after the inspection without a repair",
     "QuotationExpired": "Quote expired",
     "CompletedUnusuallyFast": "Finished unusually fast",
     "IntakeCreated": "Counter intake",
@@ -291,7 +291,14 @@
     "ReworkRootCauseRecorded": "Root cause recorded",
     "PartsUsed": "Parts used",
     "PartsReturned": "Parts returned",
-    "SupplierReturnDrafted": "Supplier return drafted"
+    "SupplierReturnDrafted": "Supplier return drafted",
+    "ArrivedFarFromAddress": "Technician arrived far from the address",
+    "ArrivedWithoutLocation": "Technician marked arrival without a location",
+    "ReturnedToPlatform": "Returned to the platform: no technician available at your organization",
+    "CrewRated": "The lead rated the crew"
+  },
+  "timelineEventDetails": {
+    "ArrivedFarFromAddress": "Technician arrived far from the address ({{distanceKm}} km)"
   },
   "auth": {
     "title": "Sign in",

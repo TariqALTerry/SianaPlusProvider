@@ -19,6 +19,7 @@ import {
   defaultScheduleWindow,
   delegateSkipped,
   ineligibleReasons,
+  isBusyWithJob,
   initials,
   inspectionProgress,
   inspectionScoreTone,
@@ -194,7 +195,10 @@ describe('candidate picker (§8.5)', () => {
   it('lists the reasons an executor is ineligible', () => {
     expect(ineligibleReasons(c({}))).toEqual([])
     expect(ineligibleReasons(c({ isEligible: false, hasAllCapabilities: false }))).toEqual(['capabilities'])
-    expect(ineligibleReasons(c({ isEligible: false, availability: 'Busy', hasCapacity: false }))).toEqual(['unavailable', 'maxJobs'])
+    // Busy is not "unavailable": only the job limit holds a busy technician back.
+    expect(ineligibleReasons(c({ isEligible: false, availability: 'Busy', hasCapacity: false }))).toEqual(['maxJobs'])
+    expect(ineligibleReasons(c({ isEligible: false, availability: 'Offline', hasCapacity: false }))).toEqual(['unavailable', 'maxJobs'])
+    expect(ineligibleReasons(c({ isEligible: false, availability: 'OnLeave' }))).toEqual(['unavailable'])
     // Inactive account: the server says ineligible without a specific flag.
     expect(ineligibleReasons(c({ isEligible: false }))).toEqual(['unavailable'])
     // Delivery only (no repair role): never a repair candidate, whatever else is true.
@@ -202,6 +206,14 @@ describe('candidate picker (§8.5)', () => {
     // Off duty at the visit time (PHASE2 §5).
     expect(ineligibleReasons(c({ isEligible: false, isOffDuty: true, offDutyReason: 'TimeOff' }))).toEqual(['offDutyTimeOff'])
     expect(ineligibleReasons(c({ isEligible: false, isOffDuty: true, offDutyReason: 'OutsideWorkingHours' }))).toEqual(['offDutyHours'])
+  })
+
+  it('never calls an eligible busy technician unavailable, and tags them as on a job', () => {
+    const busy = c({ availability: 'Busy', activeJobs: 1, maxConcurrentJobs: 3 })
+    expect(ineligibleReasons(busy)).toEqual([])
+    expect(isBusyWithJob(busy)).toBe(true)
+    expect(isBusyWithJob(c({}))).toBe(false)
+    expect(isBusyWithJob(c({ availability: 'Offline' }))).toBe(false)
   })
 
   it('marks the first eligible row as the best, keeping the server order', () => {

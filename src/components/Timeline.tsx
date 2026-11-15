@@ -7,6 +7,7 @@ import { EnumText, StatusBadge } from '@/components/StatusBadge'
 import { EmptyState } from '@/components/States'
 import { useLang } from '@/hooks/useLang'
 import type { ActorType, TimelineEventResponse } from '@/api/types'
+import { eventLabelValues } from '@/lib/timelineEvents'
 import { cn } from '@/lib/utils'
 
 const actorIcon: Record<ActorType, typeof Bot> = {
@@ -25,11 +26,19 @@ const actorColor: Record<ActorType, string> = {
   Executor: 'bg-tone-attention-soft text-tone-attention',
 }
 
-/** Label for a backend event type (`common:timelineEvents`); unknown types are humanized. */
+/**
+ * Label for a backend event type (`common:timelineEvents`); unknown types are humanized. With the
+ * event's metadata, a few events read values from it (`common:timelineEventDetails`, e.g. the distance
+ * of a far arrival).
+ */
 export function useEventLabel() {
-  const { t } = useTranslation()
-  return (type: string | null | undefined): string =>
-    type ? t(`timelineEvents.${type}`, { defaultValue: type.replace(/([a-z])([A-Z])/g, '$1 $2') }) : '—'
+  const { t, i18n } = useTranslation()
+  return (type: string | null | undefined, metadataJson?: string | null): string => {
+    if (!type) return '—'
+    const values = eventLabelValues(type, metadataJson, i18n.language)
+    if (values) return t(`timelineEventDetails.${type}`, { ...values, defaultValue: t(`timelineEvents.${type}`) })
+    return t(`timelineEvents.${type}`, { defaultValue: type.replace(/([a-z])([A-Z])/g, '$1 $2') })
+  }
 }
 
 export interface TimelineRow {
@@ -64,7 +73,7 @@ export function Timeline({ rows, className }: { rows: TimelineRow[]; className?:
             </span>
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               {context && <span className="text-xs text-muted-foreground">{context}</span>}
-              <span className="text-sm font-medium">{eventLabel(event.eventType)}</span>
+              <span className="text-sm font-medium">{eventLabel(event.eventType, event.metadataJson)}</span>
               {(event.fromStatus || event.toStatus) && (
                 <span className="inline-flex items-center gap-1">
                   {event.fromStatus && <StatusBadge enum="ServiceItemStatus" value={event.fromStatus} dot={false} />}

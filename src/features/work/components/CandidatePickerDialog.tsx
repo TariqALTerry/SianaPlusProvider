@@ -16,7 +16,7 @@ import { formatNumber } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { WORK_INVALIDATION, workApi, workKeys } from '../api'
 import { useTargetLabel, type WorkTarget } from '../hooks'
-import { bestCandidateId, declineBadge, ineligibleReasons, workErrorDetail } from '../logic'
+import { bestCandidateId, declineBadge, ineligibleReasons, isBusyWithJob, workErrorDetail } from '../logic'
 import { Avatar, LoadBar, ScoreBar, WorkErrorHint } from './widgets'
 import '../i18n'
 
@@ -176,6 +176,7 @@ function CandidateRow({
   const { lang } = useLang()
   const reasons = ineligibleReasons(c)
   const declined = declineBadge(c)
+  const busy = isBusyWithJob(c)
   const disabled = !c.isEligible || current
   return (
     <div
@@ -212,14 +213,18 @@ function CandidateRow({
             {best && <Badge tone="success">{t('picker.best')}</Badge>}
             {current && <Badge tone="info">{t('picker.current')}</Badge>}
             {declined && <Badge tone="attention">{t(`picker.${declined}`)}</Badge>}
+            {busy && <Badge tone="waiting">{t('picker.busyWithJob')}</Badge>}
           </div>
           {declined && c.declineNote && <p className="mt-0.5 text-xs text-muted-foreground">{t('picker.declineNote', { note: c.declineNote })}</p>}
           <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1">
-              <span className={cn('size-2 rounded-full', toneDot[enumTone('ExecutorAvailability', c.availability)])} aria-hidden />
-              {enumLabel('ExecutorAvailability', c.availability, lang)}
-            </span>
-            {c.specialization && <span className="truncate">· {c.specialization}</span>}
+            {/* A busy technician already carries the "مشغول بمهمة" tag above. */}
+            {!busy && (
+              <span className="inline-flex items-center gap-1">
+                <span className={cn('size-2 rounded-full', toneDot[enumTone('ExecutorAvailability', c.availability)])} aria-hidden />
+                {enumLabel('ExecutorAvailability', c.availability, lang)}
+              </span>
+            )}
+            {c.specialization && <span className="truncate">{busy ? '' : '· '}{c.specialization}</span>}
           </div>
           {reasons.length > 0 && (
             <div className="mt-1 flex flex-wrap gap-1">

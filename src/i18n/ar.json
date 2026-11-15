@@ -265,7 +265,7 @@
     "PaymentRecorded": "تسجيل دفعة إلكترونية",
     "CashPaymentDue": "مبلغ نقدي مستحق",
     "RepairTested": "اختبار الإصلاح",
-    "ClosedAfterInspection": "أُغلقت برسوم المعاينة",
+    "ClosedAfterInspection": "أُغلقت بعد المعاينة بدون إصلاح",
     "QuotationExpired": "انتهت مهلة العرض",
     "CompletedUnusuallyFast": "أُنهيت أسرع من المعتاد",
     "IntakeCreated": "استلام بالكاونتر",
@@ -291,7 +291,14 @@
     "ReworkRootCauseRecorded": "سُجّل السبب الجذري",
     "PartsUsed": "صُرفت قطع",
     "PartsReturned": "أُرجعت قطع",
-    "SupplierReturnDrafted": "مسودة مرتجع للمورد"
+    "SupplierReturnDrafted": "مسودة مرتجع للمورد",
+    "ArrivedFarFromAddress": "وصل الفني من مكان بعيد عن العنوان",
+    "ArrivedWithoutLocation": "سجّل الفني الوصول بدون موقع",
+    "ReturnedToPlatform": "رجعت للمنصة: لا يوجد فني متاح لدى المنشأة",
+    "CrewRated": "قيّم المسؤول فريقه"
+  },
+  "timelineEventDetails": {
+    "ArrivedFarFromAddress": "وصل الفني من مكان بعيد عن العنوان ({{distanceKm}} كم)"
   },
   "auth": {
     "title": "تسجيل الدخول",

@@ -158,6 +158,7 @@ const ar = {
     unreliableLocationHint: 'آخر موقع أرسله الفني بعيد جدًا عن العنوان (جهاز اختبار أو موقع خاطئ)، فلا يُحسب.',
     reassignDeclined: 'هذا الفني اعتذر عن هذه المهمة. إسنادها له مجددًا؟',
     reassignDeclinedConfirm: 'نعم، أسندها له رغم اعتذاره',
+    busyWithJob: 'مشغول بمهمة',
     reasons: {
       cannotRepair: 'ليست له صلاحية الإصلاح',
       offDutyTimeOff: 'في إجازة وقت الزيارة',
@@ -437,6 +438,7 @@ const en: typeof ar = {
     unreliableLocationHint: 'The last location this technician sent is far from the address (a test device or a wrong fix), so it is not used.',
     reassignDeclined: 'This technician declined this job. Assign it to them again?',
     reassignDeclinedConfirm: 'Yes, assign it despite the decline',
+    busyWithJob: 'On a job',
     reasons: {
       cannotRepair: 'No repair role',
       offDutyTimeOff: 'On time off at the visit time',
