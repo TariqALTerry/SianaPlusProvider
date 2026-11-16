@@ -18,7 +18,7 @@ const ar = {
   expectedReady: 'متوقع الجاهزية: {{date}}',
   openCounter: 'فتح في الكاونتر',
   overdue: 'متأخر',
-  daysInStage: '{{count}} يوم في المرحلة',
+  daysInStage: '{{count, days(case: nominative)}} في المرحلة',
   openTracking: 'فتح التتبع',
   emptyColumn: 'لا أجهزة',
   empty: 'لا توجد أجهزة خارج بيوت العملاء الآن',

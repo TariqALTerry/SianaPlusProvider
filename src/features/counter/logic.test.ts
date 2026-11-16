@@ -3,6 +3,7 @@ import {
   accessAsOverview,
   balanceState,
   can,
+  normalizeGateCode,
   canAllowDebt,
   counterGate,
   daysToAbandon,
@@ -289,5 +290,16 @@ describe('branch board (phase 5 §3)', () => {
   it('splits a stage bar by age relative to the longest bar', () => {
     expect(stageShares({ days0To2: 2, days3To7: 1, over7Days: 1 }, 8)).toEqual({ fresh: 25, mid: 12.5, old: 12.5 })
     expect(stageShares({ days0To2: 0, days3To7: 0, over7Days: 0 }, 0)).toEqual({ fresh: 0, mid: 0, old: 0 })
+  })
+})
+
+describe('normalizeGateCode', () => {
+  it('takes a bare or prefixed code, and drops anything else', () => {
+    expect(normalizeGateCode('CounterModuleDisabled')).toBe('CounterModuleDisabled')
+    expect(normalizeGateCode('gate.CounterModuleDisabled')).toBe('CounterModuleDisabled')
+    expect(normalizeGateCode(' BranchInactive ')).toBe('BranchInactive')
+    expect(normalizeGateCode(null)).toBe('')
+    expect(normalizeGateCode('')).toBe('')
+    expect(normalizeGateCode('not a code')).toBe('')
   })
 })

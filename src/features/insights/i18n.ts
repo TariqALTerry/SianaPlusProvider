@@ -82,7 +82,7 @@ registerTranslations('insights', {
       completionRate: 'نسبة الإكمال',
       daily: 'المكتملة يوميًا',
       noCompleted: 'لا خدمات مكتملة في هذه الفترة',
-      chartLabel: '{{completed}} مكتملة خلال {{days}} يومًا، وأعلى يوم {{max}}',
+      chartLabel: '{{completed}} مكتملة خلال {{days, days}}، وأعلى يوم {{max}}',
       chartTip: '{{date}}: {{count}} مكتملة',
       services: 'الخدمات المكتملة',
       areas: 'مناطق الخدمات المكتملة',

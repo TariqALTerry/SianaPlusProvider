@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { useRoleKind } from '@/features/auth/authStore'
 import { cn } from '@/lib/utils'
+import { useGateText } from '../gateText'
 import { isSubscriptionReason, type GateReason } from '../logic'
 import '../i18n'
 
@@ -14,6 +15,7 @@ import '../i18n'
  */
 export function GateBanner({ reason, message, className }: { reason: GateReason; message?: string | null; className?: string }) {
   const { t } = useTranslation('counter')
+  const gateText = useGateText()
   const role = useRoleKind()
   const subscription = isSubscriptionReason(reason)
   const tone = reason === 'CounterSubscriptionExpired' || reason === 'CounterSubscriptionPendingPayment' ? 'danger' : 'waiting'
@@ -30,7 +32,7 @@ export function GateBanner({ reason, message, className }: { reason: GateReason;
       <div className="flex items-start gap-2 text-sm">
         <Lock className="mt-0.5 size-4 shrink-0" aria-hidden />
         <div>
-          <p className="font-medium">{message || t(`gate.${reason}`)}</p>
+          <p className="font-medium">{message || gateText(reason)}</p>
           <p className="text-xs opacity-90">{t('gate.existing')}</p>
         </div>
       </div>

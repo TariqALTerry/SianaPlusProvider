@@ -5,6 +5,7 @@ import utc from 'dayjs/plugin/utc'
 import 'dayjs/locale/ar'
 import 'dayjs/locale/en-gb'
 import { LOCALES, type Language } from '@/i18n'
+import { relativeAr } from './arabicCount'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -88,7 +89,10 @@ export function formatTime(value: string | null | undefined): string {
 export function formatRelative(value: string | null | undefined, language: string, now: dayjs.ConfigType = undefined): string {
   const d = parseUtc(value)
   if (!d) return '—'
-  return d.locale(lang(language) === 'en' ? 'en-gb' : 'ar').from(now ? dayjs(now) : dayjs())
+  const base = now ? dayjs(now) : dayjs()
+  // dayjs's Arabic locale says "منذ 2 دقائق" / "منذ 25 أيام"; the Arabic text gets proper agreement instead.
+  if (lang(language) === 'ar') return relativeAr(base.diff(d))
+  return d.locale('en-gb').from(base)
 }
 
 /** Compact duration from minutes: 45د · 3س 20د · 2ي 4س. */

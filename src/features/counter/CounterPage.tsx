@@ -27,6 +27,7 @@ import { ScanDialog } from './components/ScanDialog'
 import { useCounterGate } from './hooks'
 import { balanceState, COUNTER_TABS, parseCounterTab, tabCount, tabEnum } from './logic'
 import './i18n'
+import { useGateText } from './gateText'
 
 const schema = { tab: 'received', search: '', page: 1, pageSize: 25 }
 
@@ -35,6 +36,7 @@ const schema = { tab: 'received', search: '', page: 1, pageSize: 25 }
  * closed, and the devices by tab with their counts. Scoped by the branch switcher; polled every 60 s.
  */
 export function CounterPage() {
+  const gateText = useGateText()
   const { t } = useTranslation('counter')
   const { lang, pick } = useLang()
   const navigate = useNavigate()
@@ -203,7 +205,7 @@ export function CounterPage() {
             </span>
             <span>
               <span className="block text-xl font-semibold">{t('newIntake')}</span>
-              <span className="block text-sm">{gate.loading ? t('common:common.loading') : t(`gate.${gate.open ? 'existing' : gate.reason}`)}</span>
+              <span className="block text-sm">{gate.loading ? t('common:common.loading') : gate.open ? t('gate.existing') : gateText(gate.reason)}</span>
             </span>
           </div>
         )}

@@ -65,7 +65,7 @@ registerTranslations('organization', {
       uploaded: 'تم رفع الوثيقة — بانتظار المراجعة',
       uploadedAt: 'رُفعت',
       expires: 'تنتهي',
-      expiresSoon: 'تنتهي خلال {{count}} يوم',
+      expiresSoon: 'تنتهي خلال {{count, days}}',
       expiredDate: 'انتهى تاريخها',
       reviewNotes: 'ملاحظات المراجعة',
       open: 'فتح',

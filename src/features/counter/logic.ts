@@ -118,6 +118,16 @@ export function accessAsOverview(access: MyCounterAccessResponse | null | undefi
   return access ? { counterAvailable: access.available, counterBlockedReason: access.reason } : null
 }
 
+/**
+ * A gate code as it can reach the page (`CounterModuleDisabled`, an already-prefixed `gate.CounterModuleDisabled`, null)
+ * → the bare code, or '' when there is none. The text itself comes from `useGateText`, which falls back to a generic
+ * Arabic sentence for a code it has no translation for, so the page never shows a raw key.
+ */
+export function normalizeGateCode(code: string | null | undefined): string {
+  const bare = (code ?? '').trim().replace(/^gate\./, '')
+  return /^[A-Za-z][A-Za-z0-9]*$/.test(bare) ? bare : ''
+}
+
 /** Error codes from saving an intake that mean the gate closed under the page. */
 export const GATE_ERROR_CODES = new Set(['CounterModuleDisabled', 'CounterSubscriptionPendingPayment', 'CounterSubscriptionExpired', 'BranchCounterDisabled', 'BranchInactive'])
 

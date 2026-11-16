@@ -88,7 +88,7 @@ const ar = {
     inWarranty: 'داخل الضمان',
     outOfWarranty: 'انتهى الضمان',
     alreadyClaimed: 'طُولب به',
-    daysLeft: 'باقٍ {{count}} يوم',
+    daysLeft: 'باقٍ {{count, days(case: nominative)}}',
     endsAt: 'ينتهي',
     startsAt: 'يبدأ',
     device: 'الجهاز',

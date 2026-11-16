@@ -69,7 +69,7 @@ const ar = {
     whatsAppGlobalOff: 'متوقف من المنصة حاليًا. يبدأ الإرسال حين تشغّله المنصة.',
     autoSendWhatsAppHint: 'رسائل السند والعرض والجاهزية والتسليم تصل العميل دون أن ترسلها بيدك.',
     storageTermsNote: 'اكتب مهلة المتروك ورسوم التخزين في شروط الاستلام أيضًا، حتى يعرفها العميل.',
-    effectiveAbandon: 'المطبّق الآن: {{days}} يومًا',
+    effectiveAbandon: 'المطبّق الآن: {{days, days(case: nominative)}}',
     autoSendWhatsApp: 'إرسال الرسائل عبر واتساب تلقائيًا',
     allowScanToClaim: 'السماح للفني باستلام الجهاز بمسح الملصق',
     abandonAfterDays: 'يُعدّ الجهاز متروكًا بعد (أيام)',

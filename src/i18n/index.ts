@@ -1,5 +1,6 @@
 import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import { COUNT_FORMATTERS, formatCount, type ArabicCase } from '@/lib/arabicCount'
 import { readItem, writeItem } from '@/lib/storage'
 import ar from './ar.json'
 import en from './en.json'
@@ -38,6 +39,15 @@ void i18next.use(initReactI18next).init({
   interpolation: { escapeValue: false },
   returnNull: false,
 })
+
+
+// Counted units with Arabic agreement in any translation: `{{count, days}}` → "يومين" / "7 أيام" / "12 يومًا",
+// `{{count, days(case: nominative)}}` → "يومان". See `@/lib/arabicCount`.
+for (const [name, unit] of Object.entries(COUNT_FORMATTERS)) {
+  i18next.services.formatter?.add(name, (value: unknown, language: string | undefined, options: { case?: string } | undefined) =>
+    formatCount(value, unit, language ?? 'ar', { case: options?.case === 'nominative' ? 'nominative' : ('genitive' as ArabicCase) }),
+  )
+}
 
 applyDocumentLanguage(lng)
 

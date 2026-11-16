@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardBody, CardHeader } from '@/components/ui/card'
 import { Switch } from '@/components/ui/checkbox'
 import { useProvider } from '@/app/provider'
+import { useGateText } from '@/features/counter/gateText'
 import { useAction } from '@/hooks/useAction'
 import { useLang } from '@/hooks/useLang'
 import { useUrlState } from '@/hooks/useUrlState'
@@ -119,7 +120,7 @@ function CurrentCard({
   onOpenInvoice: (id: string) => void
 }) {
   const { t } = useTranslation('subscription')
-  const { t: tc } = useTranslation('counter')
+  const gateText = useGateText()
   const { lang, pick } = useLang()
   const sub = o.subscription
   const date = sub ? keyDate(sub) : null
@@ -167,7 +168,7 @@ function CurrentCard({
         ) : (
           <p className="flex items-center gap-2 rounded-lg bg-tone-danger-soft px-3 py-2 text-sm text-tone-danger">
             <AlertTriangle className="size-4 shrink-0" />
-            {tc(`gate.${o.counterBlockedReason === 'CounterSubscriptionPendingPayment' || o.counterBlockedReason === 'CounterSubscriptionExpired' ? o.counterBlockedReason : 'CounterModuleDisabled'}`)}
+            {gateText(o.counterBlockedReason ?? 'CounterModuleDisabled')}
           </p>
         )}
         {o.pendingBusinessModel && (

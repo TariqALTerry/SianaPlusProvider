@@ -52,7 +52,7 @@ const ar = {
   inactive: 'موقوفة',
   active: 'نشط',
   negative: 'وُعد بأكثر مما على الرف',
-  days: '{{count}} يوم',
+  days: '{{count, days(case: nominative)}}',
   noWarranty: 'بلا ضمان',
   recordOnly: 'سجل فقط',
   negativeOverride: 'تحت الصفر بإذن المالك',
