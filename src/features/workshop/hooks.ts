@@ -18,7 +18,7 @@ export function useTrackingError(error: unknown, serviceItemId: string) {
   const code = trackingErrorCode(error)
 
   useEffect(() => {
-    if (code === 'CustodyStepInvalid' || code === 'ServiceItemClosed') {
+    if (code === 'CustodyStepInvalid' || code === 'DeviceNotReadyForReturn' || code === 'ServiceItemClosed') {
       void queryClient.invalidateQueries({ queryKey: trackingKeys.tracking(serviceItemId) })
     }
   }, [code, error, queryClient, serviceItemId])

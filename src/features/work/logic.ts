@@ -13,11 +13,18 @@ export const TAB_STATUSES: Record<WorkTab, ServiceItemStatus[]> = {
   scheduled: ['Accepted', 'Scheduled'],
   inProgress: ['EnRoute', 'Arrived', 'Assessment', 'WaitingCustomerApproval', 'InProgress', 'WaitingCustomerConfirmation'],
   onHold: ['Paused', 'Disputed'],
-  finished: ['Completed', 'Cancelled', 'Refunded', 'PartiallyRefunded'],
+  // Plus `completed=true` (`completedFor`): every item that completed, whatever it is now. A completed item the customer
+  // then disputed is `Disputed`, and was missing here (tester B39, ORD-10049).
+  finished: ['Cancelled', 'Refunded', 'PartiallyRefunded'],
 }
 
 export function isWorkTab(value: string): value is WorkTab {
   return (WORK_TABS as readonly string[]).includes(value)
+}
+
+/** `completed=true` for the "منتهية" tab: the server ORs it with `status` (items with a completion time). Not with an explicit `?status=`. */
+export function completedFor(tab: string, explicit: readonly string[]): true | undefined {
+  return !explicit.length && tab === 'finished' ? true : undefined
 }
 
 /** Explicit `?status=` (from the home distribution bar) wins over the tab. */

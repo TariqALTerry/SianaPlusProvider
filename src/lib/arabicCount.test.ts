@@ -39,7 +39,7 @@ describe('countAr', () => {
 describe('formatCount', () => {
   it('reads numbers and numeric strings, and speaks English too', () => {
     expect(formatCount('12', 'day', 'ar')).toBe('12 يومًا')
-    expect(formatCount('1,200', 'day', 'ar')).toBe('1200 يوم')
+    expect(formatCount('1,200', 'day', 'ar')).toBe('1,200 يوم')
     expect(formatCount(1, 'day', 'en')).toBe('1 day')
     expect(formatCount(7, 'day', 'en')).toBe('7 days')
     expect(formatCount('—', 'day', 'ar')).toBe('—')
@@ -85,5 +85,55 @@ describe('i18next count formatters', () => {
     expect(ar('x', { defaultValue: 'ينتهي خلال {{count, days}}', count: 2 })).toBe('ينتهي خلال يومين')
     expect(ar('x', { defaultValue: 'بقي {{count, days(case: nominative)}}', count: 2 })).toBe('بقي يومان')
     expect(ar('x', { defaultValue: '{{n, minutes}}', n: 22 })).toBe('22 دقيقة')
+  })
+})
+
+describe('counted nouns (tester B41: "9 دفعة")', () => {
+  it('agrees payments with the number', () => {
+    expect(countAr(1, 'payment')).toBe('دفعة واحدة')
+    expect(countAr(2, 'payment')).toBe('دفعتين')
+    expect(countAr(2, 'payment', { case: 'nominative' })).toBe('دفعتان')
+    expect(countAr(9, 'payment')).toBe('9 دفعات')
+    expect(countAr(10, 'payment')).toBe('10 دفعات')
+    expect(countAr(16, 'payment')).toBe('16 دفعة')
+    expect(countAr(100, 'payment')).toBe('100 دفعة')
+    expect(countAr(0, 'payment')).toBe('0 دفعة')
+  })
+
+  it('handles masculine nouns with the accusative tanween and broken plurals', () => {
+    expect(countAr(1, 'order')).toBe('طلب واحد')
+    expect(countAr(5, 'order')).toBe('5 طلبات')
+    expect(countAr(12, 'order')).toBe('12 طلبًا')
+    expect(countAr(3, 'technician')).toBe('3 فنيين')
+    expect(countAr(15, 'technician')).toBe('15 فنيًا')
+    expect(countAr(4, 'offer')).toBe('4 عروض')
+    expect(countAr(7, 'message')).toBe('7 رسائل')
+    expect(countAr(3, 'claim')).toBe('3 مطالبات')
+    expect(countAr(6, 'notification')).toBe('6 إشعارات')
+    expect(countAr(11, 'notification')).toBe('11 إشعارًا')
+    expect(countAr(5, 'service')).toBe('5 خدمات')
+    expect(countAr(5, 'rating')).toBe('5 تقييمات')
+    expect(countAr(5, 'product')).toBe('5 منتجات')
+    expect(countAr(2, 'device', { case: 'nominative' })).toBe('جهازان')
+  })
+
+  it('takes any noun as forms', () => {
+    const forms = { one: 'كوب واحد', two: 'كوبين', twoNom: 'كوبان', few: 'أكواب', many: 'كوبًا', other: 'كوب' }
+    expect(countAr(1, forms)).toBe('كوب واحد')
+    expect(countAr(4, forms)).toBe('4 أكواب')
+    expect(countAr(40, forms)).toBe('40 كوبًا')
+  })
+
+  it('keeps a formatted number as it came and speaks English', () => {
+    expect(formatCount('1,203', 'order', 'ar')).toBe('1,203 طلبات')
+    expect(formatCount(9, 'payment', 'en')).toBe('9 payments')
+    expect(formatCount(1, 'payment', 'en')).toBe('1 payment')
+  })
+
+  it('works as an i18next formatter', () => {
+    const ar = i18next.getFixedT('ar')
+    expect(ar('x', { defaultValue: '{{count, payments(case: nominative)}}', count: 9 })).toBe('9 دفعات')
+    expect(ar('x', { defaultValue: '{{count, payments(case: nominative)}}', count: 2 })).toBe('دفعتان')
+    expect(ar('x', { defaultValue: 'يسري على {{count, employees}}', count: 1 })).toBe('يسري على موظف واحد')
   })
 })

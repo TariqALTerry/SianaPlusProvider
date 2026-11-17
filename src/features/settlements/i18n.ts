@@ -7,7 +7,7 @@ registerTranslations('settlements', {
     note: 'التسويات تُنشئها المنصة دوريًا؛ الخدمات عليها شكوى مفتوحة لا تدخل التسوية',
     summary: {
       unsettled: 'مستحق لم يُسوَّ بعد',
-      unsettledItems: '{{count}} خدمة مكتملة',
+      unsettledItems: 'خدمات مكتملة: {{count}}',
       pending: 'قيد الصرف',
       pendingHint: 'تسويات لم تُصرف بعد',
       paid: 'تم صرفه',
@@ -44,7 +44,7 @@ registerTranslations('settlements', {
       linesEmpty: 'لا توجد خدمات في هذه التسوية',
       totals: 'الإجمالي',
       exportLines: 'تصدير الخدمات CSV',
-      exported: 'تم تصدير {{count}} صف',
+      exported: 'تم تصدير {{count, rows}}',
       executorSettlement: 'تسوية خاصة بالفني {{name}}',
     },
     lines: {

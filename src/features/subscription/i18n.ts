@@ -50,7 +50,7 @@ const ar = {
     saving: 'وفّر {{amount}} سنويًا',
     includedBranches: 'فروع مشمولة: {{count}}',
     extraBranch: 'فرع إضافي: {{price}} / شهر',
-    whatsApp: 'واتساب: {{count}} رسالة / شهر',
+    whatsApp: 'واتساب: {{count, messages(case: nominative)}} / شهر',
     trial: 'تجربة مجانية {{count, days}}',
     grace: 'مهلة سماح {{count, days}}',
     current: 'باقتك',

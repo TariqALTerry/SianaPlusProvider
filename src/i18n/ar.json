@@ -111,7 +111,7 @@
   "table": {
     "rowsPerPage": "عدد الصفوف",
     "pageOf": "صفحة {{page}} من {{pages}}",
-    "total": "{{count}} نتيجة",
+    "total": "{{count, results(case: nominative)}}",
     "columns": "الأعمدة",
     "density": "الكثافة",
     "comfortable": "مريحة",
@@ -120,7 +120,7 @@
     "emptyFiltered": "لا توجد نتائج مطابقة للفلاتر الحالية",
     "activeFilters": "الفلاتر النشطة:",
     "exporting": "جارٍ التصدير… {{done}} / {{total}}",
-    "exportDone": "تم تصدير {{count}} صف",
+    "exportDone": "تم تصدير {{count, rows}}",
     "exportLimit": "يُصدَّر أول {{max}} صف فقط",
     "loading": "جارٍ التحميل…"
   },

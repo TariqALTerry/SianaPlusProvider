@@ -39,6 +39,22 @@ export function nextSteps(stage: DeviceCustodyStage): CustodyStep[] {
   return (NEXT_STAGES[stage] ?? []).map((to) => ({ to, handover: isHandover(to) }))
 }
 
+/**
+ * The steps to offer for one device: the server's `nextStages` (what it would accept now: "جاهز للإرجاع" only once the
+ * repair is under way or done, or a return without repair was decided, tester C1), in path order. A server without the
+ * field falls back to the plain path.
+ */
+export function deviceSteps(device: Pick<TrackedDevice, 'stage' | 'nextStages'>): CustodyStep[] {
+  const path = NEXT_STAGES[device.stage] ?? []
+  if (!Array.isArray(device.nextStages)) return nextSteps(device.stage)
+  return path.filter((to) => device.nextStages.includes(to)).map((to) => ({ to, handover: isHandover(to) }))
+}
+
+/** At the workshop with "ready" held back by the server: the page says why instead of showing no button. */
+export function readyHeldBack(device: Pick<TrackedDevice, 'stage' | 'nextStages'>): boolean {
+  return device.stage === 'AtWorkshop' && Array.isArray(device.nextStages) && !device.nextStages.includes('ReadyForReturn')
+}
+
 /** Away from the customer: the workshop board's columns, in path order. */
 export const WORKSHOP_STAGES = ['PickedUp', 'AtWorkshop', 'ReadyForReturn', 'OutForReturn'] as const satisfies readonly DeviceCustodyStage[]
 
@@ -121,6 +137,7 @@ export function matchesSearch(device: { tagCode: string | null; itemNumber: stri
 /** Error codes of the tracking endpoints that get the platform's own wording (§2 of the brief). */
 export const TRACKING_ERROR_CODES = [
   'CustodyStepInvalid',
+  'DeviceNotReadyForReturn',
   'HandoverCodeInvalid',
   'HandoverCodeLocked',
   'CustodyPhotoRequired',

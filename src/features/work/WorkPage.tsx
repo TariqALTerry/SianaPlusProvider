@@ -21,7 +21,7 @@ import { formatDateTime, formatTime, riyadhDateToIso } from '@/lib/format'
 import './i18n'
 import { useBranchParam } from '@/features/branches/scope'
 import { boardQuery, prefetchWorkItem, workApi, workKeys, type WorkListParams } from './api'
-import { statusesFor, WORK_TABS } from './logic'
+import { completedFor, statusesFor, WORK_TABS } from './logic'
 import { CoverageBadge, NetInline } from './components/widgets'
 
 /**
@@ -54,6 +54,7 @@ export function WorkPage() {
   const filters: WorkListParams = {
     branchId,
     status: statusesFor(state.tab, state.status),
+    completed: completedFor(state.tab, state.status),
     executorId: state.executorId || undefined,
     timedOut: state.timedOut || undefined,
     scheduledFrom: riyadhDateToIso(state.from, 'start'),

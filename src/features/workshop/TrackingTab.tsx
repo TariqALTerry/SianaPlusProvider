@@ -18,7 +18,7 @@ import { enumLabel } from '@/i18n/enums'
 import { formatDateTime } from '@/lib/format'
 import { trackingApi, trackingKeys } from './api'
 import { CancelTripDialog, MoveDeviceDialog, PlanTripDialog, SendUpdateDialog } from './components/TrackingDialogs'
-import { isClosedStatus, nextSteps, plannedTrip, tripNeeds } from './logic'
+import { deviceSteps, isClosedStatus, plannedTrip, readyHeldBack, tripNeeds } from './logic'
 import './i18n'
 
 /**
@@ -166,7 +166,7 @@ function DevicesSection({ item, devices }: { item: WorkTarget; devices: TrackedD
 
 function DeviceRow({ device: d, onStep }: { device: TrackedDevice; onStep: (to: DeviceCustodyStage) => void }) {
   const { t } = useTranslation('workshop')
-  const steps = nextSteps(d.stage)
+  const steps = deviceSteps(d)
   return (
     <section className="rounded-lg border p-3" aria-label={d.name}>
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -201,6 +201,7 @@ function DeviceRow({ device: d, onStep }: { device: TrackedDevice; onStep: (to: 
           </div>
         )}
       </div>
+      {readyHeldBack(d) && <p className="mt-2 text-xs text-muted-foreground">{t('tracking.readyHeldBack')}</p>}
       {d.events.length > 0 && (
         <details className="mt-3 group" open={d.events.length <= 4}>
           <summary className="cursor-pointer text-xs font-medium text-muted-foreground">

@@ -12,7 +12,7 @@ registerTranslations('push', {
       disabled: 'غير مفعّلة',
       blocked: 'الإشعارات محظورة من المتصفح. فعّلها من رمز القفل بجانب الرابط ثم أعد تحميل الصفحة.',
       unsupported: 'متصفحك لا يدعم الإشعارات',
-      registeredOn: 'مسجّلة على {{count}} متصفح',
+      registeredOn: 'مسجّلة على {{count, browsers}}',
       enableFailed: 'تعذّر تفعيل الإشعارات على هذا المتصفح. حاول مرة أخرى.',
       denied: 'لم تُمنح الموافقة على الإشعارات.',
     },

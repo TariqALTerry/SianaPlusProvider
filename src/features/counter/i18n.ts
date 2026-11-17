@@ -146,7 +146,7 @@ const ar = {
     intakeNumber: 'رقم السند',
     photosTitle: 'صور الجهاز',
     photosHint: 'صوّر الجهاز من الأمام والخلف على الأقل. السند ناقص حتى صورتين.',
-    photosMissing: 'السند ناقص: أضف {{count}} صورة على الأقل.',
+    photosMissing: 'السند ناقص: أضف {{count, images}} على الأقل.',
     photosComplete: 'الصور مكتملة.',
     addPhotos: 'إضافة صور',
     takePhoto: 'تصوير',

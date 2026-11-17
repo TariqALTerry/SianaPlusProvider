@@ -587,6 +587,7 @@ export interface ProviderCandidateResponse {
   declineNote: string | null
   distanceKm: number | null
   matchedAreaName: string | null
+  receivesPlatformDevices: boolean
   isEligible: boolean
   score: number
   hasCapacity: boolean
@@ -831,6 +832,8 @@ export interface AdminAssistantConversationResponse {
   cacheWriteTokens: number
   createdAt: string
   lastMessageAt: string
+  orderId: string | null
+  orderNumber: string | null
   messages: AssistantMessageResponse[] | null
 }
 export interface AssistantFunnelRequest {
@@ -3484,6 +3487,7 @@ export interface OrderItemBriefResponse {
   serviceImageUrl: string | null
   status: ServiceItemStatus
   fulfillmentChannel: FulfillmentChannel
+  executionMode: ExecutionMode
   isManagedByShop: boolean
 }
 export interface OrderPaymentSummaryResponse {
@@ -3581,6 +3585,9 @@ export interface ServiceItemCustomerView {
   canReview: boolean
   canReschedule: boolean
   cancelBlockedReason: string | null
+  canRequestRefund: boolean
+  hasOpenRefund: boolean
+  hasOpenDispute: boolean
   destination: string | null
   pickupPlace: string | null
   goodsPickedUpAt: string | null
@@ -3994,6 +4001,7 @@ export interface TrackedDevice {
   stage: DeviceCustodyStage
   holderName: string | null
   stageAt: string | null
+  nextStages: DeviceCustodyStage[]
   events: CustodyEventResponse[]
 }
 export interface CustodyEventResponse {
@@ -5260,6 +5268,7 @@ export interface DemoSubscriptionRetireResponse {
 export interface ProviderWorkListRequest extends PaginatedRequest {
   timedOut?: boolean | null
   status?: ServiceItemStatus[] | null
+  completed?: boolean | null
   executorId?: string | null
   scheduledFrom?: string | null
   scheduledTo?: string | null

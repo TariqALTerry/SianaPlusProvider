@@ -74,7 +74,7 @@ const ar = {
     unknownSupplier: 'مورد غير معروف',
     stockValue: 'قيمة المخزون الآن',
     stockValueTotal: 'الإجمالي',
-    partsCount: '{{count}} قطعة',
+    partsCount: '{{count, parts(case: nominative)}}',
     lowStock: 'قطع منخفضة الآن',
     lowStockAll: 'كل المنخفض',
     branch: 'الفرع',

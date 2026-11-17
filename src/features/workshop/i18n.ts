@@ -62,6 +62,7 @@ const ar = {
       Returned: 'تسليم للعميل',
     },
     stepChange: '{{from}} ← {{to}}',
+    readyHeldBack: '«جاهز للإرجاع» يظهر بعد بدء الإصلاح، أو بعد قرار إرجاع الجهاز بدون إصلاح.',
     stepNote: {
       PickedUp: 'اطلب من العميل رمز التسليم من تطبيقه وصوّر الجهاز.',
       AtWorkshop: 'يُعطى الجهاز ملصقًا (WS-…) وتنتقل الخدمة إلى «الفني وصل».',
@@ -116,6 +117,7 @@ const ar = {
   errors: {
     CustodyStepInvalid: 'لا يمكن نقل الجهاز من «{{from}}» إلى «{{to}}». حدّثنا الأجهزة لترى مرحلته الآن.',
     CustodyStepInvalidPlain: 'خطوة غير مسموحة من مرحلة الجهاز الحالية. حدّثنا الأجهزة لترى مرحلته الآن.',
+    DeviceNotReadyForReturn: 'لا يُجهَّز الجهاز للإرجاع قبل بدء الإصلاح، أو قبل قرار إرجاعه بدون إصلاح.',
     HandoverCodeInvalid: 'الرمز غير صحيح. اطلبه من العميل: يظهر له في تطبيقه.',
     HandoverCodeLocked: 'الرمز مقفل بعد 5 محاولات خاطئة. تواصل مع الدعم للمتابعة.',
     CustodyPhotoRequired: 'الاستلام والإرجاع يحتاجان صورة للجهاز.',
@@ -188,6 +190,7 @@ const en: typeof ar = {
       Returned: 'Hand back to the customer',
     },
     stepChange: '{{from}} → {{to}}',
+    readyHeldBack: '“Ready for return” appears once the repair has started, or after a return without repair is decided.',
     stepNote: {
       PickedUp: 'Ask the customer for the handover code in their app, and photograph the device.',
       AtWorkshop: 'The device gets a tag (WS-…) and the service moves to “Arrived”.',
@@ -240,6 +243,7 @@ const en: typeof ar = {
   errors: {
     CustodyStepInvalid: 'The device cannot move from “{{from}}” to “{{to}}”. We refreshed the devices to show where it is now.',
     CustodyStepInvalidPlain: 'That step is not allowed from the device’s current stage. We refreshed the devices to show where it is now.',
+    DeviceNotReadyForReturn: 'The device can be marked ready only once the repair is under way or done, or after a return without repair is decided.',
     HandoverCodeInvalid: 'Wrong code. Ask the customer: it is shown in their app.',
     HandoverCodeLocked: 'The code is locked after 5 wrong attempts. Contact support to continue.',
     CustodyPhotoRequired: 'Pickup and return need a photo of the device.',

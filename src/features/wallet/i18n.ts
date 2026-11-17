@@ -6,7 +6,7 @@ registerTranslations('wallet', {
     title: 'المحفظة',
     subtitle: 'كم كسبت، وما المتاح للسحب، واطلب السحب إلى حسابك البنكي',
     available: 'متاح للسحب',
-    availableItems: '{{count}} خدمة',
+    availableItems: '{{count, services(case: nominative)}}',
     deductions: 'خُصم من الرصيد لاشتراك الكاونتر: {{amount}}. يُخصم من السحب أو التسوية القادمة.',
     deductionsLink: 'الاشتراك',
     onHold: 'معلّق',

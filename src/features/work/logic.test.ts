@@ -31,6 +31,7 @@ import {
   loadRatio,
   showsInspectionWarning,
   statusesFor,
+  completedFor,
   TAB_STATUSES,
   workErrorDetail,
 } from './logic'
@@ -56,13 +57,19 @@ describe('work list quick tabs (§8.4)', () => {
     expect(TAB_STATUSES.scheduled).toEqual(['Accepted', 'Scheduled'])
     expect(TAB_STATUSES.inProgress).toEqual(['EnRoute', 'Arrived', 'Assessment', 'WaitingCustomerApproval', 'InProgress', 'WaitingCustomerConfirmation'])
     expect(TAB_STATUSES.onHold).toEqual(['Paused', 'Disputed'])
-    expect(TAB_STATUSES.finished).toEqual(['Completed', 'Cancelled', 'Refunded', 'PartiallyRefunded'])
+    expect(TAB_STATUSES.finished).toEqual(['Cancelled', 'Refunded', 'PartiallyRefunded'])
   })
 
   it('lets an explicit ?status= win over the tab, and ignores unknown tabs', () => {
     expect(statusesFor('scheduled', [])).toEqual(['Accepted', 'Scheduled'])
     expect(statusesFor('scheduled', ['Paused'])).toEqual(['Paused'])
     expect(statusesFor('nope', [])).toEqual([])
+  })
+
+  it('asks for every completed item on the finished tab, disputed ones too (tester B39)', () => {
+    expect(completedFor('finished', [])).toBe(true)
+    expect(completedFor('finished', ['Completed'])).toBeUndefined()
+    expect(completedFor('inProgress', [])).toBeUndefined()
   })
 })
 

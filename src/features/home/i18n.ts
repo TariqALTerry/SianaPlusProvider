@@ -15,7 +15,7 @@ const ar = {
     today: 'مواعيد اليوم',
     executors: 'الفنيون النشطون',
     rating: 'التقييم',
-    ratingsCount: '{{count}} تقييم',
+    ratingsCount: '{{count, ratings(case: nominative)}}',
     noRatings: 'لا توجد تقييمات بعد',
     completed: 'خدمات مكتملة',
   },

@@ -6,6 +6,8 @@ import {
   isValidCode,
   matchesSearch,
   nextSteps,
+  deviceSteps,
+  readyHeldBack,
   normalizeCode,
   plannedTrip,
   trackingError,
@@ -16,6 +18,16 @@ import {
 } from './logic'
 
 describe('custody steps', () => {
+  it('offers what the server allows now: no "ready" before the repair (tester C1)', () => {
+    expect(deviceSteps({ stage: 'AtWorkshop', nextStages: [] })).toEqual([])
+    expect(readyHeldBack({ stage: 'AtWorkshop', nextStages: [] })).toBe(true)
+    expect(deviceSteps({ stage: 'AtWorkshop', nextStages: ['ReadyForReturn'] })).toEqual([{ to: 'ReadyForReturn', handover: false }])
+    expect(readyHeldBack({ stage: 'AtWorkshop', nextStages: ['ReadyForReturn'] })).toBe(false)
+    expect(deviceSteps({ stage: 'ReadyForReturn', nextStages: ['Returned', 'OutForReturn'] }).map((s) => s.to)).toEqual(['OutForReturn', 'Returned'])
+    // An older server without the field: the plain path.
+    expect(deviceSteps({ stage: 'PickedUp', nextStages: undefined as unknown as [] })).toEqual([{ to: 'AtWorkshop', handover: false }])
+  })
+
   it('offers only the next step, as the server allows', () => {
     expect(nextSteps('AtCustomer')).toEqual([{ to: 'PickedUp', handover: true }])
     expect(nextSteps('PickedUp')).toEqual([{ to: 'AtWorkshop', handover: false }])
