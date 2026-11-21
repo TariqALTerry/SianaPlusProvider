@@ -51,6 +51,7 @@ import {
   type IntakeStep,
 } from './logic'
 import './i18n'
+import { deviceLine } from '@/lib/device'
 
 /** Server errors that belong to a step, so the wizard can take the user back there. */
 const ERROR_STEP: Record<string, IntakeStep> = {
@@ -447,7 +448,7 @@ function History({ data, management }: { data: CounterCustomerLookupResponse; ma
             {data.devices.map((d) => (
               <li key={d.serviceItemId} className="flex items-center justify-between gap-2 px-3 py-2">
                 <span className="min-w-0">
-                  <span className="block truncate font-medium">{[d.deviceName, d.brand, d.model].filter(Boolean).join(' · ')}</span>
+                  <span className="block truncate font-medium">{deviceLine(d.deviceName, d.brand, d.model)}</span>
                   <span className="block truncate text-xs text-muted-foreground">
                     <bdi className="ltr-nums font-mono">{d.intakeNumber}</bdi> · {pick(d.serviceNameAr, d.serviceNameEn)} · {d.branchName} · <DateTime value={d.receivedAt} mode="date" />
                   </span>

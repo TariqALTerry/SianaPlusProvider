@@ -30,3 +30,16 @@ export const listQueryOptions = { placeholderData: keepPreviousData } as const
 
 /** Options for the one detail currently open: refetch when the tab regains focus. */
 export const detailQueryOptions = { refetchOnWindowFocus: true } as const
+
+/**
+ * Still waiting for this list's first answer: nothing yet (`isPending`), or nothing to show while its first request
+ * runs (the previous filter's empty page kept as placeholder, or an empty cached copy being refreshed). Lists show
+ * their skeleton then, never "no data" (tester item 60: pages sat on "لا توجد بيانات" for 2–4 s before the data came).
+ * Later refreshes (polling) keep what is on screen.
+ */
+export function isFirstLoad(
+  query: { isPending: boolean; isFetching: boolean; isFetchedAfterMount: boolean },
+  empty: boolean,
+): boolean {
+  return query.isPending || (empty && query.isFetching && !query.isFetchedAfterMount)
+}

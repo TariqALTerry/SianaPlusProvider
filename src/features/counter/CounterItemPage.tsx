@@ -55,6 +55,7 @@ import { useCounterDocuments } from './hooks'
 import { can, holdActions, photosMissing } from './logic'
 import './i18n'
 import './opsI18n'
+import { deviceLine } from '@/lib/device'
 
 type DialogKind = 'call' | 'decision' | 'payment' | 'discount' | 'handover' | 'sign' | 'assign' | 'pause' | 'resume' | 'transfer'
 
@@ -276,7 +277,7 @@ function Item({ detail, fetching }: { detail: CounterItemDetailResponse; fetchin
                 {detail.devices.map((d) => (
                   <li key={d.id} className="flex flex-wrap items-center justify-between gap-2 py-2 first:pt-0 last:pb-0">
                     <span className="min-w-0">
-                      <span className="block font-medium">{[d.name, d.brand, d.model].filter(Boolean).join(' · ')}</span>
+                      <span className="block font-medium">{deviceLine(d.name, d.brand, d.model)}</span>
                       <span className="block text-xs text-muted-foreground">
                         {d.imei && <bdi className="ltr-nums me-2 font-mono">IMEI {d.imei}</bdi>}
                         {d.serialNumber && <bdi className="ltr-nums me-2 font-mono">SN {d.serialNumber}</bdi>}

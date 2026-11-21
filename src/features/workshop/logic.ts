@@ -1,9 +1,11 @@
 import { ApiError, toApiError } from '@/api/http'
+import { ProgressUpdateKindValues } from '@/api/types'
 import type {
   DeviceCustodyStage,
   ExecutorCandidateResponse,
   LegResponse,
   ProgressUpdateKind,
+  ServiceTrackingResponse,
   ServiceItemLegType,
   ServiceItemStatus,
   TrackedDevice,
@@ -100,6 +102,17 @@ export function noteRequired(kind: ProgressUpdateKind): boolean {
   return kind === 'Other' || kind === 'Delayed'
 }
 
+/**
+ * The update kinds to offer: the server's `allowedUpdateKinds` (what it accepts now: "جاهز" only once the work is
+ * under way or the device goes back unrepaired, repair steps only after approval; anything else answers
+ * `ProgressUpdateNotNow`, tester item 45), in enum order. A server without the field falls back to every kind.
+ */
+export function allowedUpdateKinds(data: Pick<ServiceTrackingResponse, 'allowedUpdateKinds'> | null | undefined): ProgressUpdateKind[] {
+  const allowed = data?.allowedUpdateKinds
+  if (!Array.isArray(allowed)) return [...ProgressUpdateKindValues]
+  return ProgressUpdateKindValues.filter((k) => allowed.includes(k))
+}
+
 export type UpdateProblem = 'noteRequired' | 'noteTooLong' | 'readyInvalid'
 
 export function updateProblems(input: { kind: ProgressUpdateKind; note: string; expectedReadyAt: string | null }, now = Date.now()): UpdateProblem[] {
@@ -144,6 +157,7 @@ export const TRACKING_ERROR_CODES = [
   'TrackingPhotoInvalid',
   'ProgressNoteRequired',
   'ExpectedReadyAtInvalid',
+  'ProgressUpdateNotNow',
   'ServiceItemClosed',
   'ExecutorCannotRepair',
   'ExecutorCannotDeliver',

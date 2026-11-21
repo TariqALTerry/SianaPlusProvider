@@ -28,6 +28,7 @@ import { useCounterGate } from './hooks'
 import { balanceState, COUNTER_TABS, parseCounterTab, tabCount, tabEnum } from './logic'
 import './i18n'
 import { useGateText } from './gateText'
+import { deviceLine } from '@/lib/device'
 
 const schema = { tab: 'received', search: '', page: 1, pageSize: 25 }
 
@@ -119,7 +120,7 @@ export function CounterPage() {
         header: t('col.device'),
         cell: ({ row: { original: r } }) => (
           <div className="min-w-0 text-sm">
-            <div className="truncate">{[r.deviceName, r.brand, r.model].filter(Boolean).join(' · ') || '—'}</div>
+            <div className="truncate">{deviceLine(r.deviceName, r.brand, r.model) || '—'}</div>
             {r.imei && <bdi className="ltr-nums font-mono text-[0.6875rem] text-muted-foreground">{r.imei}</bdi>}
           </div>
         ),

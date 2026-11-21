@@ -26,6 +26,7 @@ import { trackingApi, trackingKeys } from './api'
 import { PlanTripDialog } from './components/TrackingDialogs'
 import { matchesSearch, WORKSHOP_STAGES } from './logic'
 import './i18n'
+import { deviceLine } from '@/lib/device'
 
 const schema = { q: '', stage: '' }
 
@@ -159,12 +160,12 @@ function DeviceCard({ device: d, onArrangeReturn }: { device: WorkshopDevice; on
         {href ? (
           <Link to={href} className="min-w-0 hover:underline">
             <span className="ltr-nums block font-mono text-xs font-semibold text-primary">{d.tagCode ?? '—'}</span>
-            <span className="block truncate font-medium">{[d.name, d.brand, d.model].filter(Boolean).join(' · ')}</span>
+            <span className="block truncate font-medium">{deviceLine(d.name, d.brand, d.model)}</span>
           </Link>
         ) : (
           <span className="min-w-0">
             <span className="ltr-nums block font-mono text-xs font-semibold">{d.tagCode ?? '—'}</span>
-            <span className="block truncate font-medium">{[d.name, d.brand, d.model].filter(Boolean).join(' · ')}</span>
+            <span className="block truncate font-medium">{deviceLine(d.name, d.brand, d.model)}</span>
           </span>
         )}
         {d.stageAt && (

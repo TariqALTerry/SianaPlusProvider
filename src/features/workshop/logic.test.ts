@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { ApiError } from '@/api/http'
 import type { ExecutorCandidateResponse } from '@/api/types'
 import {
+  allowedUpdateKinds,
   isHandover,
   isValidCode,
   matchesSearch,
@@ -100,6 +101,13 @@ describe('progress update form', () => {
     expect(updateProblems({ kind: 'Testing', note: 'x'.repeat(1001), expectedReadyAt: null }, now)).toEqual(['noteTooLong'])
   })
 
+  it('offers only the kinds the server allows now, in enum order; every kind from an older server', () => {
+    expect(allowedUpdateKinds({ allowedUpdateKinds: ['Delayed', 'InspectionStarted', 'Other'] })).toEqual(['InspectionStarted', 'Delayed', 'Other'])
+    expect(allowedUpdateKinds({ allowedUpdateKinds: [] })).toEqual([])
+    expect(allowedUpdateKinds({} as never)).toContain('ReadyForReturn')
+    expect(allowedUpdateKinds(null)).toHaveLength(9)
+  })
+
   it('keeps the ready date within now..4 months', () => {
     expect(updateProblems({ kind: 'Testing', note: '', expectedReadyAt: '2026-10-20T09:00:00Z' }, now)).toEqual([])
     expect(updateProblems({ kind: 'Testing', note: '', expectedReadyAt: '2026-10-16T09:00:00Z' }, now)).toEqual(['readyInvalid'])
@@ -128,7 +136,7 @@ describe('tracking errors', () => {
     expect(e?.message).toBe('CustodyStepInvalid:AtCustomer>Returned')
     expect(e?.errorCode).toBe('CustodyStepInvalid')
     expect(e?.details).toBeUndefined()
-    for (const code of ['HandoverCodeInvalid', 'HandoverCodeLocked', 'CustodyPhotoRequired', 'TrackingPhotoInvalid', 'ProgressNoteRequired', 'ExpectedReadyAtInvalid', 'ServiceItemClosed', 'ExecutorCannotRepair', 'ExecutorCannotDeliver', 'ExecutorRolesRequired']) {
+    for (const code of ['HandoverCodeInvalid', 'HandoverCodeLocked', 'CustodyPhotoRequired', 'TrackingPhotoInvalid', 'ProgressNoteRequired', 'ExpectedReadyAtInvalid', 'ProgressUpdateNotNow', 'ServiceItemClosed', 'ExecutorCannotRepair', 'ExecutorCannotDeliver', 'ExecutorRolesRequired']) {
       expect(trackingErrorCode(err(code))).toBe(code)
     }
   })

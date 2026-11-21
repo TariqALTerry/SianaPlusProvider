@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { CalendarClock, Camera, KeyRound, MessageSquarePlus, Package, Truck, X } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { fileUrl, thumbUrl } from '@/api/files'
 import type { CustodyEventResponse, DeviceCustodyStage, LegResponse, ProgressUpdateResponse, ServiceItemLegType, ServiceTrackingResponse, TrackedDevice } from '@/api/types'
@@ -18,7 +18,7 @@ import { enumLabel } from '@/i18n/enums'
 import { formatDateTime } from '@/lib/format'
 import { trackingApi, trackingKeys } from './api'
 import { CancelTripDialog, MoveDeviceDialog, PlanTripDialog, SendUpdateDialog } from './components/TrackingDialogs'
-import { deviceSteps, isClosedStatus, plannedTrip, readyHeldBack, tripNeeds } from './logic'
+import { allowedUpdateKinds, deviceSteps, isClosedStatus, plannedTrip, readyHeldBack, tripNeeds } from './logic'
 import './i18n'
 
 /**
@@ -70,6 +70,8 @@ function UpdatesCard({ item, data }: { item: WorkTarget; data: ServiceTrackingRe
   const { lang } = useLang()
   const [open, setOpen] = useState(false)
   const closed = isClosedStatus(data.itemStatus)
+  const kinds = useMemo(() => allowedUpdateKinds(data), [data])
+  const blocked = closed || kinds.length === 0
 
   return (
     <Card>
@@ -89,7 +91,12 @@ function UpdatesCard({ item, data }: { item: WorkTarget; data: ServiceTrackingRe
           </span>
         }
         actions={
-          <Button size="sm" onClick={() => setOpen(true)} disabled={closed} title={closed ? t('tracking.closed') : undefined}>
+          <Button
+            size="sm"
+            onClick={() => setOpen(true)}
+            disabled={blocked}
+            title={closed ? t('tracking.closed') : blocked ? t('tracking.noUpdateNow') : undefined}
+          >
             <MessageSquarePlus /> {t('tracking.sendUpdate')}
           </Button>
         }
@@ -105,7 +112,7 @@ function UpdatesCard({ item, data }: { item: WorkTarget; data: ServiceTrackingRe
           </ol>
         )}
       </CardBody>
-      <SendUpdateDialog item={item} open={open} onOpenChange={setOpen} />
+      <SendUpdateDialog item={item} open={open} onOpenChange={setOpen} kinds={kinds} />
     </Card>
   )
 }

@@ -6,7 +6,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 import { HumanNumber } from '@/components/EntityLink'
 import { PageHeader } from '@/components/PageHeader'
 import { ErrorState, PageSkeleton } from '@/components/States'
-import { StatusBadge } from '@/components/StatusBadge'
+import { ItemStatusBadge } from '@/components/StatusBadge'
 import { Timeline } from '@/components/Timeline'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -139,7 +139,7 @@ export function WorkItemPage() {
         }
         meta={
           <>
-            <StatusBadge enum="ServiceItemStatus" value={item.status} />
+            <ItemStatusBadge status={item.status} completedAt={item.completedAt} />
             {item.statusBeforeHold && <span className="text-xs text-muted-foreground">{t('detail.was', { status: enumLabel('ServiceItemStatus', item.statusBeforeHold, lang) })}</span>}
             {item.hasDispute && (
               <Badge tone="danger">

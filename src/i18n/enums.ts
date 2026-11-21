@@ -883,6 +883,21 @@ export function enumTone(name: EnumName, value: string | null | undefined): Tone
   return (enumMaps[name] as Record<string, EnumEntry>)[value]?.tone ?? 'neutral'
 }
 
+/** States a service item can reach after it completed: the customer disputed it, or it was refunded. */
+const AFTER_COMPLETION: readonly string[] = ['Disputed', 'PartiallyRefunded', 'Refunded']
+
+/**
+ * A service item's status as the platform reads it: an item that completed (`completedAt`) and then went to a dispute
+ * or a refund still counts as completed, so it reads "مكتملة · عليها شكوى" with the later state's tone (tester item
+ * 60: the "منتهية" tab showed no completed item while the home page counted one). Anything else is its own label.
+ */
+export function itemStatusLabel(status: string | null | undefined, completedAt: string | null | undefined, lang: string): { label: string; tone: Tone } {
+  const label = enumLabel('ServiceItemStatus', status, lang)
+  const tone = enumTone('ServiceItemStatus', status)
+  if (!status || !completedAt || !AFTER_COMPLETION.includes(status)) return { label, tone }
+  return { label: `${enumLabel('ServiceItemStatus', 'Completed', lang)} · ${label}`, tone }
+}
+
 /** Values of an enum in declaration order, for select options. */
 export function enumOptions<N extends EnumName>(name: N): Array<keyof (typeof enumMaps)[N] & string> {
   return Object.keys(enumMaps[name]) as Array<keyof (typeof enumMaps)[N] & string>

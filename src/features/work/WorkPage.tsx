@@ -7,7 +7,7 @@ import { DataTable } from '@/components/DataTable'
 import { DateRangeFilter, FilterChips, QuickTabs, SearchInput, type FilterChip } from '@/components/Filters'
 import { DateTime } from '@/components/Format'
 import { PageHeader } from '@/components/PageHeader'
-import { StatusBadge } from '@/components/StatusBadge'
+import { ItemStatusBadge } from '@/components/StatusBadge'
 import { Button } from '@/components/ui/button'
 import { Select } from '@/components/ui/input'
 import { Tooltip } from '@/components/ui/menu'
@@ -114,7 +114,7 @@ export function WorkPage() {
           </div>
         ),
       },
-      { id: 'status', header: t('columns.status'), cell: ({ row: { original: r } }) => <StatusBadge enum="ServiceItemStatus" value={r.status} /> },
+      { id: 'status', header: t('columns.status'), cell: ({ row: { original: r } }) => <ItemStatusBadge status={r.status} completedAt={r.completedAt} /> },
       {
         id: 'technician',
         header: t('columns.technician'),

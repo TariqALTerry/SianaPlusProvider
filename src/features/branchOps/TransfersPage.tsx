@@ -18,6 +18,7 @@ import { useLang } from '@/hooks/useLang'
 import { branchOpsApi, branchOpsKeys, type TransferListParams } from './api'
 import { routeArrow, transferDirection } from './logic'
 import './i18n'
+import { deviceLine } from '@/lib/device'
 
 const schema = { status: '', openOnly: true, page: 1, pageSize: 25 }
 
@@ -83,7 +84,7 @@ export function TransfersPage() {
         meta: { cardHidden: true },
         cell: ({ row: { original: r } }) => (
           <span className="text-xs">
-            {r.devices.length === 1 ? [r.devices[0]!.name, r.devices[0]!.brand, r.devices[0]!.model].filter(Boolean).join(' · ') : t('transfers.devicesCount', { count: r.devices.length })}
+            {r.devices.length === 1 ? deviceLine(r.devices[0]!.name, r.devices[0]!.brand, r.devices[0]!.model) : t('transfers.devicesCount', { count: r.devices.length })}
           </span>
         ),
       },

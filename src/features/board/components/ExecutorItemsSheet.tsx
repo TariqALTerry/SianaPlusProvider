@@ -6,11 +6,12 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { QuickTabs } from '@/components/Filters'
 import { ErrorState } from '@/components/States'
-import { StatusBadge } from '@/components/StatusBadge'
+import { ItemStatusBadge, StatusBadge } from '@/components/StatusBadge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogBody, DialogDescription, DialogHeader, DialogTitle, SheetContent } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { ExecutorLoadResponse } from '@/api/types'
+import { isFirstLoad } from '@/api/queryClient'
 import { useLang } from '@/hooks/useLang'
 import { formatDateTime } from '@/lib/format'
 import { workApi, workKeys, type WorkListParams } from '@/features/work/api'
@@ -71,7 +72,7 @@ export function ExecutorItemsSheet({ executor, onClose }: { executor: ExecutorLo
               { key: 'all', label: tw('tabs.all') },
             ]}
           />
-          {query.isPending ? (
+          {isFirstLoad(query, rows.length === 0) ? (
             <div className="space-y-2">
               {Array.from({ length: 4 }, (_, i) => (
                 <Skeleton key={i} className="h-14" />
@@ -96,7 +97,7 @@ export function ExecutorItemsSheet({ executor, onClose }: { executor: ExecutorLo
                     </span>
                     <span className="flex shrink-0 items-center gap-1.5">
                       {r.isSubscriptionCovered && <CoverageBadge />}
-                      <StatusBadge enum="ServiceItemStatus" value={r.status} />
+                      <ItemStatusBadge status={r.status} completedAt={r.completedAt} />
                     </span>
                   </Link>
                 </li>

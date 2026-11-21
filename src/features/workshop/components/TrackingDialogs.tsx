@@ -14,7 +14,7 @@ import { workApi, workKeys } from '@/features/work/api'
 import { useTargetLabel, type WorkTarget } from '@/features/work/hooks'
 import { useAction } from '@/hooks/useAction'
 import { useLang } from '@/hooks/useLang'
-import { enumLabel, enumOptions } from '@/i18n/enums'
+import { enumLabel } from '@/i18n/enums'
 import { nowRiyadh, riyadhInputToIso } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { TRACKING_INVALIDATION, trackingApi } from '../api'
@@ -33,16 +33,21 @@ interface DialogProps {
   onOpenChange: (open: boolean) => void
 }
 
+interface SendUpdateProps extends DialogProps {
+  /** The kinds the server accepts now (`allowedUpdateKinds`), in enum order. */
+  kinds: readonly ProgressUpdateKind[]
+}
+
 /**
  * "إرسال تحديث للعميل": kind, a note (required for Other/Delayed, ≤ 1000), the expected ready date (now..4 months,
  * Riyadh input) and an optional photo — multipart `POST …/updates`. The customer is notified at once.
  */
-export function SendUpdateDialog({ item, open, onOpenChange }: DialogProps) {
+export function SendUpdateDialog({ item, open, onOpenChange, kinds }: SendUpdateProps) {
   const { t } = useTranslation('workshop')
   const { lang } = useLang()
   const targetLabel = useTargetLabel()
   const ids = { kind: useId(), note: useId(), ready: useId() }
-  const [kind, setKind] = useState<ProgressUpdateKind>('InspectionStarted')
+  const [kind, setKind] = useState<ProgressUpdateKind>(kinds[0] ?? 'InspectionStarted')
   const [note, setNote] = useState('')
   const [ready, setReady] = useState('')
   const [file, setFile] = useState<File | null>(null)
@@ -58,7 +63,7 @@ export function SendUpdateDialog({ item, open, onOpenChange }: DialogProps) {
 
   useEffect(() => {
     if (open) {
-      setKind('InspectionStarted')
+      setKind(kinds[0] ?? 'InspectionStarted')
       setNote('')
       setReady('')
       setFile(null)
@@ -67,6 +72,11 @@ export function SendUpdateDialog({ item, open, onOpenChange }: DialogProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
+
+  // A refetch can narrow the allowed kinds while the dialog is open: never keep a kind the server would refuse.
+  useEffect(() => {
+    if (open && kinds.length > 0 && !kinds.includes(kind)) setKind(kinds[0])
+  }, [open, kinds, kind])
 
   const problems = updateProblems({ kind, note, expectedReadyAt: riyadhInputToIso(ready) })
   const now = nowRiyadh()
@@ -80,13 +90,13 @@ export function SendUpdateDialog({ item, open, onOpenChange }: DialogProps) {
       changes={t('tracking.updateEffect')}
       confirmLabel={t('tracking.send')}
       submitting={action.isPending}
-      submitDisabled={problems.length > 0}
+      submitDisabled={problems.length > 0 || !kinds.includes(kind)}
       error={error}
       onSubmit={() => action.mutate()}
     >
       <Field label={t('tracking.kind')} htmlFor={ids.kind} required>
         <Select id={ids.kind} value={kind} onChange={(e) => setKind(e.target.value as ProgressUpdateKind)}>
-          {enumOptions('ProgressUpdateKind').map((k) => (
+          {kinds.map((k) => (
             <option key={k} value={k}>
               {enumLabel('ProgressUpdateKind', k, lang)}
             </option>

@@ -53,6 +53,7 @@ const ar = {
     noSchedule: 'بلا موعد محدد',
     completedAt: 'تمت',
     closed: 'الخدمة مغلقة: لا تُرسل لها تحديثات.',
+    noUpdateNow: 'لا يوجد تحديث يناسب مرحلة الخدمة الآن.',
     // Next-step buttons
     step: {
       PickedUp: 'استلام من العميل',
@@ -124,6 +125,7 @@ const ar = {
     TrackingPhotoInvalid: 'ليست صورة JPG أو PNG أو WEBP، أو أكبر من 5 ميجابايت.',
     ProgressNoteRequired: 'الملاحظة إلزامية لتحديث «تأخير» أو «تحديث».',
     ExpectedReadyAtInvalid: 'تاريخ الجاهزية خارج النطاق: من الآن وحتى أربعة أشهر.',
+    ProgressUpdateNotNow: 'هذا التحديث لا يناسب مرحلة الخدمة الآن: «جاهز» بعد الإصلاح، وخطوات الإصلاح بعد موافقة العميل.',
     ServiceItemClosed: 'الخدمة مغلقة.',
     ExecutorCannotRepair: 'العضو ليست له صلاحية الإصلاح.',
     ExecutorCannotDeliver: 'العضو ليست له صلاحية التوصيل (وليس الفني المكلّف).',
@@ -182,6 +184,7 @@ const en: typeof ar = {
     noSchedule: 'No window set',
     completedAt: 'Done',
     closed: 'This service is closed: it takes no more updates.',
+    noUpdateNow: 'No update fits the service’s stage right now.',
     step: {
       PickedUp: 'Collect from the customer',
       AtWorkshop: 'Received at the workshop',
@@ -250,6 +253,7 @@ const en: typeof ar = {
     TrackingPhotoInvalid: 'Not a JPG, PNG or WEBP image, or larger than 5 MB.',
     ProgressNoteRequired: 'A note is required for “Delayed” and “Update”.',
     ExpectedReadyAtInvalid: 'The ready date is out of range: from now up to four months.',
+    ProgressUpdateNotNow: 'This update does not fit the service’s stage yet: “Ready” comes after the repair, and repair steps after the customer approves.',
     ServiceItemClosed: 'This service is closed.',
     ExecutorCannotRepair: 'This member has no repair role.',
     ExecutorCannotDeliver: 'This member has no delivery role (and is not the assigned technician).',

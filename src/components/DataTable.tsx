@@ -28,6 +28,7 @@ import { useIsDesktopTable } from '@/hooks/useMediaQuery'
 import { PAGE_SIZES } from '@/hooks/useUrlState'
 import { useLang } from '@/hooks/useLang'
 import { canPrefetch } from '@/api/netStatus'
+import { isFirstLoad } from '@/api/queryClient'
 import type { PaginatedResponse } from '@/api/types'
 import { formatNumber } from '@/lib/format'
 import { readItem, writeItem } from '@/lib/storage'
@@ -62,7 +63,7 @@ export interface DataTableProps<T> {
   /** Stable id: column visibility and density persist per list under it. */
   id: string
   columns: ColumnDef<T, unknown>[]
-  query: Pick<UseQueryResult<PaginatedResponse<T>>, 'data' | 'isPending' | 'isError' | 'error' | 'refetch' | 'isFetching' | 'isPlaceholderData'>
+  query: Pick<UseQueryResult<PaginatedResponse<T>>, 'data' | 'isPending' | 'isError' | 'error' | 'refetch' | 'isFetching' | 'isPlaceholderData' | 'isFetchedAfterMount'>
   page: number
   pageSize: number
   onPageChange: (page: number) => void
@@ -126,6 +127,8 @@ export function DataTable<T>({
   }, [columns])
 
   const rows = query.data?.items ?? []
+  // The first answer for these filters is still on its way: skeleton, not the empty state.
+  const loading = isFirstLoad(query, rows.length === 0)
   const table = useReactTable({
     data: rows,
     columns,
@@ -206,7 +209,7 @@ export function DataTable<T>({
   // Phones: one card per row — the title cell on top, then "header: value" pairs.
   const cards = (
     <ul className={cn('divide-y', query.isPlaceholderData && 'opacity-60 transition-opacity')}>
-      {query.isPending ? (
+      {loading ? (
         Array.from({ length: 4 }, (_, i) => (
           <li key={i} className="space-y-2 p-3">
             <Skeleton className="h-4 w-1/2" />
@@ -254,7 +257,7 @@ export function DataTable<T>({
       <div className="flex flex-wrap items-center justify-between gap-2 border-b px-3 py-2">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">{toolbar}</div>
         <div className="flex items-center gap-1">
-          {query.isFetching && !query.isPending && <span className="me-2 size-2 animate-pulse rounded-full bg-primary" aria-label={t('table.loading')} />}
+          {query.isFetching && !loading && <span className="me-2 size-2 animate-pulse rounded-full bg-primary" aria-label={t('table.loading')} />}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon-sm" aria-label={t('table.columns')} title={t('table.columns')}>
@@ -298,7 +301,7 @@ export function DataTable<T>({
             ))}
           </THead>
           <TBody>
-            {query.isPending ? (
+            {loading ? (
               Array.from({ length: SKELETON_ROWS }, (_, i) => (
                 <Tr key={i}>
                   {visibleColumns.map((c) => (

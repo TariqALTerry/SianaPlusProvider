@@ -25,6 +25,7 @@ import { branchOpsApi, branchOpsKeys } from './api'
 import { ClaimDialog } from './components/ClaimDialog'
 import { lineState, lookupQuery } from './logic'
 import './i18n'
+import { deviceLine } from '@/lib/device'
 
 const schema = { phone: '', imei: '', code: '' }
 
@@ -161,7 +162,7 @@ function WarrantyCard({ item: w, onClaim }: { item: CounterWarrantyLookupItem; o
         <KeyValue
           columns={3}
           items={[
-            { label: t('warranty.device'), value: [w.deviceName, w.brand, w.model].filter(Boolean).join(' · ') || null },
+            { label: t('warranty.device'), value: deviceLine(w.deviceName, w.brand, w.model) || null },
             { label: 'IMEI', value: w.imei || w.serialNumber ? <bdi className="ltr-nums font-mono text-xs">{w.imei ?? w.serialNumber}</bdi> : null },
             {
               label: t('warranty.customer'),

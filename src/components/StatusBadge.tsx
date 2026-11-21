@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { useLang } from '@/hooks/useLang'
-import { enumLabel, enumTone, type EnumName, type Tone } from '@/i18n/enums'
+import { enumLabel, enumTone, itemStatusLabel, type EnumName, type Tone } from '@/i18n/enums'
 
 interface StatusBadgeProps {
   enum: EnumName
@@ -18,6 +18,18 @@ export function StatusBadge({ enum: name, value, tone, className, dot = true }: 
   return (
     <Badge tone={tone ?? enumTone(name, value)} dot={dot} className={className} title={value}>
       {enumLabel(name, value, lang)}
+    </Badge>
+  )
+}
+
+/** A service item's status; one that completed before a dispute or refund reads "مكتملة · …" (`itemStatusLabel`). */
+export function ItemStatusBadge({ status, completedAt, className }: { status: string | null | undefined; completedAt?: string | null; className?: string }) {
+  const { lang } = useLang()
+  if (!status) return <span className="text-muted-foreground">—</span>
+  const { label, tone } = itemStatusLabel(status, completedAt, lang)
+  return (
+    <Badge tone={tone} dot className={className} title={status}>
+      {label}
     </Badge>
   )
 }

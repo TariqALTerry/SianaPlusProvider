@@ -14,6 +14,7 @@ import { PhotoUploader } from './components/PhotoUploader'
 import { useCounterDocuments } from './hooks'
 import { MIN_PHOTOS, photosMissing } from './logic'
 import './i18n'
+import { deviceLine } from '@/lib/device'
 
 /**
  * `/counter/items/:id/done` (phase 2 §4, "تم الاستلام"): the photos first (two at least; until then the receipt is
@@ -50,7 +51,7 @@ function Done({ detail }: { detail: CounterItemDetailResponse }) {
             </p>
             <p className="text-sm text-white/85">
               {detail.customer.fullName} · {pick(detail.serviceNameAr, detail.serviceNameEn)}
-              {device && ` · ${[device.name, device.brand, device.model].filter(Boolean).join(' ')}`}
+              {device && ` · ${deviceLine(device.name, device.brand, device.model, ' ')}`}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">

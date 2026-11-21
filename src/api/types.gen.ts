@@ -1004,6 +1004,7 @@ export interface CreateServiceRequest {
   executionMode: ExecutionMode
   pricingType: PricingType
   basePrice?: number | null
+  declineFee?: number | null
   requiresDevice: boolean
   supportsMultiDevice: boolean
   requiresBeforeEvidence: boolean
@@ -1025,6 +1026,7 @@ export interface UpdateServiceRequest {
   executionMode: ExecutionMode
   pricingType: PricingType
   basePrice?: number | null
+  declineFee?: number | null
   requiresDevice: boolean
   supportsMultiDevice: boolean
   requiresBeforeEvidence: boolean
@@ -1211,6 +1213,8 @@ export interface ServiceAdminListItemResponse {
   updatedAt: string | null
 }
 export interface ServiceAdminDetailResponse extends ServiceAdminListItemResponse {
+  declineFee: number | null
+  effectiveDeclineFee: number | null
   descriptionAr: string | null
   descriptionEn: string | null
   keywords: string | null
@@ -1352,6 +1356,7 @@ export interface ServiceCardResponse {
   executionMode: ExecutionMode
   pricingType: PricingType
   basePrice: number | null
+  declineFee: number | null
   priceQuantityFieldKey: string | null
   priceUnitAr: string | null
   priceUnitEn: string | null
@@ -1585,6 +1590,21 @@ export interface PaginatedResponse<T> {
   totalPages: number
   hasNextPage: boolean
   hasPreviousPage: boolean
+}
+
+// ── Common/PolicyDtos.cs
+export interface PolicyResponse {
+  textAr: string
+  textEn: string
+  updatedAt: string | null
+}
+export interface AdminPolicyResponse extends PolicyResponse {
+  updatedByUserId: string | null
+  updatedByName: string | null
+}
+export interface UpdatePolicyRequest {
+  textAr?: string | null
+  textEn?: string | null
 }
 
 // ── Community/CommunityAdminDtos.cs
@@ -3518,6 +3538,8 @@ export interface OrderDetailResponse {
   cancelledBy: CancellationInitiator | null
   cancellationReason: string | null
   canCancel: boolean
+  itemsCount: number
+  completedItemsCount: number
   items: ServiceItemCustomerView[]
 }
 export interface ServiceItemCustomerView {
@@ -3542,6 +3564,7 @@ export interface ServiceItemCustomerView {
   issueNameEn: string | null
   executionMode: ExecutionMode
   pricingType: PricingType
+  includedWithProduct: boolean
   status: ServiceItemStatus
   scheduledStart: string | null
   scheduledEnd: string | null
@@ -3559,6 +3582,7 @@ export interface ServiceItemCustomerView {
   pendingQuotationEffect: QuotationEffect | null
   pendingQuotationResultingAmount: number | null
   inspectionFee: number
+  declineFee: number
   canRequestDeviceReturn: boolean
   deviceReturnFee: number | null
   homeInspectionId: string | null
@@ -3714,6 +3738,10 @@ export interface EarningsSummaryResponse {
   completedItemsAllTime: number
   deliveredAmountAllTime: number
   pendingNetAmount: number
+  unsettledItemsCount: number
+  unsettledAmount: number
+  cashHeldItemsCount: number
+  cashHeldAmount: number
   paidNetAmount: number
   lastSettlementAt: string | null
   lastPaidAt: string | null
@@ -3785,6 +3813,11 @@ export interface ArriveRequest {
   latitude?: number | null
   longitude?: number | null
   confirmFarArrival: boolean
+}
+export interface ConfirmDropOffRequest {
+  latitude?: number | null
+  longitude?: number | null
+  confirmFarDropOff: boolean
 }
 export interface PauseJobRequest {
   reason: string
@@ -3896,6 +3929,7 @@ export interface JobDetailResponse extends JobSummaryResponse {
   internalCost: number | null
   quotationEffect: QuotationEffect
   inspectionFee: number
+  declineFee: number
   paymentMethod: PaymentMethod | null
   requiresCashCollection: boolean
   requiresTestResult: boolean
@@ -3991,6 +4025,7 @@ export interface ServiceTrackingResponse {
   devices: TrackedDevice[]
   updates: ProgressUpdateResponse[]
   legs: LegResponse[]
+  allowedUpdateKinds: ProgressUpdateKind[]
 }
 export interface TrackedDevice {
   deviceId: string

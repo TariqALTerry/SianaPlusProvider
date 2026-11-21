@@ -17,6 +17,7 @@ import { counterApi } from '../api'
 import { ACCESSORIES, CONDITIONS, INTAKE_LIMITS, MAX_PHOTOS_PER_UPLOAD, toggleFlag } from '../logic'
 import { FlagChips } from './FlagChips'
 import '../i18n'
+import { deviceLine } from '@/lib/device'
 
 interface Target {
   id: string
@@ -86,7 +87,7 @@ export function PlatformIntakeDialog({ item, device, open, onOpenChange }: { ite
       size="lg"
       title={t('platform.title')}
       description={t('platform.hint')}
-      target={[item.itemNumber, device ? [device.name, device.brand, device.model].filter(Boolean).join(' ') : null].filter(Boolean).join(' · ')}
+      target={[item.itemNumber, device ? deviceLine(device.name, device.brand, device.model, ' ') : null].filter(Boolean).join(' · ')}
       submitting={action.isPending}
       error={action.error}
       confirmLabel={t('platform.action')}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import * as generated from '@/api/types.gen'
-import { enumLabel, enumMaps, enumTone, type EnumEntry } from './enums'
+import { enumLabel, enumMaps, enumTone, itemStatusLabel, type EnumEntry } from './enums'
 
 /** Backend enums the provider platform never renders. */
 /** Backend enums this platform never shows (other apps' features, internal states). */
@@ -59,5 +59,18 @@ describe('enum label maps', () => {
     expect(enumLabel('SettlementStatus', 'Paid', 'ar')).toBe('مصروفة')
     expect(enumLabel('DisputeStatus', 'Rejected', 'ar')).toBe('مغلقة')
     expect(enumTone('ServiceItemStatus', 'Rejected')).toBe('danger')
+  })
+})
+
+describe('itemStatusLabel', () => {
+  it('reads a dispute or refund after completion as completed (tester item 60)', () => {
+    expect(itemStatusLabel('Disputed', '2026-11-10T10:00:00Z', 'ar')).toEqual({ label: 'مكتملة · عليها شكوى', tone: 'danger' })
+    expect(itemStatusLabel('PartiallyRefunded', '2026-11-10T10:00:00Z', 'en').label).toBe('Completed · Partially refunded')
+  })
+
+  it('keeps the plain label otherwise', () => {
+    expect(itemStatusLabel('Disputed', null, 'ar').label).toBe('عليها شكوى')
+    expect(itemStatusLabel('Completed', '2026-11-10T10:00:00Z', 'ar').label).toBe('مكتملة')
+    expect(itemStatusLabel('Cancelled', '2026-11-10T10:00:00Z', 'en').label).toBe(enumLabel('ServiceItemStatus', 'Cancelled', 'en'))
   })
 })

@@ -18,6 +18,7 @@ import { branchOpsApi, branchOpsKeys } from './api'
 import { CancelTransferDialog, ScanTransferDialog } from './components/TransferDialogs'
 import { serviceHref, transferActions, transferTarget } from './logic'
 import './i18n'
+import { deviceLine } from '@/lib/device'
 
 /** `/counter/transfers/:id` (phase 5 §5): the devices, both branches, the courier, the times and the actions. */
 export function TransferPage() {
@@ -123,7 +124,7 @@ function Transfer({ transfer: tr }: { transfer: BranchTransferResponse }) {
             {tr.devices.map((d) => (
               <li key={d.deviceId} className="flex flex-wrap items-center justify-between gap-2 py-2">
                 <span>
-                  {[d.name, d.brand, d.model].filter(Boolean).join(' · ')}
+                  {deviceLine(d.name, d.brand, d.model)}
                   {d.tagCode && (
                     <span className="ms-2 text-xs text-muted-foreground">
                       {t('transfer.tag')}: <bdi className="ltr-nums font-mono">{d.tagCode}</bdi>

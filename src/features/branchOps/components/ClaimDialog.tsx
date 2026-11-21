@@ -32,6 +32,7 @@ import {
   type ClaimDraft,
 } from '../logic'
 import '../i18n'
+import { deviceLine } from '@/lib/device'
 
 const ACCESSORIES: readonly IntakeAccessory[] = ['Charger', 'Case', 'SimCard', 'MemoryCard', 'Box', 'Cable', 'Other']
 const CONDITIONS: readonly IntakeCondition[] = ['Scratches', 'CrackedScreen', 'LiquidDamage', 'NotPoweringOn', 'Dents', 'MissingParts']
@@ -83,7 +84,7 @@ export function ClaimDialog({ item, open, onOpenChange }: { item: CounterWarrant
   const needsGoodwill = claimNeedsGoodwill(item, draft.lineIds)
   const problem = claimProblem(draft, item, role)
   const expired = toApiError(action.error).errorCode === 'CounterWarrantyExpired'
-  const device = [item.deviceName, item.brand, item.model].filter(Boolean).join(' ')
+  const device = deviceLine(item.deviceName, item.brand, item.model, ' ')
 
   return (
     <ActionDialog
