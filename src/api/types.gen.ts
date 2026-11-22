@@ -232,6 +232,10 @@ export const DisputeResolutionTypeValues = ['None', 'FullRefund', 'PartialRefund
 export type DisputeResolutionType = (typeof DisputeResolutionTypeValues)[number]
 export const RoleValues = ['SuperAdmin', 'TenantAdmin', 'Manager', 'Member', 'PlatformAdmin', 'Customer', 'ProviderOwner', 'ProviderSupervisor', 'Executor', 'Supplier', 'ProviderFrontDesk'] as const
 export type Role = (typeof RoleValues)[number]
+export const ServiceCallSideValues = ['Customer', 'Executor'] as const
+export type ServiceCallSide = (typeof ServiceCallSideValues)[number]
+export const ServiceCallOutcomeValues = ['Ringing', 'Answered', 'Missed', 'Declined', 'Cancelled', 'Failed'] as const
+export type ServiceCallOutcome = (typeof ServiceCallOutcomeValues)[number]
 export const StoreOrderStatusValues = ['Draft', 'PendingPayment', 'Paid', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] as const
 export type StoreOrderStatus = (typeof StoreOrderStatusValues)[number]
 export const StoreProductImageStatusValues = ['Pending', 'Ready', 'Failed'] as const
@@ -942,6 +946,39 @@ export interface OtpRequestResponse {
   codeLength: number
   expiresAt: string
   resendAvailableAt: string
+}
+
+// ── Calls/CallDtos.cs
+export interface CallTokenResponse {
+  enabled: boolean
+  appId: number
+  userId: string
+  userName: string
+  token: string
+  expiresAt: string
+}
+export interface StartCallResponse {
+  callId: string
+  calleeUserId: string
+  calleeName: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+}
+export interface EndCallRequest {
+  outcome: ServiceCallOutcome
+  durationSeconds: number
+}
+export interface ServiceCallResponse {
+  id: string
+  callerSide: ServiceCallSide
+  callerName: string
+  calleeName: string
+  outcome: ServiceCallOutcome
+  startedAt: string
+  answeredAt: string | null
+  endedAt: string | null
+  durationSeconds: number
 }
 
 // ── Catalog/CatalogAdminDtos.cs
@@ -3565,6 +3602,7 @@ export interface ServiceItemCustomerView {
   executionMode: ExecutionMode
   pricingType: PricingType
   includedWithProduct: boolean
+  canCall: boolean
   status: ServiceItemStatus
   scheduledStart: string | null
   scheduledEnd: string | null
@@ -3917,6 +3955,7 @@ export interface EvidenceGroupResponse {
 }
 export interface JobDetailResponse extends JobSummaryResponse {
   requiresHomeInspection: boolean
+  canCall: boolean
   requiresHoldReason: boolean
   holdReason: HoldReason | null
   holdNote: string | null

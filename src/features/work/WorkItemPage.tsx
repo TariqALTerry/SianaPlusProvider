@@ -39,6 +39,7 @@ import {
   WorkflowCard,
 } from './components/ItemSections'
 import { HomeInspectionButton, HomeInspectionSheet, InspectionWarning } from './components/HomeInspection'
+import { CallsTab } from './components/CallsTab'
 import { WorkActions } from './components/WorkActions'
 import { CoverageBadge, NetBlock } from './components/widgets'
 import { BranchCard } from './components/BranchCard'
@@ -47,7 +48,7 @@ import { PlatformDeviceActions, PlatformIntakeDialog } from '@/features/counter/
 import type { DeviceResponse } from '@/api/types'
 
 // `?tab=tracking` is the deep link the 72 h no-update and "arrange the return" alerts open.
-const TABS = ['timeline', 'tracking', 'photos', 'quotations', 'assignments', 'schedules'] as const
+const TABS = ['timeline', 'tracking', 'photos', 'quotations', 'assignments', 'schedules', 'calls'] as const
 type Tab = (typeof TABS)[number]
 
 /** `/work/:id` (§8.4): everything about one item, polled every 30 s while it can still change. */
@@ -241,6 +242,9 @@ export function WorkItemPage() {
             </TabsContent>
             <TabsContent value="schedules">
               <SchedulesSection schedules={schedules} />
+            </TabsContent>
+            <TabsContent value="calls">
+              <CallsTab itemId={id} />
             </TabsContent>
           </Tabs>
         </div>

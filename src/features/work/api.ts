@@ -16,6 +16,7 @@ import type {
   ReviewQuotationRequest,
   ScheduleItemRequest,
   SetCrewRequest,
+  ServiceCallResponse,
   ServiceItemProviderDetailResponse,
   ServiceItemProviderView,
   UnassignRequest,
@@ -29,6 +30,8 @@ export type WorkListParams = ListParams<ProviderWorkListRequest>
 export const workApi = {
   list: (params: WorkListParams, signal?: AbortSignal) => http.get<PaginatedResponse<ServiceItemProviderView>>(`${base}/items`, params, signal),
   detail: (id: string, signal?: AbortSignal) => http.get<ServiceItemProviderDetailResponse>(`${base}/items/${id}`, undefined, signal),
+  /** In-app calls on this service, newest first (no phone numbers). */
+  calls: (id: string, signal?: AbortSignal) => http.get<ServiceCallResponse[]>(`${base}/items/${id}/calls`, undefined, signal),
   candidates: (id: string, signal?: AbortSignal) => http.get<ExecutorCandidateResponse[]>(`${base}/items/${id}/candidates`, undefined, signal),
   /** `branchId`: the branch's technicians and those without a branch (PROVIDER-BRANCHES phase 1 §5). */
   board: (branchId: string | undefined, signal?: AbortSignal) => http.get<ProviderWorkBoardResponse>(`${base}/board`, { branchId }, signal),
@@ -59,6 +62,7 @@ export const workKeys = {
   lists: () => [...qk.work, 'list'] as const,
   list: (params: WorkListParams) => [...qk.work, 'list', params] as const,
   detail: (id: string) => [...qk.work, 'detail', id] as const,
+  calls: (id: string) => [...qk.work, 'calls', id] as const,
   candidates: (id: string) => [...qk.work, 'candidates', id] as const,
   crewCandidates: (id: string) => [...qk.work, 'crew-candidates', id] as const,
   homeInspection: (id: string) => [...qk.work, 'home-inspection', id] as const,

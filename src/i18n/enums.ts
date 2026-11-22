@@ -847,6 +847,20 @@ export const StockReservationStatus: EnumMap<T.StockReservationStatus> = {
   Released: e('فُك الحجز', 'Released', 'muted'),
 }
 
+export const ServiceCallSide: EnumMap<T.ServiceCallSide> = {
+  Customer: e('العميل', 'Customer', 'neutral'),
+  Executor: e('الفني', 'Technician', 'info'),
+}
+
+export const ServiceCallOutcome: EnumMap<T.ServiceCallOutcome> = {
+  Ringing: e('رنّت', 'Ringing', 'waiting'),
+  Answered: e('تم الرد', 'Answered', 'success'),
+  Missed: e('لم يرد', 'Missed', 'attention'),
+  Declined: e('رُفضت', 'Declined', 'danger'),
+  Cancelled: e('أُلغيت', 'Cancelled', 'muted'),
+  Failed: e('فشلت', 'Failed', 'danger'),
+}
+
 export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
@@ -866,6 +880,7 @@ export const enumMaps = {
   WhatsAppMessageStatus, WhatsAppSenderKind, WhatsAppTemplateKind, WhatsAppSkipReason, TrackingStage,
   ReworkRootCause, BranchTransferStatus, AgingBucket, BranchBoardStage, CashCloseStatus,
   StockMovementKind, SupplierReturnStatus, WarrantyLineKind, StockReservationStatus,
+  ServiceCallSide, ServiceCallOutcome,
 } as const
 
 export type EnumName = keyof typeof enumMaps

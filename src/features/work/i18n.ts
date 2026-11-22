@@ -230,7 +230,9 @@ const ar = {
       assignments: 'الإسنادات',
       schedules: 'المواعيد',
       tracking: 'التتبع',
+      calls: 'المكالمات',
     },
+    calls: { empty: 'لا توجد مكالمات', startedAt: 'البداية', parties: 'المتصل ← المستقبل', side: 'الجهة', outcome: 'النتيجة', duration: 'المدة' },
     photos: { empty: 'لا توجد صور بعد', openFile: 'فتح الملف' },
     quotation: {
       sentAt: 'أُرسل',
@@ -510,7 +512,9 @@ const en: typeof ar = {
       assignments: 'Assignments',
       schedules: 'Schedules',
       tracking: 'Tracking',
+      calls: 'Calls',
     },
+    calls: { empty: 'No calls', startedAt: 'Started', parties: 'Caller → callee', side: 'Side', outcome: 'Outcome', duration: 'Duration' },
     photos: { empty: 'No photos yet', openFile: 'Open file' },
     quotation: {
       sentAt: 'Sent',
