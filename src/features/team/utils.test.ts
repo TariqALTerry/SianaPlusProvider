@@ -51,6 +51,8 @@ const executor: ExecutorResponse = {
   ratingsCount: 2,
   completedItemsCount: 7,
   isActive: true,
+  assignmentSuspendedAt: null,
+  assignmentSuspensionReason: null,
   createdAt: '2026-01-01T00:00:00Z',
 }
 

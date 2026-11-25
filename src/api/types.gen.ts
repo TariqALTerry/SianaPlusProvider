@@ -124,9 +124,9 @@ export const SubscriptionInvoiceStatusValues = ['Pending', 'Paid', 'Cancelled'] 
 export type SubscriptionInvoiceStatus = (typeof SubscriptionInvoiceStatusValues)[number]
 export const SubscriptionPaymentMethodValues = ['BankTransfer', 'WalletDeduction', 'Gateway'] as const
 export type SubscriptionPaymentMethod = (typeof SubscriptionPaymentMethodValues)[number]
-export const WalletDeductionKindValues = ['CounterSubscription'] as const
+export const WalletDeductionKindValues = ['CounterSubscription', 'Penalty', 'CancellationFeeShare'] as const
 export type WalletDeductionKind = (typeof WalletDeductionKindValues)[number]
-export const WalletItemKindValues = ['Service', 'CounterSubscription'] as const
+export const WalletItemKindValues = ['Service', 'CounterSubscription', 'Penalty', 'CancellationFeeShare'] as const
 export type WalletItemKind = (typeof WalletItemKindValues)[number]
 export const QuotationStatusValues = ['Draft', 'Sent', 'Approved', 'Rejected', 'Expired', 'Cancelled', 'PendingReview'] as const
 export type QuotationStatus = (typeof QuotationStatusValues)[number]
@@ -196,6 +196,18 @@ export const RepairOutcomeValues = ['Repaired', 'NotRepairable', 'QuoteRejected'
 export type RepairOutcome = (typeof RepairOutcomeValues)[number]
 export const OtpPurposeValues = ['CustomerLogin', 'ProviderLogin', 'ProviderRegistration', 'AppLogin', 'ChangePhone', 'CounterApproval'] as const
 export type OtpPurpose = (typeof OtpPurposeValues)[number]
+export const CustomerChargeKindValues = ['CancellationFee'] as const
+export type CustomerChargeKind = (typeof CustomerChargeKindValues)[number]
+export const CustomerChargeStatusValues = ['Due', 'Paid', 'Waived'] as const
+export type CustomerChargeStatus = (typeof CustomerChargeStatusValues)[number]
+export const ProviderPenaltyKindValues = ['LateForVisit'] as const
+export type ProviderPenaltyKind = (typeof ProviderPenaltyKindValues)[number]
+export const ProviderPenaltyStatusValues = ['Pending', 'Applied', 'Dismissed'] as const
+export type ProviderPenaltyStatus = (typeof ProviderPenaltyStatusValues)[number]
+export const CancellationFeeStageValues = ['AfterAccepted', 'AfterEnRoute', 'AfterArrived'] as const
+export type CancellationFeeStage = (typeof CancellationFeeStageValues)[number]
+export const LowScoreActionValues = ['None', 'Alert', 'Suspend'] as const
+export type LowScoreAction = (typeof LowScoreActionValues)[number]
 export const ProviderTypeValues = ['IndependentTechnician', 'Company'] as const
 export type ProviderType = (typeof ProviderTypeValues)[number]
 export const ProviderVerificationStatusValues = ['Draft', 'Submitted', 'UnderReview', 'Approved', 'Trial', 'Rejected', 'Suspended'] as const
@@ -284,6 +296,8 @@ export const WhatsAppSkipReasonValues = ['QuotaExceeded', 'NoPhone', 'SenderNotC
 export type WhatsAppSkipReason = (typeof WhatsAppSkipReasonValues)[number]
 export const TrackingStageValues = ['Received', 'Diagnosing', 'AwaitingApproval', 'InRepair', 'Ready', 'Delivered', 'NotRepairable', 'Cancelled'] as const
 export type TrackingStage = (typeof TrackingStageValues)[number]
+export const PlatformSettingKindValues = ['Bool', 'Int', 'Decimal', 'IntList'] as const
+export type PlatformSettingKind = (typeof PlatformSettingKindValues)[number]
 export const WalletItemsBucketValues = ['Available', 'OnHold'] as const
 export type WalletItemsBucket = (typeof WalletItemsBucketValues)[number]
 
@@ -1629,6 +1643,27 @@ export interface PaginatedResponse<T> {
   hasPreviousPage: boolean
 }
 
+// ── Common/PlatformSettingDtos.cs
+export interface PlatformSettingResponse {
+  key: string
+  group: string
+  kind: PlatformSettingKind
+  value: string
+  defaultValue: string
+  min: number | null
+  max: number | null
+  isOverridden: boolean
+  updatedAt: string | null
+  updatedByName: string | null
+}
+export interface UpdatePlatformSettingsRequest {
+  changes: PlatformSettingChange[]
+}
+export interface PlatformSettingChange {
+  key: string
+  value: string | null
+}
+
 // ── Common/PolicyDtos.cs
 export interface PolicyResponse {
   textAr: string
@@ -1642,6 +1677,145 @@ export interface AdminPolicyResponse extends PolicyResponse {
 export interface UpdatePolicyRequest {
   textAr?: string | null
   textEn?: string | null
+}
+
+// ── Common/SystemPolicyDtos.cs
+export interface SystemPoliciesResponse {
+  assignment: AssignmentPolicyValues
+  delays: DelayPolicyValues
+  scheduling: SchedulingPolicyValues
+  pricing: PricingPolicyValues
+  cancellation: CancellationPolicyValues
+  finance: FinancePolicyValues
+  quality: QualityPolicyValues
+  tracking: TrackingPolicyValues
+  homeSubscriptions: HomeSubscriptionPolicyValues
+  store: StorePolicyValues
+  counter: CounterPolicyValues
+  accounts: AccountPolicyValues
+  notifications: NotificationPolicyValues
+}
+export interface AssignmentPolicyValues {
+  autoAssignEnabled: boolean
+  includeDemoProviders: boolean
+  maxDistanceKm: number
+  newcomerRating: number
+  providerDistanceWeightPercent: number
+  providerRatingWeightPercent: number
+  providerLoadWeightPercent: number
+  providerExperienceWeightPercent: number
+  executorDistanceWeightPercent: number
+  executorRatingWeightPercent: number
+  executorLoadWeightPercent: number
+  executorLocationMaxAgeMinutes: number
+  maxPlausibleExecutorDistanceKm: number
+  maxCrewMembers: number
+}
+export interface DelayPolicyValues {
+  executorResponseHours: number
+  providerResponseHours: number
+  delegatedNoExecutorHours: number
+  deadlineCheckMinutes: number
+  notStartedAlertHours: number
+  notStartedStaleHours: number
+  updateReminderHours: number
+  updateEscalationHours: number
+  updateReminderEveryHours: number
+  lateCustomerNoticeEnabled: boolean
+  lateCustomerNoticeMinutes: number
+  lateAutoWithdrawEnabled: boolean
+  lateAutoWithdrawMinutes: number
+  latePenaltyAmount: number
+  attentionUnassignedMinutes: number
+  attentionProviderMinutes: number
+  attentionExecutorMinutes: number
+  attentionCustomerApprovalMinutes: number
+}
+export interface SchedulingPolicyValues {
+  slotStartHours: number[]
+  slotLengthHours: number
+  leadTimeHours: number
+  requireCoverage: boolean
+  enforceSlots: boolean
+  reservedSlotPercent: number
+}
+export interface PricingPolicyValues {
+  quotationAnswerHours: number
+  maxPricedQuantity: number
+  defaultSupervisorMaxDiscountPercent: number
+}
+export interface CancellationPolicyValues {
+  refundWindowDays: number
+  feeEnabled: boolean
+  feeFromStage: number
+  feeAmount: number
+  feeFreeHours: number
+  feeProviderSharePercent: number
+  cancellationTextWritten: boolean
+}
+export interface FinancePolicyValues {
+  offeredPaymentMethods: string[]
+  gatewayAvailable: boolean
+  defaultCommissionPercent: number
+  walletHoldDays: number
+  minWithdrawalAmount: number
+  currency: string
+}
+export interface QualityPolicyValues {
+  autoConfirmHours: number
+  defaultWarrantyDays: number
+  fastCompletionPercent: number
+  fastCompletionMinMinutes: number
+  lowScoreAction: number
+  lowScoreThreshold: number
+  lowScoreMinJobs: number
+}
+export interface TrackingPolicyValues {
+  arrivalConfirmKm: number
+  arrivalRefuseKm: number
+  liveLocationMaxAgeMinutes: number
+  handoverCodeAttempts: number
+  messagesGraceDays: number
+}
+export interface HomeSubscriptionPolicyValues {
+  expiryNoticeDays: number
+  visitReminderIntervalDays: number
+  autoRenewLeadDays: number
+  renewalGraceDays: number
+}
+export interface StorePolicyValues {
+  fallbackDeliveryFee: number
+  maxProductImages: number
+  newForDays: number
+}
+export interface CounterPolicyValues {
+  minIntakePhotos: number
+  defaultFreeStorageDays: number
+  minFreeStorageDays: number
+  maxFreeStorageDays: number
+  maxStorageFeePerDay: number
+  maxChargeableStorageDays: number
+  defaultAbandonAfterDays: number
+  minAbandonAfterDays: number
+  maxAbandonAfterDays: number
+  minRemindersBeforeAbandon: number
+  subscriptionInvoiceLeadDays: number
+  subscriptionGraceDays: number
+  quoteReminderHours: number
+  maxPickupReminders: number
+  pickupReminderLocalHour: number
+  whatsAppMaxAttempts: number
+}
+export interface AccountPolicyValues {
+  otpExpiryMinutes: number
+  otpMaxAttempts: number
+  otpResendCooldownSeconds: number
+  fixedOtpCodeActive: boolean
+}
+export interface NotificationPolicyValues {
+  pushMaxAgeHours: number
+  pushMaxAttempts: number
+  staleTokenDays: number
 }
 
 // ── Community/CommunityAdminDtos.cs
@@ -3621,6 +3795,7 @@ export interface ServiceItemCustomerView {
   pendingQuotationResultingAmount: number | null
   inspectionFee: number
   declineFee: number
+  cancellationFee: number | null
   canRequestDeviceReturn: boolean
   deviceReturnFee: number | null
   homeInspectionId: string | null
@@ -4211,6 +4386,74 @@ export interface PaymentResponse {
   failureReason: string | null
   paidAt: string | null
   createdAt: string
+}
+
+// ── Finance/PolicyChargeDtos.cs
+export interface CustomerChargeResponse {
+  id: string
+  kind: CustomerChargeKind
+  status: CustomerChargeStatus
+  amount: number
+  customerId: string
+  customerUserId: string
+  customerName: string
+  customerPhone: string | null
+  parentOrderId: string
+  orderNumber: string | null
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  providerOrganizationId: string | null
+  providerName: string | null
+  providerShareAmount: number
+  createdAt: string
+  settledAt: string | null
+  settledByName: string | null
+  note: string | null
+}
+export interface MyChargeResponse {
+  id: string
+  kind: CustomerChargeKind
+  status: CustomerChargeStatus
+  amount: number
+  parentOrderId: string
+  orderNumber: string | null
+  serviceItemId: string
+  serviceNameAr: string
+  serviceNameEn: string
+  createdAt: string
+}
+export interface MyChargesResponse {
+  dueAmount: number
+  items: MyChargeResponse[]
+}
+export interface SettleChargeRequest {
+  note?: string | null
+}
+export interface ProviderPenaltyResponse {
+  id: string
+  kind: ProviderPenaltyKind
+  status: ProviderPenaltyStatus
+  providerOrganizationId: string
+  providerName: string
+  executorId: string | null
+  executorName: string | null
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  lateMinutes: number
+  suggestedAmount: number
+  amount: number | null
+  createdAt: string
+  decidedAt: string | null
+  decidedByName: string | null
+  note: string | null
+}
+export interface ApplyPenaltyRequest {
+  amount?: number | null
+  note?: string | null
 }
 
 // ── Finance/RefundDtos.cs
@@ -5813,6 +6056,7 @@ export interface ExecutorSummaryResponse {
   averageRating: number
   completedItemsCount: number
   isActive: boolean
+  assignmentSuspendedAt: string | null
 }
 export interface ProviderAdminDetailResponse {
   profile: ProviderOrganizationResponse
@@ -6401,6 +6645,8 @@ export interface ExecutorResponse {
   ratingsCount: number
   completedItemsCount: number
   isActive: boolean
+  assignmentSuspendedAt: string | null
+  assignmentSuspensionReason: string | null
   createdAt: string
 }
 

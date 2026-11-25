@@ -730,10 +730,14 @@ export const SubscriptionPaymentMethod: EnumMap<T.SubscriptionPaymentMethod> = {
 export const WalletItemKind: EnumMap<T.WalletItemKind> = {
   Service: e('خدمة', 'Service'),
   CounterSubscription: e('اشتراك الكاونتر', 'Counter subscription', 'danger'),
+  Penalty: e('غرامة تأخر عن موعد', 'Late-visit penalty', 'danger'),
+  CancellationFeeShare: e('حصة من رسوم إلغاء', 'Cancellation fee share', 'success'),
 }
 
 export const WalletDeductionKind: EnumMap<T.WalletDeductionKind> = {
   CounterSubscription: e('اشتراك الكاونتر', 'Counter subscription', 'danger'),
+  Penalty: e('غرامة تأخر عن موعد', 'Late-visit penalty', 'danger'),
+  CancellationFeeShare: e('حصة من رسوم إلغاء', 'Cancellation fee share', 'success'),
 }
 
 // ── Phases 4–6: WhatsApp (grey queued, blue sent, green delivered/read, red failed, orange not sent), branch operations, inventory ─

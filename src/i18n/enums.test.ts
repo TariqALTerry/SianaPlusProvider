@@ -17,6 +17,10 @@ const NOT_DISPLAYED = new Set([
   'CommunityPostFilter', 'ServiceImageJobStatus',
   // «أمان بيتك» plans and subscriptions are the platform's; the provider only sees covered items.
   'HomeSubscriptionStatus', 'SubscriptionEntitlementKind',
+  // The platform's own settings and what its switchable policies record: admin dashboard pages only. The provider sees
+  // a penalty or a fee share as a wallet row (WalletItemKind).
+  'PlatformSettingKind', 'CustomerChargeKind', 'CustomerChargeStatus', 'ProviderPenaltyKind', 'ProviderPenaltyStatus',
+  'CancellationFeeStage', 'LowScoreAction',
 ])
 
 const generatedEnums = Object.entries(generated)
