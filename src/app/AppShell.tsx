@@ -15,6 +15,8 @@ import { StatusBanner } from './StatusBanner'
 import { Topbar } from './Topbar'
 import { EnablePrompt } from '@/features/push/EnablePrompt'
 import { WebPushBridge } from '@/features/push/WebPushBridge'
+import { AssistantHost } from '@/features/assistant-panel/AssistantHost'
+import { useAssistantPanel } from '@/features/assistant-panel/store'
 
 function RateLimitBanner() {
   const { t } = useTranslation()
@@ -33,6 +35,8 @@ export function AppShell() {
   const { mode } = ctx
   const [collapsed, setCollapsed] = useState(() => readItem<boolean>('sidebarCollapsed', false))
   const [mobileOpen, setMobileOpen] = useState(false)
+  // The assistant's panel sits beside the page on wide screens: the page reflows instead of being covered.
+  const assistantOpen = useAssistantPanel((s) => s.open)
 
   useEffect(() => writeItem('sidebarCollapsed', collapsed), [collapsed])
 
@@ -50,7 +54,7 @@ export function AppShell() {
         </SheetContent>
       </Dialog>
 
-      <div className="flex min-w-0 flex-1 flex-col" data-print="column">
+      <div className={cn('flex min-w-0 flex-1 flex-col transition-[margin] duration-200', assistantOpen && 'xl:me-[440px]')} data-print="column">
         <Topbar onOpenMenu={() => setMobileOpen(true)} />
         <StatusBanner />
         <EnablePrompt />
@@ -69,6 +73,7 @@ export function AppShell() {
 
       {/* Incoming platform work: not for the front desk, nor for a "counter only" shop. */}
       {ctx.kind === 'management' && mode === 'full' && !ctx.counterOnly && <IncomingWatcher />}
+      {mode === 'full' && <AssistantHost />}
     </div>
   )
 }

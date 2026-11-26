@@ -310,3 +310,12 @@ npm test
 npm run build
 npm run gen:types   # regenerate src/api/types.gen.ts from ../Siana
 ```
+
+## The assistant panel (`features/assistant-panel/`)
+
+«اسأل المساعد» (and Ctrl+J) on every page for the owner, supervisors and the front desk, while the platform has the provider
+assistant on (`GET /api/provider/assistant/sections` → `enabled`). Contract: `../Siana/docs/AI-STAFF-ASSISTANT-PROVIDER-PLATFORM-PROMPT.md`.
+The same component as the admin dashboard's (`../Siana-Dashboard/src/features/assistant-panel`); only `config.ts` (API base, the detail
+pages that name the record on screen) and `AssistantHost.tsx` (who sees it, the branch from the switcher) differ — keep the rest in step.
+The branch picked in the switcher (`useBranchScope().branchId`) goes with every message as `context.branchId`. Confirmed changes
+refresh every non-assistant query so the page under the panel shows them; on `xl` the page reflows beside the panel.

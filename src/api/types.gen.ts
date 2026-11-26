@@ -248,6 +248,16 @@ export const ServiceCallSideValues = ['Customer', 'Executor'] as const
 export type ServiceCallSide = (typeof ServiceCallSideValues)[number]
 export const ServiceCallOutcomeValues = ['Ringing', 'Answered', 'Missed', 'Declined', 'Cancelled', 'Failed'] as const
 export type ServiceCallOutcome = (typeof ServiceCallOutcomeValues)[number]
+export const StaffAssistantAudienceValues = ['Admin', 'Provider', 'Technician'] as const
+export type StaffAssistantAudience = (typeof StaffAssistantAudienceValues)[number]
+export const StaffAssistantConversationStatusValues = ['Active', 'Closed'] as const
+export type StaffAssistantConversationStatus = (typeof StaffAssistantConversationStatusValues)[number]
+export const StaffAssistantMessageRoleValues = ['User', 'Assistant'] as const
+export type StaffAssistantMessageRole = (typeof StaffAssistantMessageRoleValues)[number]
+export const StaffToolKindValues = ['Read', 'Write', 'Money'] as const
+export type StaffToolKind = (typeof StaffToolKindValues)[number]
+export const StaffAssistantActionStatusValues = ['Proposed', 'Confirmed', 'Executed', 'Failed', 'Rejected', 'Expired'] as const
+export type StaffAssistantActionStatus = (typeof StaffAssistantActionStatusValues)[number]
 export const StoreOrderStatusValues = ['Draft', 'PendingPayment', 'Paid', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] as const
 export type StoreOrderStatus = (typeof StoreOrderStatusValues)[number]
 export const StoreProductImageStatusValues = ['Pending', 'Ready', 'Failed'] as const
@@ -303,6 +313,8 @@ export type WalletItemsBucket = (typeof WalletItemsBucketValues)[number]
 
 // ── Ai/AiDtos.cs
 export interface AiSettingsResponse {
+  staffAssistants: StaffAssistantSettingsDto
+  staffPromptVersion: string
   provider: AiProvider
   model: string
   hasApiKey: boolean
@@ -326,6 +338,7 @@ export interface AiSettingsResponse {
   updatedBy: string | null
 }
 export interface UpdateAiSettingsRequest {
+  staffAssistants?: StaffAssistantSettingsDto | null
   provider: AiProvider
   model: string
   apiKey?: string | null
@@ -571,6 +584,18 @@ export interface AiExportTurn {
   card: AssistantCardType | null
   quickReplies: string[]
   photos: number
+}
+export interface StaffAssistantSettingsDto {
+  staffAssistantEnabled: boolean
+  providerAssistantEnabled: boolean
+  technicianAssistantEnabled: boolean
+  staffAssistantModel: string | null
+  providerAssistantModel: string | null
+  technicianAssistantModel: string | null
+  assistantDailyMessageLimit: number
+  providerDailyMessageLimit: number
+  technicianDailyMessageLimit: number
+  assistantMonthlyBudgetUsd: number
 }
 
 // ── Assignments/AssignmentDtos.cs
@@ -4371,6 +4396,17 @@ export interface MarkPaymentPaidRequest {
   reference?: string | null
   note?: string | null
 }
+export interface PaymentSummaryResponse {
+  totalCount: number
+  totalAmount: number
+  refundedAmount: number
+  byStatus: PaymentStatusTotal[]
+}
+export interface PaymentStatusTotal {
+  status: PaymentStatus
+  count: number
+  amount: number
+}
 export interface PaymentResponse {
   id: string
   paymentNumber: string
@@ -7110,6 +7146,8 @@ export interface AuditLogResponse {
   notes: string | null
   ipAddress: string | null
   tenantId: string | null
+  via: string | null
+  viaReference: string | null
 }
 export interface AuditEntityTypeCount {
   entityType: string
@@ -7196,6 +7234,291 @@ export interface StaffRoleResponse {
   membersCount: number
   createdAt: string
   updatedAt: string | null
+}
+
+// ── StaffAssistant/StaffAssistantDtos.cs
+export interface StaffAssistantContext {
+  route: string | null
+  entityType: string | null
+  entityId: string | null
+  branchId: string | null
+}
+export interface StartStaffAssistantConversationRequest {
+  section?: string | null
+  context?: StaffAssistantContext | null
+}
+export interface SendStaffAssistantMessageRequest {
+  text: string
+  context?: StaffAssistantContext | null
+  mediaIds: string[]
+}
+export interface ConfirmStaffAssistantActionRequest {
+  reason?: string | null
+}
+export interface StaffAssistantConversationListRequest extends PaginatedRequest {
+}
+export interface StaffAssistantUsageRequest {
+  from?: string | null
+  to?: string | null
+  audience?: StaffAssistantAudience | null
+}
+export interface StaffAssistantSectionResponse {
+  key: string
+  nameAr: string
+  nameEn: string
+  assistantNameAr: string
+  assistantNameEn: string
+  routes: string[]
+  suggestions: string[]
+  readTools: number
+  writeTools: number
+}
+export interface StaffAssistantSectionsResponse {
+  enabled: boolean
+  sections: StaffAssistantSectionResponse[]
+  messagesLeftToday: number
+}
+export interface StaffAssistantKpi {
+  label: string
+  value: number | null
+  text: string | null
+  format: string
+  hint: string | null
+  tone: string | null
+}
+export interface StaffAssistantTableColumn {
+  key: string
+  label: string
+  format: string
+}
+export interface StaffAssistantTable {
+  columns: StaffAssistantTableColumn[]
+  rows: Record<string, unknown>[]
+  total: number
+  viewAllRoute: string | null
+}
+export interface StaffAssistantField {
+  label: string
+  value: string | null
+  number: number | null
+  format: string
+}
+export interface StaffAssistantEntity {
+  kind: string
+  id: string | null
+  title: string
+  subtitle: string | null
+  status: string | null
+  statusText: string | null
+  fields: StaffAssistantField[]
+  route: string | null
+}
+export interface StaffAssistantStep {
+  label: string
+  state: string
+  hint: string | null
+}
+export interface StaffAssistantOpenScreen {
+  screen: string
+  label: string
+  serviceItemId: string | null
+}
+export interface StaffAssistantBriefItem {
+  key: string
+  severity: string
+  text: string
+  count: number | null
+  route: string | null
+  question: string | null
+}
+export interface StaffAssistantBriefResponse {
+  greeting: string
+  items: StaffAssistantBriefItem[]
+  generatedAt: string
+}
+export interface StaffAssistantActionDetail {
+  label: string
+  value: string
+}
+export interface StaffAssistantActionResponse {
+  id: string
+  toolName: string
+  kind: StaffToolKind
+  summary: string
+  details: StaffAssistantActionDetail[]
+  requiredPermission: string | null
+  reasonRequired: boolean
+  status: StaffAssistantActionStatus
+  expiresAt: string
+  reason: string | null
+  error: string | null
+  resultText: string | null
+  entityType: string | null
+  entityId: string | null
+  route: string | null
+  decidedAt: string | null
+}
+export interface StaffAssistantCard {
+  type: string
+  title: string | null
+  kpis: StaffAssistantKpi[] | null
+  table: StaffAssistantTable | null
+  entity: StaffAssistantEntity | null
+  steps: StaffAssistantStep[] | null
+  action: StaffAssistantActionResponse | null
+  openScreen: StaffAssistantOpenScreen | null
+  brief: StaffAssistantBriefResponse | null
+  period: string | null
+}
+export interface StaffAssistantLink {
+  label: string
+  route: string
+}
+export interface StaffAssistantMediaResponse {
+  id: string
+  url: string
+  contentType: string
+  sizeBytes: number
+}
+export interface StaffAssistantMessageResponse {
+  id: string
+  role: StaffAssistantMessageRole
+  text: string
+  quickReplies: string[]
+  card: StaffAssistantCard | null
+  links: StaffAssistantLink[]
+  section: string | null
+  media: StaffAssistantMediaResponse[]
+  createdAt: string
+}
+export interface StaffAssistantConversationResponse {
+  id: string
+  audience: StaffAssistantAudience
+  section: string
+  sectionNameAr: string
+  sectionNameEn: string
+  title: string | null
+  status: StaffAssistantConversationStatus
+  canSend: boolean
+  contextRoute: string | null
+  contextEntityType: string | null
+  contextEntityId: string | null
+  messages: StaffAssistantMessageResponse[]
+  createdAt: string
+  lastMessageAt: string
+}
+export interface StaffAssistantConversationSummaryResponse {
+  id: string
+  section: string
+  title: string | null
+  status: StaffAssistantConversationStatus
+  lastMessagePreview: string | null
+  createdAt: string
+  lastMessageAt: string
+}
+export interface StaffAssistantTurnResponse {
+  conversationId: string
+  section: string
+  canSend: boolean
+  userMessage: StaffAssistantMessageResponse
+  reply: StaffAssistantMessageResponse
+}
+export interface StaffAssistantActionResultResponse {
+  action: StaffAssistantActionResponse
+  message: StaffAssistantMessageResponse | null
+}
+export interface StaffAssistantUsageTotals {
+  conversations: number
+  messages: number
+  modelCalls: number
+  costUsd: number
+  actionsProposed: number
+  actionsExecuted: number
+  actionsFailed: number
+  users: number
+}
+export interface StaffAssistantUsageAudienceRow {
+  audience: StaffAssistantAudience
+  totals: StaffAssistantUsageTotals
+}
+export interface StaffAssistantUsageUserRow {
+  userId: string
+  name: string
+  phone: string | null
+  audience: StaffAssistantAudience
+  providerOrganizationId: string | null
+  providerName: string | null
+  conversations: number
+  messages: number
+  costUsd: number
+  actionsExecuted: number
+  lastMessageAt: string
+}
+export interface StaffAssistantUsageOrganizationRow {
+  providerOrganizationId: string
+  name: string
+  users: number
+  conversations: number
+  messages: number
+  costUsd: number
+}
+export interface StaffAssistantUsageToolRow {
+  toolName: string
+  calls: number
+  errors: number
+  avgDurationMs: number
+}
+export interface StaffAssistantUsageResponse {
+  from: string
+  to: string
+  totals: StaffAssistantUsageTotals
+  byAudience: StaffAssistantUsageAudienceRow[]
+  byUser: StaffAssistantUsageUserRow[]
+  byOrganization: StaffAssistantUsageOrganizationRow[]
+  tools: StaffAssistantUsageToolRow[]
+  monthCostUsd: number
+  monthlyBudgetUsd: number
+}
+export interface StaffAssistantEvalQuestionResult {
+  id: string
+  audience: StaffAssistantAudience
+  section: string
+  question: string
+  expectedTools: string[]
+  calledTools: string[]
+  reply: string | null
+  passed: boolean
+  error: string | null
+}
+export interface StaffAssistantEvalRunResponse {
+  id: string
+  promptVersion: string
+  model: string
+  total: number
+  passed: number
+  failed: number
+  errors: number
+  costUsd: number
+  startedAt: string
+  finishedAt: string | null
+  results: StaffAssistantEvalQuestionResult[]
+}
+export interface StaffAssistantEvalQuestionResponse {
+  id: string
+  audience: StaffAssistantAudience
+  section: string
+  question: string
+  expectedTools: string[]
+}
+export interface StaffAssistantToolResponse {
+  name: string
+  audience: StaffAssistantAudience
+  sections: string[]
+  kind: StaffToolKind
+  permission: string | null
+  roles: string | null
+  endpoint: string | null
+  description: string
 }
 
 // ── Store/StoreCatalogDtos.cs

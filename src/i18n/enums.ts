@@ -865,6 +865,38 @@ export const ServiceCallOutcome: EnumMap<T.ServiceCallOutcome> = {
   Failed: e('فشلت', 'Failed', 'danger'),
 }
 
+/** The staff assistants (AI-STAFF-ASSISTANT-PROVIDER-PLATFORM-PROMPT), in provider wording. */
+export const StaffAssistantAudience: EnumMap<T.StaffAssistantAudience> = {
+  Admin: e('لوحة المنصة', 'Platform dashboard', 'info'),
+  Provider: e('منصة المزود', 'Provider platform', 'active'),
+  Technician: e('الفني', 'Technician', 'waiting'),
+}
+
+export const StaffAssistantConversationStatus: EnumMap<T.StaffAssistantConversationStatus> = {
+  Active: e('نشطة', 'Active', 'success'),
+  Closed: e('مغلقة', 'Closed', 'muted'),
+}
+
+export const StaffAssistantMessageRole: EnumMap<T.StaffAssistantMessageRole> = {
+  User: e('أنت', 'You', 'neutral'),
+  Assistant: e('المساعد', 'Assistant', 'info'),
+}
+
+export const StaffToolKind: EnumMap<T.StaffToolKind> = {
+  Read: e('قراءة', 'Read', 'neutral'),
+  Write: e('تعديل', 'Change', 'attention'),
+  Money: e('مالي', 'Money', 'danger'),
+}
+
+export const StaffAssistantActionStatus: EnumMap<T.StaffAssistantActionStatus> = {
+  Proposed: e('بانتظار تأكيدك', 'Waiting for you', 'waiting'),
+  Confirmed: e('قيد التنفيذ', 'Running', 'active'),
+  Executed: e('تم التنفيذ', 'Done', 'success'),
+  Failed: e('تعذّر التنفيذ', 'Failed', 'danger'),
+  Rejected: e('أُلغي', 'Cancelled', 'muted'),
+  Expired: e('انتهت المهلة', 'Expired', 'muted'),
+}
+
 export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
@@ -885,6 +917,7 @@ export const enumMaps = {
   ReworkRootCause, BranchTransferStatus, AgingBucket, BranchBoardStage, CashCloseStatus,
   StockMovementKind, SupplierReturnStatus, WarrantyLineKind, StockReservationStatus,
   ServiceCallSide, ServiceCallOutcome,
+  StaffAssistantAudience, StaffAssistantConversationStatus, StaffAssistantMessageRole, StaffToolKind, StaffAssistantActionStatus,
 } as const
 
 export type EnumName = keyof typeof enumMaps
