@@ -4713,6 +4713,22 @@ export interface AccountingPeriodRequest {
   from?: string | null
   to?: string | null
   format?: string | null
+  layout?: string | null
+}
+export interface AccountingAccountResponse {
+  code: string
+  name: string
+  externalCode: string | null
+  externalName: string | null
+  updatedAt: string | null
+}
+export interface SaveAccountingAccountsRequest {
+  accounts: AccountingAccountMapItem[]
+}
+export interface AccountingAccountMapItem {
+  code: string
+  externalCode: string | null
+  externalName: string | null
 }
 export interface VatSummaryResponse {
   from: string
