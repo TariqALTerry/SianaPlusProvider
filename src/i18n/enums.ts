@@ -897,6 +897,81 @@ export const StaffAssistantActionStatus: EnumMap<T.StaffAssistantActionStatus> =
   Expired: e('انتهت المهلة', 'Expired', 'muted'),
 }
 
+// Marketing and company accounts: labels the provider platform may meet in shared views.
+export const CorporateAccountStatus: EnumMap<T.CorporateAccountStatus> = {
+  Active: e('نشط', 'Active', 'success'),
+  Suspended: e('موقوف', 'Suspended', 'danger'),
+}
+
+export const CorporateBillingMode: EnumMap<T.CorporateBillingMode> = {
+  MonthlyInvoice: e('فاتورة شهرية (آجل)', 'Monthly invoice', 'info'),
+  PayPerOrder: e('دفع لكل طلب', 'Pay per order', 'muted'),
+}
+
+export const CorporateMemberRole: EnumMap<T.CorporateMemberRole> = {
+  Manager: e('مدير', 'Manager', 'active'),
+  Requester: e('طالب خدمة', 'Requester', 'muted'),
+}
+
+export const CorporateApprovalStatus: EnumMap<T.CorporateApprovalStatus> = {
+  Pending: e('بانتظار المدير', 'Waiting for the manager', 'waiting'),
+  Approved: e('موافق عليه', 'Approved', 'success'),
+  Rejected: e('مرفوض', 'Rejected', 'danger'),
+}
+
+export const CorporateInvoiceStatus: EnumMap<T.CorporateInvoiceStatus> = {
+  Draft: e('مسودة', 'Draft', 'muted'),
+  Issued: e('صادرة', 'Issued', 'attention'),
+  Paid: e('مدفوعة', 'Paid', 'success'),
+  Void: e('ملغاة', 'Void', 'muted'),
+}
+
+export const CouponDiscountType: EnumMap<T.CouponDiscountType> = {
+  Percent: e('نسبة', 'Percent', 'info'),
+  Fixed: e('مبلغ ثابت', 'Fixed amount', 'info'),
+}
+
+export const CouponRedemptionStatus: EnumMap<T.CouponRedemptionStatus> = {
+  Applied: e('مستخدم', 'Applied', 'success'),
+  Released: e('أُعيد (أُلغي الطلب)', 'Released (order cancelled)', 'muted'),
+}
+
+export const CustomerCreditKind: EnumMap<T.CustomerCreditKind> = {
+  ReferralReward: e('مكافأة دعوة صديق', 'Referral reward', 'success'),
+  ReferralWelcome: e('رصيد ترحيبي', 'Welcome credit', 'success'),
+  LoyaltyRedemption: e('استبدال نقاط', 'Points redeemed', 'info'),
+  AdminGrant: e('إضافة من الإدارة', 'Added by staff', 'success'),
+  AdminDeduction: e('خصم من الإدارة', 'Taken by staff', 'danger'),
+  OrderUse: e('دفع في طلب', 'Spent on an order', 'muted'),
+  OrderReturn: e('أُعيد من خدمة ملغاة', 'Returned from a cancelled service', 'info'),
+  EmergencyLate: e('رد رسوم الطوارئ للتأخير', 'Emergency fee back (late)', 'success'),
+}
+
+export const LoyaltyEntryKind: EnumMap<T.LoyaltyEntryKind> = {
+  Earned: e('مكتسبة', 'Earned', 'success'),
+  Redeemed: e('مستبدلة', 'Redeemed', 'info'),
+  Reversed: e('مسحوبة (استرداد)', 'Reversed (refund)', 'danger'),
+}
+
+export const LoyaltyTier: EnumMap<T.LoyaltyTier> = {
+  Bronze: e('برونزي', 'Bronze', 'muted'),
+  Silver: e('فضي', 'Silver', 'info'),
+  Gold: e('ذهبي', 'Gold', 'attention'),
+}
+
+export const MaintenanceReminderStatus: EnumMap<T.MaintenanceReminderStatus> = {
+  Scheduled: e('مجدول', 'Scheduled', 'info'),
+  Sent: e('أُرسل', 'Sent', 'active'),
+  Booked: e('حجز العميل', 'Booked', 'success'),
+  Dismissed: e('أجّله العميل', 'Dismissed', 'muted'),
+  Cancelled: e('ملغى', 'Cancelled', 'muted'),
+}
+
+export const ReferralStatus: EnumMap<T.ReferralStatus> = {
+  Pending: e('بانتظار أول طلب', 'Waiting for first order', 'waiting'),
+  Rewarded: e('مُكافأة', 'Rewarded', 'success'),
+}
+
 export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
@@ -918,6 +993,7 @@ export const enumMaps = {
   StockMovementKind, SupplierReturnStatus, WarrantyLineKind, StockReservationStatus,
   ServiceCallSide, ServiceCallOutcome,
   StaffAssistantAudience, StaffAssistantConversationStatus, StaffAssistantMessageRole, StaffToolKind, StaffAssistantActionStatus,
+  CorporateAccountStatus, CorporateBillingMode, CorporateMemberRole, CorporateApprovalStatus, CorporateInvoiceStatus, CouponDiscountType, CouponRedemptionStatus, CustomerCreditKind, LoyaltyEntryKind, LoyaltyTier, MaintenanceReminderStatus, ReferralStatus,
 } as const
 
 export type EnumName = keyof typeof enumMaps

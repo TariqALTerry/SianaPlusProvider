@@ -3,6 +3,7 @@ import { Gavel, LifeBuoy, MessagesSquare, RefreshCw, ShieldAlert, Sparkles } fro
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
+import { EmergencyBadge } from '@/components/EmergencyBadge'
 import { HumanNumber } from '@/components/EntityLink'
 import { PageHeader } from '@/components/PageHeader'
 import { ErrorState, PageSkeleton } from '@/components/States'
@@ -141,6 +142,7 @@ export function WorkItemPage() {
         meta={
           <>
             <ItemStatusBadge status={item.status} completedAt={item.completedAt} />
+            <EmergencyBadge emergency={item.emergency} />
             {item.statusBeforeHold && <span className="text-xs text-muted-foreground">{t('detail.was', { status: enumLabel('ServiceItemStatus', item.statusBeforeHold, lang) })}</span>}
             {item.hasDispute && (
               <Badge tone="danger">

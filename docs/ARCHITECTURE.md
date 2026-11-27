@@ -319,3 +319,10 @@ The same component as the admin dashboard's (`../Siana-Dashboard/src/features/as
 pages that name the record on screen) and `AssistantHost.tsx` (who sees it, the branch from the switcher) differ — keep the rest in step.
 The branch picked in the switcher (`useBranchScope().branchId`) goes with every message as `context.branchId`. Confirmed changes
 refresh every non-assistant query so the page under the panel shows them; on `xl` the page reflows beside the panel.
+
+## Technician now — emergencies (2026-11-27)
+
+Contract: `../Siana/docs/EMERGENCY-PROVIDER-PLATFORM-PROMPT.md`. `EmergencyBadge` (`src/components`) shows «طارئ» with the promised
+arrival (and «متأخر عن الوعد») from `emergency` on the incoming card (which also gets the red edge), the work item header, and a siren
+in the work list row. The platform places emergencies with the nearest free technician; the provider sees them already assigned.
+Types regenerated: the marketing and company-account enums now have labels too (the enum test asks for every backend enum).

@@ -94,6 +94,16 @@ export const CommunityListingSortValues = ['Newest', 'PriceLowToHigh', 'PriceHig
 export type CommunityListingSort = (typeof CommunityListingSortValues)[number]
 export const CommunityPostFilterValues = ['Unanswered', 'Popular', 'Videos'] as const
 export type CommunityPostFilter = (typeof CommunityPostFilterValues)[number]
+export const CorporateAccountStatusValues = ['Active', 'Suspended'] as const
+export type CorporateAccountStatus = (typeof CorporateAccountStatusValues)[number]
+export const CorporateBillingModeValues = ['MonthlyInvoice', 'PayPerOrder'] as const
+export type CorporateBillingMode = (typeof CorporateBillingModeValues)[number]
+export const CorporateMemberRoleValues = ['Manager', 'Requester'] as const
+export type CorporateMemberRole = (typeof CorporateMemberRoleValues)[number]
+export const CorporateApprovalStatusValues = ['Pending', 'Approved', 'Rejected'] as const
+export type CorporateApprovalStatus = (typeof CorporateApprovalStatusValues)[number]
+export const CorporateInvoiceStatusValues = ['Draft', 'Issued', 'Paid', 'Void'] as const
+export type CorporateInvoiceStatus = (typeof CorporateInvoiceStatusValues)[number]
 export const IntakeAccessoryValues = ['Charger', 'Case', 'SimCard', 'MemoryCard', 'Box', 'Cable', 'Other'] as const
 export type IntakeAccessory = (typeof IntakeAccessoryValues)[number]
 export const IntakeConditionValues = ['None', 'Scratches', 'CrackedScreen', 'LiquidDamage', 'NotPoweringOn', 'Dents', 'MissingParts'] as const
@@ -172,6 +182,20 @@ export const WarrantyLineKindValues = ['Part', 'Labor'] as const
 export type WarrantyLineKind = (typeof WarrantyLineKindValues)[number]
 export const SupplierReturnStatusValues = ['Draft', 'Sent', 'Credited', 'Rejected'] as const
 export type SupplierReturnStatus = (typeof SupplierReturnStatusValues)[number]
+export const CouponDiscountTypeValues = ['Percent', 'Fixed'] as const
+export type CouponDiscountType = (typeof CouponDiscountTypeValues)[number]
+export const CouponRedemptionStatusValues = ['Applied', 'Released'] as const
+export type CouponRedemptionStatus = (typeof CouponRedemptionStatusValues)[number]
+export const CustomerCreditKindValues = ['ReferralReward', 'ReferralWelcome', 'LoyaltyRedemption', 'AdminGrant', 'AdminDeduction', 'OrderUse', 'OrderReturn', 'EmergencyLate'] as const
+export type CustomerCreditKind = (typeof CustomerCreditKindValues)[number]
+export const LoyaltyEntryKindValues = ['Earned', 'Redeemed', 'Reversed'] as const
+export type LoyaltyEntryKind = (typeof LoyaltyEntryKindValues)[number]
+export const ReferralStatusValues = ['Pending', 'Rewarded'] as const
+export type ReferralStatus = (typeof ReferralStatusValues)[number]
+export const MaintenanceReminderStatusValues = ['Scheduled', 'Sent', 'Booked', 'Dismissed', 'Cancelled'] as const
+export type MaintenanceReminderStatus = (typeof MaintenanceReminderStatusValues)[number]
+export const LoyaltyTierValues = ['Bronze', 'Silver', 'Gold'] as const
+export type LoyaltyTier = (typeof LoyaltyTierValues)[number]
 export const MarketplaceRequestStatusValues = ['Open', 'Awarded', 'Closed', 'Cancelled'] as const
 export type MarketplaceRequestStatus = (typeof MarketplaceRequestStatusValues)[number]
 export const MarketplaceOfferStatusValues = ['Submitted', 'Accepted', 'Rejected', 'Withdrawn'] as const
@@ -1081,6 +1105,7 @@ export interface CreateServiceRequest {
   pricingType: PricingType
   basePrice?: number | null
   declineFee?: number | null
+  allowsEmergency: boolean
   requiresDevice: boolean
   supportsMultiDevice: boolean
   requiresBeforeEvidence: boolean
@@ -1103,6 +1128,7 @@ export interface UpdateServiceRequest {
   pricingType: PricingType
   basePrice?: number | null
   declineFee?: number | null
+  allowsEmergency: boolean
   requiresDevice: boolean
   supportsMultiDevice: boolean
   requiresBeforeEvidence: boolean
@@ -1291,6 +1317,7 @@ export interface ServiceAdminListItemResponse {
 export interface ServiceAdminDetailResponse extends ServiceAdminListItemResponse {
   declineFee: number | null
   effectiveDeclineFee: number | null
+  allowsEmergency: boolean
   descriptionAr: string | null
   descriptionEn: string | null
   keywords: string | null
@@ -1438,6 +1465,7 @@ export interface ServiceCardResponse {
   priceUnitEn: string | null
   requiresDevice: boolean
   supportsMultiDevice: boolean
+  allowsEmergency: boolean
   estimatedDurationMinutes: number | null
   warrantyDays: number | null
   sortOrder: number
@@ -1717,6 +1745,8 @@ export interface SystemPoliciesResponse {
   homeSubscriptions: HomeSubscriptionPolicyValues
   store: StorePolicyValues
   counter: CounterPolicyValues
+  marketing: MarketingPolicyValues
+  emergency: EmergencyPolicyValues
   accounts: AccountPolicyValues
   notifications: NotificationPolicyValues
 }
@@ -1812,6 +1842,29 @@ export interface StorePolicyValues {
   fallbackDeliveryFee: number
   maxProductImages: number
   newForDays: number
+}
+export interface MarketingPolicyValues {
+  referralReferrerReward: number
+  referralRefereeReward: number
+  referralMinOrderAmount: number
+  loyaltyPointsPerSar: number
+  loyaltyPointValue: number
+  loyaltyMinRedeemPoints: number
+  loyaltySilverPoints: number
+  loyaltyGoldPoints: number
+  maxCreditPercent: number
+  maintenanceRemindersEnabled: boolean
+}
+export interface EmergencyPolicyValues {
+  enabled: boolean
+  fee: number
+  radiusKm: number
+  maxEtaMinutes: number
+  acceptMinutes: number
+  prepMinutes: number
+  refundFeeWhenLate: boolean
+  lateGraceMinutes: number
+  escalateMinutes: number
 }
 export interface CounterPolicyValues {
   minIntakePhotos: number
@@ -2271,6 +2324,223 @@ export interface CommunityReportResponse {
   reason: CommunityReportReason
   status: CommunityReportStatus
   createdAt: string
+}
+
+// ── Corporate/CorporateDtos.cs
+export interface CorporateAccountListRequest extends PaginatedRequest {
+  search?: string | null
+  status?: CorporateAccountStatus | null
+}
+export interface SaveCorporateAccountRequest {
+  nameAr: string
+  nameEn: string
+  commercialRegistration?: string | null
+  vatNumber?: string | null
+  billingEmail?: string | null
+  contactName?: string | null
+  contactPhone?: string | null
+  billingMode: CorporateBillingMode
+  paymentTermsDays: number
+  creditLimit?: number | null
+  approvalThreshold?: number | null
+  discountPercent: number
+  slaResponseHours?: number | null
+  contractStartsOn?: string | null
+  contractEndsOn?: string | null
+  notes?: string | null
+}
+export interface SetCorporateStatusRequest {
+  status: CorporateAccountStatus
+}
+export interface CorporateAccountResponse {
+  id: string
+  nameAr: string
+  nameEn: string
+  commercialRegistration: string | null
+  vatNumber: string | null
+  billingEmail: string | null
+  contactName: string | null
+  contactPhone: string | null
+  status: CorporateAccountStatus
+  billingMode: CorporateBillingMode
+  paymentTermsDays: number
+  creditLimit: number | null
+  approvalThreshold: number | null
+  discountPercent: number
+  slaResponseHours: number | null
+  contractStartsOn: string | null
+  contractEndsOn: string | null
+  notes: string | null
+  contractActive: boolean
+  sitesCount: number
+  membersCount: number
+  outstanding: number
+  createdAt: string
+}
+export interface CorporateSiteResponse {
+  id: string
+  name: string
+  city: string
+  district: string | null
+  addressLine: string | null
+  latitude: number | null
+  longitude: number | null
+  contactName: string | null
+  contactPhone: string | null
+  isActive: boolean
+  ordersCount: number
+}
+export interface SaveCorporateSiteRequest {
+  name: string
+  city: string
+  district?: string | null
+  addressLine?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  contactName?: string | null
+  contactPhone?: string | null
+  isActive: boolean
+}
+export interface CorporateMemberResponse {
+  id: string
+  customerId: string
+  userId: string
+  fullName: string | null
+  phone: string | null
+  role: CorporateMemberRole
+  isActive: boolean
+  ordersCount: number
+  createdAt: string
+}
+export interface AddCorporateMemberRequest {
+  phone: string
+  role: CorporateMemberRole
+}
+export interface UpdateCorporateMemberRequest {
+  role: CorporateMemberRole
+  isActive: boolean
+}
+export interface CorporateStatsResponse {
+  ordersCount: number
+  completedServices: number
+  spend: number
+  discountGiven: number
+  slaMet: number
+  slaBreached: number
+  pendingApprovals: number
+}
+export interface CorporateAccountDetailResponse extends CorporateAccountResponse {
+  sites: CorporateSiteResponse[]
+  members: CorporateMemberResponse[]
+  stats: CorporateStatsResponse
+}
+export interface CorporateOrderListRequest extends PaginatedRequest {
+  siteId?: string | null
+}
+export interface CorporateOrderResponse {
+  orderId: string
+  orderNumber: string | null
+  status: ParentOrderStatus
+  paymentStatus: PaymentStatus
+  siteId: string | null
+  siteName: string | null
+  requestedBy: string | null
+  itemsCount: number
+  firstServiceNameAr: string | null
+  firstServiceNameEn: string | null
+  total: number
+  discountTotal: number
+  checkedOutAt: string | null
+  arrivedAt: string | null
+  slaDueAt: string | null
+  slaMet: boolean | null
+}
+export interface CorporateApprovalResponse {
+  id: string
+  parentOrderId: string
+  orderNumber: string | null
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  quotationId: string
+  quotationNumber: string | null
+  siteName: string | null
+  requestedBy: string | null
+  amount: number
+  status: CorporateApprovalStatus
+  note: string | null
+  decidedBy: string | null
+  decidedAt: string | null
+  createdAt: string
+}
+export interface DecideCorporateApprovalRequest {
+  note?: string | null
+}
+export interface CorporateInvoiceListRequest extends PaginatedRequest {
+  accountId?: string | null
+  status?: CorporateInvoiceStatus | null
+}
+export interface CorporateInvoiceLineResponse {
+  serviceItemId: string
+  parentOrderId: string
+  orderNumber: string | null
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  siteName: string | null
+  requestedBy: string | null
+  completedAt: string | null
+  amount: number
+  discount: number
+  total: number
+}
+export interface CorporateInvoiceResponse {
+  id: string
+  accountId: string
+  accountNameAr: string
+  accountNameEn: string
+  number: string
+  periodFrom: string
+  periodTo: string
+  subtotal: number
+  discountTotal: number
+  total: number
+  currency: string
+  status: CorporateInvoiceStatus
+  issuedAt: string | null
+  dueOn: string | null
+  isOverdue: boolean
+  paidAt: string | null
+  paymentReference: string | null
+  linesCount: number
+  createdAt: string
+}
+export interface CorporateInvoiceDetailResponse extends CorporateInvoiceResponse {
+  lines: CorporateInvoiceLineResponse[]
+}
+export interface GenerateCorporateInvoiceRequest {
+  from: string
+  to: string
+}
+export interface MarkCorporateInvoicePaidRequest {
+  reference: string
+}
+export interface CorporateMembershipResponse {
+  isMember: boolean
+  accountId: string | null
+  nameAr: string | null
+  nameEn: string | null
+  role: CorporateMemberRole | null
+  status: CorporateAccountStatus | null
+  billingMode: CorporateBillingMode | null
+  discountPercent: number
+  slaResponseHours: number | null
+  approvalThreshold: number | null
+  contractActive: boolean
+  sites: CorporateSiteResponse[]
+  pendingApprovals: number
+  outstanding: number
 }
 
 // ── Counter/BranchOperationsDtos.cs
@@ -3505,6 +3775,7 @@ export interface CustomerAddressResponse {
   latitude: number | null
   longitude: number | null
   isDefault: boolean
+  corporateSiteId: string | null
   createdAt: string
 }
 
@@ -3579,6 +3850,9 @@ export interface CheckoutRequest {
   preferredStart?: string | null
   preferredEnd?: string | null
   customerNotes?: string | null
+  couponCode?: string | null
+  useCredit: boolean
+  emergency: boolean
 }
 export interface RetryPaymentRequest {
   paymentMethod: PaymentMethod
@@ -3595,6 +3869,8 @@ export interface CheckoutSummaryResponse {
   defaultAddressId: string | null
   paymentMethods: PaymentMethod[]
   earliestScheduleDate: string
+  creditBalance: number
+  maxCreditPercent: number
 }
 export interface CheckoutSummaryItemResponse {
   id: string
@@ -3671,6 +3947,9 @@ export interface InvoiceResponse {
   lines: InvoiceLineResponse[]
   subtotal: number
   discountTotal: number
+  couponCode: string | null
+  couponDiscount: number
+  creditUsed: number
   total: number
   paymentMethod: PaymentMethod | null
   paymentStatus: PaymentStatus
@@ -3692,6 +3971,7 @@ export interface InvoiceLineResponse {
   quotedAmount: number | null
   amount: number
   coveredAmount: number
+  promotionAmount: number
   refundedAmount: number
   isBilled: boolean
 }
@@ -3745,6 +4025,7 @@ export interface OrderItemBriefResponse {
   fulfillmentChannel: FulfillmentChannel
   executionMode: ExecutionMode
   isManagedByShop: boolean
+  isEmergency: boolean
 }
 export interface OrderPaymentSummaryResponse {
   method: PaymentMethod | null
@@ -3764,6 +4045,9 @@ export interface OrderDetailResponse {
   currency: string
   subtotal: number
   discountTotal: number
+  couponCode: string | null
+  couponDiscount: number
+  creditUsed: number
   total: number
   payment: OrderPaymentSummaryResponse
   customerNotes: string | null
@@ -3779,6 +4063,7 @@ export interface OrderDetailResponse {
   items: ServiceItemCustomerView[]
 }
 export interface ServiceItemCustomerView {
+  emergency: EmergencyItemInfo | null
   id: string
   fulfillmentChannel: FulfillmentChannel
   isManagedByShop: boolean
@@ -3812,6 +4097,7 @@ export interface ServiceItemCustomerView {
   finalAmount: number
   refundedAmount: number
   coveredAmount: number
+  promotionAmount: number
   customerPays: number
   subscriptionId: string | null
   subscriptionVisitIncluded: boolean
@@ -4101,6 +4387,8 @@ export interface ExecutorProfileResponse {
   completedItemsCount: number
 }
 export interface JobSummaryResponse {
+  emergency: EmergencyItemInfo | null
+  emergencyAcceptBy: string | null
   id: string
   itemNumber: string | null
   orderNumber: string | null
@@ -4929,6 +5217,256 @@ export interface JobPartLine {
   lastUsedAt: string | null
 }
 
+// ── Marketing/MarketingDtos.cs
+export interface PreviewCouponRequest {
+  code: string
+}
+export interface CouponPreviewResponse {
+  code: string
+  nameAr: string
+  nameEn: string
+  discountType: CouponDiscountType
+  value: number
+  eligibleAmount: number
+  discount: number
+  currency: string
+  excludesQuotedServices: boolean
+}
+export interface PublicCouponResponse {
+  code: string
+  nameAr: string
+  nameEn: string
+  descriptionAr: string | null
+  descriptionEn: string | null
+  discountType: CouponDiscountType
+  value: number
+  maxDiscount: number | null
+  minOrderAmount: number | null
+  categoryNameAr: string | null
+  categoryNameEn: string | null
+  firstOrderOnly: boolean
+  endsAt: string | null
+}
+export interface CustomerCreditEntryResponse {
+  id: string
+  kind: CustomerCreditKind
+  amount: number
+  balanceAfter: number
+  parentOrderId: string | null
+  orderNumber: string | null
+  note: string | null
+  createdAt: string
+}
+export interface LoyaltyEntryResponse {
+  id: string
+  kind: LoyaltyEntryKind
+  points: number
+  balanceAfter: number
+  serviceItemId: string | null
+  serviceNameAr: string | null
+  serviceNameEn: string | null
+  createdAt: string
+}
+export interface CustomerWalletResponse {
+  creditBalance: number
+  currency: string
+  points: number
+  pointsValue: number
+  pointValue: number
+  pointsPerSar: number
+  minRedeemPoints: number
+  tier: LoyaltyTier
+  pointsLast12Months: number
+  nextTier: LoyaltyTier | null
+  pointsToNextTier: number | null
+  recentCredit: CustomerCreditEntryResponse[]
+  recentPoints: LoyaltyEntryResponse[]
+}
+export interface RedeemPointsRequest {
+  points: number
+}
+export interface CustomerReferralResponse {
+  code: string
+  shareText: string
+  referrerReward: number
+  refereeReward: number
+  minOrderAmount: number
+  currency: string
+  invitedCount: number
+  rewardedCount: number
+  earnedTotal: number
+  canEnterCode: boolean
+  enteredCode: string | null
+  enteredStatus: ReferralStatus | null
+}
+export interface RedeemReferralRequest {
+  code: string
+}
+export interface MaintenanceReminderResponse {
+  id: string
+  canonicalServiceId: string
+  serviceNameAr: string
+  serviceNameEn: string
+  addressId: string | null
+  addressLabel: string | null
+  lastServiceAt: string
+  dueAt: string
+  status: MaintenanceReminderStatus
+  messageAr: string | null
+  messageEn: string | null
+  couponCode: string | null
+  isDue: boolean
+}
+export interface CouponListRequest extends PaginatedRequest {
+  search?: string | null
+  state?: string | null
+}
+export interface SaveCouponRequest {
+  code: string
+  nameAr: string
+  nameEn: string
+  descriptionAr?: string | null
+  descriptionEn?: string | null
+  discountType: CouponDiscountType
+  value: number
+  maxDiscount?: number | null
+  minOrderAmount?: number | null
+  categoryId?: string | null
+  startsAt?: string | null
+  endsAt?: string | null
+  usageLimit?: number | null
+  perCustomerLimit: number
+  firstOrderOnly: boolean
+  isPublic: boolean
+  isActive: boolean
+}
+export interface CouponResponse {
+  id: string
+  code: string
+  nameAr: string
+  nameEn: string
+  descriptionAr: string | null
+  descriptionEn: string | null
+  discountType: CouponDiscountType
+  value: number
+  maxDiscount: number | null
+  minOrderAmount: number | null
+  categoryId: string | null
+  categoryNameAr: string | null
+  categoryNameEn: string | null
+  startsAt: string | null
+  endsAt: string | null
+  usageLimit: number | null
+  perCustomerLimit: number
+  firstOrderOnly: boolean
+  isPublic: boolean
+  isActive: boolean
+  state: string
+  usedCount: number
+  discountGiven: number
+  createdAt: string
+  updatedAt: string | null
+}
+export interface CouponRedemptionResponse {
+  id: string
+  customerId: string
+  customerName: string | null
+  customerPhone: string | null
+  parentOrderId: string
+  orderNumber: string | null
+  amount: number
+  status: CouponRedemptionStatus
+  createdAt: string
+}
+export interface CouponDetailResponse extends CouponResponse {
+  ordersTotal: number
+  uniqueCustomers: number
+  recentRedemptions: CouponRedemptionResponse[]
+}
+export interface AdjustCustomerCreditRequest {
+  amount: number
+  reason: string
+}
+export interface AdminCustomerCreditResponse {
+  customerId: string
+  creditBalance: number
+  points: number
+  tier: LoyaltyTier
+  referralCode: string | null
+  invitedCount: number
+  entries: CustomerCreditEntryResponse[]
+}
+export interface ReferralListRequest extends PaginatedRequest {
+  status?: ReferralStatus | null
+  search?: string | null
+}
+export interface ReferralResponse {
+  id: string
+  code: string
+  referrerCustomerId: string
+  referrerName: string | null
+  referrerPhone: string | null
+  refereeCustomerId: string
+  refereeName: string | null
+  refereePhone: string | null
+  status: ReferralStatus
+  referrerReward: number
+  refereeReward: number
+  createdAt: string
+  rewardedAt: string | null
+}
+export interface SaveReminderRuleRequest {
+  canonicalServiceId?: string | null
+  categoryId?: string | null
+  intervalDays: number
+  messageAr?: string | null
+  messageEn?: string | null
+  couponId?: string | null
+  isActive: boolean
+}
+export interface ReminderRuleResponse {
+  id: string
+  canonicalServiceId: string | null
+  categoryId: string | null
+  targetNameAr: string
+  targetNameEn: string
+  intervalDays: number
+  messageAr: string | null
+  messageEn: string | null
+  couponId: string | null
+  couponCode: string | null
+  isActive: boolean
+  scheduledCount: number
+  sentCount: number
+  bookedCount: number
+  createdAt: string
+}
+export interface MarketingOverviewRequest {
+  from?: string | null
+  to?: string | null
+}
+export interface MarketingOverviewResponse {
+  from: string
+  to: string
+  currency: string
+  couponUses: number
+  couponDiscount: number
+  creditOrders: number
+  creditSpent: number
+  creditIssued: number
+  creditOutstanding: number
+  pointsEarned: number
+  pointsRedeemed: number
+  pointsOutstanding: number
+  pointsOutstandingValue: number
+  referralsJoined: number
+  referralsRewarded: number
+  referralRewardsPaid: number
+  remindersSent: number
+  remindersBooked: number
+  topCoupons: CouponResponse[]
+}
+
 // ── Marketplace/MarketplaceDtos.cs
 export interface PublishMarketplaceRequest {
   serviceItemId: string
@@ -5168,6 +5706,7 @@ export interface AdminOrderListRequest extends PaginatedRequest {
 }
 export interface AdminServiceItemListRequest extends PaginatedRequest {
   timedOut?: boolean | null
+  emergency?: boolean | null
   status?: ServiceItemStatus[] | null
   providerOrganizationId?: string | null
   executorId?: string | null
@@ -5283,6 +5822,7 @@ export interface OrderTimelineRowResponse {
   event: TimelineEventResponse
 }
 export interface ServiceItemAdminView {
+  emergency: EmergencyItemInfo | null
   id: string
   orderId: string
   orderNumber: string | null
@@ -5318,6 +5858,7 @@ export interface ServiceItemAdminView {
   finalAmount: number
   refundedAmount: number
   coveredAmount: number
+  promotionAmount: number
   subscriptionId: string | null
   commissionRate: number | null
   commissionAmount: number
@@ -5632,6 +6173,7 @@ export interface ProviderRejectRequest {
   note: string
 }
 export interface IncomingWorkItemResponse {
+  emergency: EmergencyItemInfo | null
   id: string
   returnedByTimeout: boolean
   fulfillmentChannel: FulfillmentChannel
@@ -5663,6 +6205,7 @@ export interface IncomingWorkItemResponse {
   createdAt: string
 }
 export interface ServiceItemProviderView {
+  emergency: EmergencyItemInfo | null
   id: string
   orderId: string
   orderNumber: string | null
@@ -5832,6 +6375,75 @@ export interface CrewCandidateResponse {
   maxConcurrentJobs: number
   isInCrew: boolean
   hasCapacity: boolean
+}
+
+// ── Orders/EmergencyDtos.cs
+export interface EmergencyItemInfo {
+  fee: number
+  etaMinutes: number | null
+  arriveBy: string | null
+  arrivedAt: string | null
+  isLate: boolean
+  feeReturnedAt: string | null
+}
+export interface EmergencyInfoResponse {
+  enabled: boolean
+  fee: number
+  currency: string
+  acceptMinutes: number
+  refundFeeWhenLate: boolean
+  lateGraceMinutes: number
+  services: ServiceCardResponse[]
+}
+export interface EmergencyQuoteRequest {
+  addressId: string
+}
+export interface EmergencyQuoteResponse {
+  available: boolean
+  reason: string | null
+  fee: number
+  currency: string
+  etaMinutes: number | null
+  distanceKm: number | null
+  acceptMinutes: number
+  refundFeeWhenLate: boolean
+  lateGraceMinutes: number
+}
+export interface EmergencyBoardRequest {
+  days: number
+}
+export interface EmergencyBoardResponse {
+  days: number
+  ordered: number
+  arrived: number
+  onTime: number
+  averageArrivalMinutes: number | null
+  feesCharged: number
+  feesReturned: number
+  cancelled: number
+  open: EmergencyBoardItem[]
+}
+export interface EmergencyBoardItem {
+  serviceItemId: string
+  parentOrderId: string
+  itemNumber: string | null
+  orderNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  status: ServiceItemStatus
+  city: string | null
+  district: string | null
+  customer: PersonLookupResponse | null
+  providerName: string | null
+  executor: PersonLookupResponse | null
+  checkedOutAt: string | null
+  etaMinutes: number | null
+  arriveBy: string | null
+  elapsedMinutes: number
+  isLate: boolean
+  hasTechnician: boolean
+  awaitingAccept: boolean
+  fee: number
 }
 
 // ── Orders/SharedOrderDtos.cs

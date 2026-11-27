@@ -1,3 +1,4 @@
+import { EmergencyBadge } from '@/components/EmergencyBadge'
 import { useQueryClient } from '@tanstack/react-query'
 import { CalendarClock, Clock, Cpu, Gavel, MapPin, Sparkles, TimerOff, UserPlus, UserX, XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -55,7 +56,7 @@ export function IncomingCard({
   const prefetch = () => canPrefetch() && void prefetchWorkItem(queryClient, item.id)
 
   return (
-    <Card className={cn('flex w-full flex-col', (declined || item.returnedByTimeout) && 'border-tone-danger/40')}>
+    <Card className={cn('flex w-full flex-col', (declined || item.returnedByTimeout || item.emergency) && 'border-tone-danger/40')}>
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -74,8 +75,9 @@ export function IncomingCard({
           </Badge>
         </div>
 
-        {(declined || item.returnedByTimeout || item.isMarketplace || item.executorAssignmentDelegated || item.isSubscriptionCovered) && (
+        {(declined || item.returnedByTimeout || item.isMarketplace || item.executorAssignmentDelegated || item.isSubscriptionCovered || item.emergency) && (
           <div className="flex flex-wrap gap-1.5">
+            <EmergencyBadge emergency={item.emergency} />
             {declined && (
               <Badge tone="danger">
                 <UserX className="size-3" aria-hidden /> {t('declinedTag')}

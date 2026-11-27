@@ -1,3 +1,4 @@
+import { EmergencyBadge } from '@/components/EmergencyBadge'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Gavel, ShieldAlert, Sparkles, TimerOff } from 'lucide-react'
@@ -89,6 +90,7 @@ export function WorkPage() {
         cell: ({ row: { original: r } }) => (
           <div className="min-w-0 max-w-[18rem]">
             <div className="flex items-center gap-1.5">
+              <EmergencyBadge emergency={r.emergency} compact />
               <span className="truncate font-medium">{pick(r.serviceNameAr, r.serviceNameEn)}</span>
               {r.hasDispute && (
                 <Tooltip content={t('icons.dispute')}>
