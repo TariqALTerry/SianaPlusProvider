@@ -1,3 +1,5 @@
+import { LiveBadge } from '@/components/LiveBadge'
+import { liveAware, useLive } from '@/api/live'
 import { useQuery } from '@tanstack/react-query'
 import { CalendarDays, Inbox, ListChecks, RefreshCw, Star, UserX } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
@@ -38,7 +40,9 @@ const blockTone: Record<Tone, string> = {
 export function BoardPage() {
   const { t } = useTranslation('board')
   const { lang } = useLang()
-  const interval = usePollingInterval(60_000)
+  const liveStatus = useLive((s) => s.status)
+  // While live, the hub says what changed: the poll is only a fallback.
+  const interval = usePollingInterval(liveAware(60_000, liveStatus))
   const [params, setParams] = useSearchParams()
   const branchId = useBranchParam()
   const query = useQuery({ ...boardQuery(branchId), refetchInterval: interval, refetchOnWindowFocus: true })
@@ -60,7 +64,12 @@ export function BoardPage() {
   return (
     <>
       <PageHeader
-        title={t('title')}
+        title={
+          <span className="flex items-center gap-2">
+            {t('title')}
+            <LiveBadge />
+          </span>
+        }
         description={t('description')}
         actions={
           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">

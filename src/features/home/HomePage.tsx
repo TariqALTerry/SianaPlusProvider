@@ -1,3 +1,4 @@
+import { liveAware, useLive } from '@/api/live'
 import { ScanBarcode } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, ArrowRight, CalendarDays, CheckCircle2, Inbox, ListChecks, RefreshCw, Star, Users } from 'lucide-react'
@@ -29,7 +30,9 @@ export function HomePage() {
   const { lang, pick, isRtl } = useLang()
   // A "counter only" shop gets no platform work: its home points at the counter (PROVIDER-BRANCHES phase 3 §7).
   const { org, counterOnly } = useProvider()
-  const interval = usePollingInterval(60_000)
+  const liveStatus = useLive((s) => s.status)
+  // While live, the hub says what changed: the poll is only a fallback.
+  const interval = usePollingInterval(liveAware(60_000, liveStatus))
   const Forward = isRtl ? ArrowLeft : ArrowRight
 
   const dashboard = useQuery({

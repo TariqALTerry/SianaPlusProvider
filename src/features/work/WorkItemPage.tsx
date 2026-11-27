@@ -1,3 +1,4 @@
+import { liveAware, useLive } from '@/api/live'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Gavel, LifeBuoy, MessagesSquare, RefreshCw, ShieldAlert, Sparkles } from 'lucide-react'
 import { useState } from 'react'
@@ -65,7 +66,9 @@ export function WorkItemPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [params, setParams] = useSearchParams()
-  const interval = usePollingInterval(30_000)
+  const liveStatus = useLive((s) => s.status)
+  // While live, the hub says what changed: the poll is only a fallback.
+  const interval = usePollingInterval(liveAware(30_000, liveStatus))
   const tab: Tab = (TABS as readonly string[]).includes(params.get('tab') ?? '') ? (params.get('tab') as Tab) : 'timeline'
 
   const query = useQuery({

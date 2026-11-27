@@ -326,3 +326,10 @@ Contract: `../Siana/docs/EMERGENCY-PROVIDER-PLATFORM-PROMPT.md`. `EmergencyBadge
 arrival (and «متأخر عن الوعد») from `emergency` on the incoming card (which also gets the red edge), the work item header, and a siren
 in the work list row. The platform places emergencies with the nearest free technician; the provider sees them already assigned.
 Types regenerated: the marketing and company-account enums now have labels too (the enum test asks for every backend enum).
+
+## Live updates (`src/api/live.ts`, 2026-11-27)
+
+Contract: `../Siana/docs/LIVE-UPDATES-PROMPT.md`. `LiveBridge` (in `AppShell`) keeps one SignalR connection to `/hubs/live`; the hub puts
+the owner, supervisors and front desk in their organization's group. `serviceItem` invalidates incoming, work, board, workshop, counter and
+dashboard queries; `notification` the bell; `location` keeps the latest position per technician. The branch board, work list, work item
+and home poll `LIVE_POLL_FACTOR` times slower while live; the board shows `LiveBadge`.

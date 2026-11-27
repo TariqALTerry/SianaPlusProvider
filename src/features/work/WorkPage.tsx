@@ -1,3 +1,4 @@
+import { liveAware, useLive } from '@/api/live'
 import { EmergencyBadge } from '@/components/EmergencyBadge'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -49,7 +50,9 @@ export function WorkPage() {
   const { lang, pick } = useLang()
   const queryClient = useQueryClient()
   const { state, set, reset, active } = useUrlState(schema)
-  const interval = usePollingInterval(60_000)
+  const liveStatus = useLive((s) => s.status)
+  // While live, the hub says what changed: the poll is only a fallback.
+  const interval = usePollingInterval(liveAware(60_000, liveStatus))
 
   const branchId = useBranchParam()
   const filters: WorkListParams = {

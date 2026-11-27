@@ -353,5 +353,12 @@
     "viewAll": "View all notifications",
     "unreadOnly": "Unread only",
     "open": "Open reference"
+  },
+  "live": {
+    "on": "Live",
+    "off": "Periodic refresh",
+    "reconnecting": "Reconnecting…",
+    "onHint": "Changes arrive as they happen",
+    "offHint": "No live connection; the page refreshes periodically"
   }
 }

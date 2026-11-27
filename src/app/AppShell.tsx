@@ -1,3 +1,4 @@
+import { LiveBridge } from './LiveBridge'
 import { Suspense, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollRestoration, useLocation } from 'react-router'
@@ -59,6 +60,7 @@ export function AppShell() {
         <StatusBanner />
         <EnablePrompt />
         <WebPushBridge />
+        <LiveBridge />
         <RateLimitBanner />
         <main id="main" className="flex-1">
           <div className="mx-auto w-full max-w-[1440px] px-3 py-4 md:px-6 md:py-6">
