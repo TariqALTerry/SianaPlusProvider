@@ -170,6 +170,8 @@ export const RefundStatusValues = ['Requested', 'Approved', 'Rejected', 'Process
 export type RefundStatus = (typeof RefundStatusValues)[number]
 export const SettlementPartyTypeValues = ['Provider', 'Executor'] as const
 export type SettlementPartyType = (typeof SettlementPartyTypeValues)[number]
+export const PayoutBatchStatusValues = ['Open', 'Paid', 'Cancelled'] as const
+export type PayoutBatchStatus = (typeof PayoutBatchStatusValues)[number]
 export const SettlementStatusValues = ['Pending', 'Approved', 'Paid', 'OnHold'] as const
 export type SettlementStatus = (typeof SettlementStatusValues)[number]
 export const WarrantyStatusValues = ['Active', 'Expired', 'Claimed', 'Void'] as const
@@ -1732,6 +1734,33 @@ export interface UpdatePolicyRequest {
   textEn?: string | null
 }
 
+// ── Common/SiteDtos.cs
+export interface SiteOverviewResponse {
+  enabled: boolean
+  baseUrl: string
+  sitemapUrl: string
+  hasAppStoreUrl: boolean
+  hasPlayStoreUrl: boolean
+  hasWhatsApp: boolean
+  pagesCount: number
+  servicesCount: number
+  cities: SiteCityResponse[]
+  servicesWithoutDescription: SiteServiceGapResponse[]
+}
+export interface SiteCityResponse {
+  slug: string
+  nameAr: string
+  nameEn: string
+  covered: boolean
+  servicesCount: number
+  url: string
+}
+export interface SiteServiceGapResponse {
+  id: string
+  code: string
+  nameAr: string
+}
+
 // ── Common/SystemPolicyDtos.cs
 export interface SystemPoliciesResponse {
   assignment: AssignmentPolicyValues
@@ -1815,6 +1844,7 @@ export interface FinancePolicyValues {
   walletHoldDays: number
   minWithdrawalAmount: number
   currency: string
+  vatPercent: number
 }
 export interface QualityPolicyValues {
   autoConfirmHours: number
@@ -4670,6 +4700,81 @@ export interface WorkshopDevice {
 export interface SetExecutorRolesRequest {
   canRepair: boolean
   canDeliver: boolean
+}
+
+// ── Finance/AccountingDtos.cs
+export interface AccountingPeriodRequest {
+  from?: string | null
+  to?: string | null
+  format?: string | null
+}
+export interface VatSummaryResponse {
+  from: string
+  to: string
+  vatPercent: number
+  customerPayments: number
+  refunds: number
+  netCollected: number
+  vatInCollected: number
+  commission: number
+  vatOnCommission: number
+  promotions: number
+  subscriptionCoverage: number
+  months: VatMonthResponse[]
+}
+export interface VatMonthResponse {
+  month: string
+  netCollected: number
+  commission: number
+  vatOnCommission: number
+}
+export interface PayoutCandidateResponse {
+  settlementId: string
+  settlementNumber: string
+  providerOrganizationId: string
+  providerName: string
+  amount: number
+  periodStart: string
+  periodEnd: string
+  bankName: string | null
+  iban: string | null
+  accountHolderName: string | null
+  canPay: boolean
+  problem: string | null
+}
+export interface CreatePayoutBatchRequest {
+  settlementIds: string[]
+  notes?: string | null
+}
+export interface MarkPayoutBatchPaidRequest {
+  bankReference: string
+}
+export interface PayoutBatchResponse {
+  id: string
+  number: string
+  status: PayoutBatchStatus
+  totalAmount: number
+  itemsCount: number
+  notes: string | null
+  bankReference: string | null
+  createdByName: string | null
+  createdAt: string
+  paidAt: string | null
+  cancelledAt: string | null
+}
+export interface PayoutBatchDetailResponse extends PayoutBatchResponse {
+  items: PayoutBatchItemResponse[]
+}
+export interface PayoutBatchItemResponse {
+  settlementId: string
+  settlementNumber: string
+  settlementStatus: SettlementStatus
+  providerOrganizationId: string
+  providerName: string
+  amount: number
+  bankName: string
+  iban: string
+  accountHolderName: string
 }
 
 // ── Finance/PaymentDtos.cs

@@ -972,6 +972,12 @@ export const ReferralStatus: EnumMap<T.ReferralStatus> = {
   Rewarded: e('مُكافأة', 'Rewarded', 'success'),
 }
 
+export const PayoutBatchStatus: EnumMap<T.PayoutBatchStatus> = {
+  Open: e('بانتظار البنك', 'Waiting for the bank', 'waiting'),
+  Paid: e('مدفوعة', 'Paid', 'success'),
+  Cancelled: e('ملغاة', 'Cancelled', 'muted'),
+}
+
 export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
@@ -994,6 +1000,7 @@ export const enumMaps = {
   ServiceCallSide, ServiceCallOutcome,
   StaffAssistantAudience, StaffAssistantConversationStatus, StaffAssistantMessageRole, StaffToolKind, StaffAssistantActionStatus,
   CorporateAccountStatus, CorporateBillingMode, CorporateMemberRole, CorporateApprovalStatus, CorporateInvoiceStatus, CouponDiscountType, CouponRedemptionStatus, CustomerCreditKind, LoyaltyEntryKind, LoyaltyTier, MaintenanceReminderStatus, ReferralStatus,
+  PayoutBatchStatus,
 } as const
 
 export type EnumName = keyof typeof enumMaps
