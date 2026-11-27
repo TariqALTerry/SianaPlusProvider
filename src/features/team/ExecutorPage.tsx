@@ -31,6 +31,7 @@ import { teamApi, teamKeys } from './api'
 import { RoleBadges } from './components/Bits'
 import { RolesCard } from './components/RolesCard'
 import { HomeBranchCard } from './components/HomeBranchCard'
+import { RouteCard } from './components/RouteCard'
 import { defaultWeek, invalidDays, toEntries, toRows, type DayRow } from './schedule'
 import './i18n'
 
@@ -79,6 +80,7 @@ export function ExecutorPage() {
         {e && <RolesCard executor={e} />}
         {e && <HomeBranchCard executor={e} />}
         <PerformanceCards executorId={executorId} />
+        <RouteCard executorId={executorId} />
         <ScheduleSection executorId={executorId} query={schedule} />
       </div>
     </>

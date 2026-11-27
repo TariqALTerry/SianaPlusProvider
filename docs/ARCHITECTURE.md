@@ -333,3 +333,10 @@ Contract: `../Siana/docs/LIVE-UPDATES-PROMPT.md`. `LiveBridge` (in `AppShell`) k
 the owner, supervisors and front desk in their organization's group. `serviceItem` invalidates incoming, work, board, workshop, counter and
 dashboard queries; `notification` the bell; `location` keeps the latest position per technician. The branch board, work list, work item
 and home poll `LIVE_POLL_FACTOR` times slower while live; the board shows `LiveBadge`.
+
+## A technician's route (`src/features/team/components/RouteCard.tsx`, 2026-11-27)
+
+Contract: `../Siana/docs/SCHEDULING-PROVIDER-PLATFORM-PROMPT.md`. On `/team/:executorId`, «مسار اليوم» with a day picker (Riyadh
+today): where the day starts, kilometres and driving time, the kilometres saved against the booked order, visits at risk of being late
+and without a pin; numbered pins joined in order on the map (`routePins`, `routeLegs`; at-risk pins red) and the visit list linking to
+`/work/:id`. Read only: the server only suggests the order.

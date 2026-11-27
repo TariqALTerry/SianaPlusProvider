@@ -1827,6 +1827,9 @@ export interface PricingPolicyValues {
   quotationAnswerHours: number
   maxPricedQuantity: number
   defaultSupervisorMaxDiscountPercent: number
+  peakEnabled: boolean
+  peakPercent: number
+  peakLoadPercent: number
 }
 export interface CancellationPolicyValues {
   refundWindowDays: number
@@ -4094,6 +4097,7 @@ export interface OrderDetailResponse {
 }
 export interface ServiceItemCustomerView {
   emergency: EmergencyItemInfo | null
+  peakSurcharge: number
   id: string
   fulfillmentChannel: FulfillmentChannel
   isManagedByShop: boolean
@@ -4219,6 +4223,8 @@ export interface ScheduleSlotResponse {
   end: string
   isAvailable: boolean
   reason: string | null
+  isPeak: boolean
+  peakPercent: number
 }
 
 // ── Customers/CustomerServiceHistoryDtos.cs
@@ -7919,6 +7925,80 @@ export interface AiHealth {
   medianLatencyMs: number | null
   lastFailureAt: string | null
   lastFailure: string | null
+}
+
+// ── Scheduling/SchedulingDtos.cs
+export interface RouteRequest {
+  date?: string | null
+}
+export interface RouteResponse {
+  date: string
+  executorId: string
+  executorName: string | null
+  startSource: string
+  startLatitude: number | null
+  startLongitude: number | null
+  stops: RouteStopResponse[]
+  totalKm: number
+  totalDriveMinutes: number
+  bookedOrderKm: number
+  savedKm: number
+  withoutLocation: number
+}
+export interface RouteStopResponse {
+  order: number
+  serviceItemId: string
+  itemNumber: string | null
+  serviceNameAr: string
+  serviceNameEn: string
+  status: ServiceItemStatus
+  district: string | null
+  city: string | null
+  latitude: number | null
+  longitude: number | null
+  windowStart: string | null
+  windowEnd: string | null
+  driveKm: number | null
+  driveMinutes: number | null
+  estimatedArrival: string | null
+  durationMinutes: number
+  lateRisk: boolean
+}
+export interface DemandForecastRequest {
+  days: number
+  city?: string | null
+  categoryId?: string | null
+}
+export interface DemandForecastResponse {
+  from: string
+  to: string
+  historyWeeks: number
+  trend: number
+  history: DemandDayResponse[]
+  forecast: DemandDayResponse[]
+  heatmap: DemandCellResponse[]
+  topCategories: DemandShareResponse[]
+  topDistricts: DemandShareResponse[]
+  activeTechnicians: number
+  dailyCapacity: number
+  peakLoadPercent: number
+}
+export interface DemandDayResponse {
+  date: string
+  count: number
+  low: number | null
+  high: number | null
+}
+export interface DemandCellResponse {
+  weekday: number
+  hour: number
+  count: number
+}
+export interface DemandShareResponse {
+  nameAr: string
+  nameEn: string
+  count: number
+  percent: number
 }
 
 // ── Staff/StaffDtos.cs

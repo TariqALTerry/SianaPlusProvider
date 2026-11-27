@@ -17,8 +17,7 @@ import type {
   ProviderCapabilitiesResponse,
   SetExecutorRolesRequest,
   TeamMemberResponse,
-  UpdateExecutorRequest,
-} from '@/api/types'
+  UpdateExecutorRequest, RouteResponse } from '@/api/types'
 
 const base = '/api/provider/team'
 
@@ -33,6 +32,8 @@ export const teamApi = {
   executor: (id: string, signal?: AbortSignal) => http.get<ExecutorResponse>(`${base}/executors/${id}`, undefined, signal),
   // Working hours and time off (PHASE2 §5).
   schedule: (id: string, signal?: AbortSignal) => http.get<ExecutorScheduleResponse>(`${base}/executors/${id}/schedule`, undefined, signal),
+  /** The day in the shortest order (SCHEDULING-PROVIDER-PLATFORM-PROMPT). Read only. */
+  route: (id: string, date: string, signal?: AbortSignal) => http.get<RouteResponse>(`${base}/executors/${id}/route`, { date }, signal),
   saveWorkingHours: (id: string, days: WorkingHoursEntry[]) => http.put<ExecutorScheduleResponse>(`${base}/executors/${id}/schedule/working-hours`, { days }),
   addTimeOff: (id: string, body: CreateTimeOffRequest) => http.post<ExecutorScheduleResponse>(`${base}/executors/${id}/schedule/time-off`, body),
   removeTimeOff: (id: string, timeOffId: string) => http.delete<ExecutorScheduleResponse>(`${base}/executors/${id}/schedule/time-off/${timeOffId}`),
@@ -68,6 +69,7 @@ export const teamKeys = {
   executors: (params: ExecutorListParams) => [...qk.team, 'executors', params] as const,
   executor: (id: string) => [...qk.team, 'executor', id] as const,
   schedule: (id: string) => [...qk.team, 'schedule', id] as const,
+  route: (id: string, date: string) => [...qk.team, 'route', id, date] as const,
   /**
    * Under `qk.organization` so every organization write (capabilities saved on ملف المنشأة)
    * refreshes the skill picker too. The extra segment keeps it apart from the organization
