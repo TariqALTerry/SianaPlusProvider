@@ -26,7 +26,7 @@ import { enumLabel } from '@/i18n/enums'
 import { cn } from '@/lib/utils'
 import { useExecutors, useMembers, type ExecutorListParams } from '../api'
 import { TEAM_URL_SCHEMA, executorSearchTerm, ownerUserIds } from '../utils'
-import { ActiveBadge, LoadBar, OwnerBadge, RoleBadges, SkillChips } from './Bits'
+import { ActiveBadge, LoadBar, OwnerBadge, LanguageBadge, RoleBadges, SkillChips } from './Bits'
 import { AvailabilityDialog } from './AvailabilityDialog'
 import { ExecutorDialog } from './ExecutorDialog'
 import { SkillsDialog } from './SkillsDialog'
@@ -75,6 +75,7 @@ export function TechniciansTab() {
               <span className="font-medium">{e.fullName}</span>
               {owners.has(e.userId) && <OwnerBadge />}
               <RoleBadges canRepair={e.canRepair} canDeliver={e.canDeliver} />
+              <LanguageBadge language={e.language} />
               {offNow.has(e.id) && <Badge tone="muted">{t('schedule.offNow')}</Badge>}
             </div>
           )

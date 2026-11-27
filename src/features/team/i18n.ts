@@ -148,6 +148,14 @@ registerTranslations('team', {
       activated: 'تم التفعيل',
       deactivated: 'تم التعطيل',
     },
+    language: {
+      hint: 'لغة التطبيق عند الفني. رسائل الخدمة تصله مترجمة.',
+      en: 'إنجليزي',
+      ur: 'أردو',
+      hi: 'هندي',
+      bn: 'بنغالي',
+      fil: 'فلبيني',
+    },
     route: {
       title: 'مسار اليوم',
       hint: 'زيارات اليوم بأقصر ترتيب: النوافذ بترتيبها، وداخل كل نافذة الأقرب فالأقرب. تقديري ولا يغيّر شيئًا.',
@@ -356,6 +364,14 @@ registerTranslations('team', {
       deactivate: 'Disable',
       activated: 'Enabled',
       deactivated: 'Disabled',
+    },
+    language: {
+      hint: 'The technician’s app language. Service messages reach them translated.',
+      en: 'English',
+      ur: 'Urdu',
+      hi: 'Hindi',
+      bn: 'Bengali',
+      fil: 'Filipino',
     },
     route: {
       title: 'Today’s route',

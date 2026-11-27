@@ -36,6 +36,7 @@ const executor: ExecutorResponse = {
   username: '+966501234567',
   phone: '+966501234567',
   email: null,
+  language: 'ar',
   specialization: 'تكييف',
   availability: 'Available',
   homeBranchId: null,

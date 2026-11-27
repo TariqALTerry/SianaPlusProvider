@@ -1786,6 +1786,7 @@ export interface SystemPoliciesResponse {
   counter: CounterPolicyValues
   marketing: MarketingPolicyValues
   emergency: EmergencyPolicyValues
+  languages: LanguagePolicyValues
   accounts: AccountPolicyValues
   notifications: NotificationPolicyValues
 }
@@ -1941,6 +1942,22 @@ export interface NotificationPolicyValues {
   pushMaxAgeHours: number
   pushMaxAttempts: number
   staleTokenDays: number
+}
+export interface LanguagePolicyValues {
+  appLanguages: string[]
+  translationEnabled: boolean
+  translationDailyLimit: number
+}
+
+// ── Common/TranslationDtos.cs
+export interface TranslateRequest {
+  texts: string[]
+  target?: string | null
+}
+export interface TranslateResponse {
+  target: string
+  translations: string[]
+  limited: boolean
 }
 
 // ── Community/CommunityAdminDtos.cs
@@ -5877,6 +5894,8 @@ export interface ServiceMessageResponse {
   senderName: string
   isMine: boolean
   text: string | null
+  translation: string | null
+  translationLanguage: string | null
   imageUrl: string | null
   createdAt: string
 }
@@ -7564,6 +7583,7 @@ export interface ExecutorResponse {
   username: string
   phone: string | null
   email: string | null
+  language: string
   specialization: string | null
   availability: ExecutorAvailability
   homeBranchId: string | null

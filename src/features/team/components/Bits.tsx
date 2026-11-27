@@ -225,3 +225,14 @@ export function CreatedDialog({
     </Dialog>
   )
 }
+
+/** The app language a technician reads (LANGUAGES-MOBILE-PROMPT): shown only when it is not Arabic, since messages to them are translated. */
+export function LanguageBadge({ language }: { language: string | null | undefined }) {
+  const { t } = useTranslation('team')
+  if (!language || language === 'ar') return null
+  return (
+    <Badge tone="info" className="text-[0.6875rem]" title={t('language.hint')}>
+      🌐 {t(`language.${language}`, { defaultValue: language })}
+    </Badge>
+  )
+}

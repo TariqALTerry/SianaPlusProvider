@@ -28,7 +28,7 @@ import { enumLabel } from '@/i18n/enums'
 import { formatDuration, formatNumber, formatPercent, riyadhDateToIso, riyadhInputToIso } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { teamApi, teamKeys } from './api'
-import { RoleBadges } from './components/Bits'
+import { LanguageBadge, RoleBadges } from './components/Bits'
 import { RolesCard } from './components/RolesCard'
 import { HomeBranchCard } from './components/HomeBranchCard'
 import { RouteCard } from './components/RouteCard'
@@ -67,6 +67,7 @@ export function ExecutorPage() {
               {e.fullName}
               <StatusBadge enum="ExecutorAvailability" value={e.availability} />
               <RoleBadges canRepair={e.canRepair} canDeliver={e.canDeliver} />
+              <LanguageBadge language={e.language} />
               {schedule.data?.isOffNow && <Badge tone="muted">{t('schedule.offNow')}</Badge>}
             </span>
           ) : (
