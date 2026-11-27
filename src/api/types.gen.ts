@@ -184,11 +184,21 @@ export const WarrantyLineKindValues = ['Part', 'Labor'] as const
 export type WarrantyLineKind = (typeof WarrantyLineKindValues)[number]
 export const SupplierReturnStatusValues = ['Draft', 'Sent', 'Credited', 'Rejected'] as const
 export type SupplierReturnStatus = (typeof SupplierReturnStatusValues)[number]
+export const JourneyTriggerValues = ['Inactive', 'AbandonedCart', 'AfterFirstService', 'LowRating', 'SignedUpNoOrder', 'NpsDetractor', 'ChurnRisk'] as const
+export type JourneyTrigger = (typeof JourneyTriggerValues)[number]
+export const JourneyStepKindValues = ['Wait', 'Notify', 'GiveCredit', 'AlertTeam'] as const
+export type JourneyStepKind = (typeof JourneyStepKindValues)[number]
+export const JourneyLinkValues = ['Home', 'Cart', 'Offers', 'Wallet', 'Orders'] as const
+export type JourneyLink = (typeof JourneyLinkValues)[number]
+export const JourneyEnrollmentStatusValues = ['Active', 'Completed', 'Ordered', 'Control', 'Stopped'] as const
+export type JourneyEnrollmentStatus = (typeof JourneyEnrollmentStatusValues)[number]
+export const ChurnBandValues = ['Low', 'Medium', 'High'] as const
+export type ChurnBand = (typeof ChurnBandValues)[number]
 export const CouponDiscountTypeValues = ['Percent', 'Fixed'] as const
 export type CouponDiscountType = (typeof CouponDiscountTypeValues)[number]
 export const CouponRedemptionStatusValues = ['Applied', 'Released'] as const
 export type CouponRedemptionStatus = (typeof CouponRedemptionStatusValues)[number]
-export const CustomerCreditKindValues = ['ReferralReward', 'ReferralWelcome', 'LoyaltyRedemption', 'AdminGrant', 'AdminDeduction', 'OrderUse', 'OrderReturn', 'EmergencyLate'] as const
+export const CustomerCreditKindValues = ['ReferralReward', 'ReferralWelcome', 'LoyaltyRedemption', 'AdminGrant', 'AdminDeduction', 'OrderUse', 'OrderReturn', 'EmergencyLate', 'JourneyReward'] as const
 export type CustomerCreditKind = (typeof CustomerCreditKindValues)[number]
 export const LoyaltyEntryKindValues = ['Earned', 'Redeemed', 'Reversed'] as const
 export type LoyaltyEntryKind = (typeof LoyaltyEntryKindValues)[number]
@@ -1887,6 +1897,10 @@ export interface MarketingPolicyValues {
   loyaltyGoldPoints: number
   maxCreditPercent: number
   maintenanceRemindersEnabled: boolean
+  journeysEnabled: boolean
+  journeyWeeklyMessageCap: number
+  npsEnabled: boolean
+  npsCooldownDays: number
 }
 export interface EmergencyPolicyValues {
   enabled: boolean
@@ -5342,6 +5356,151 @@ export interface JobPartLine {
   used: number
   lastBatchRef: string | null
   lastUsedAt: string | null
+}
+
+// ── Marketing/JourneyDtos.cs
+export interface JourneyStepDto {
+  kind: JourneyStepKind
+  waitHours: number | null
+  titleAr: string | null
+  titleEn: string | null
+  bodyAr: string | null
+  bodyEn: string | null
+  link: JourneyLink | null
+  creditAmount: number | null
+  note: string | null
+}
+export interface SaveJourneyRequest {
+  name: string
+  description?: string | null
+  trigger: JourneyTrigger
+  triggerValue: number
+  city?: string | null
+  controlPercent: number
+  reentryDays: number
+  attributionDays: number
+  exitOnOrder: boolean
+  steps: JourneyStepDto[]
+}
+export interface JourneyStatsResponse {
+  entered: number
+  inJourney: number
+  control: number
+  converted: number
+  controlConverted: number
+  conversionRate: number | null
+  controlConversionRate: number | null
+  upliftPoints: number | null
+  messagesSent: number
+  messagesSkipped: number
+  creditGiven: number
+  revenue: number
+}
+export interface JourneyResponse {
+  id: string
+  name: string
+  description: string | null
+  trigger: JourneyTrigger
+  triggerValue: number
+  city: string | null
+  controlPercent: number
+  reentryDays: number
+  attributionDays: number
+  exitOnOrder: boolean
+  isActive: boolean
+  createdAt: string
+  updatedAt: string | null
+  steps: JourneyStepDto[]
+  stats: JourneyStatsResponse
+}
+export interface JourneyTemplateResponse {
+  key: string
+  nameAr: string
+  nameEn: string
+  descriptionAr: string
+  descriptionEn: string
+  journey: SaveJourneyRequest
+}
+export interface JourneyEnrollmentListRequest extends PaginatedRequest {
+  status?: JourneyEnrollmentStatus | null
+}
+export interface JourneyEnrollmentResponse {
+  id: string
+  customerId: string
+  customerName: string
+  customerPhone: string | null
+  isControl: boolean
+  status: JourneyEnrollmentStatus
+  enteredAt: string
+  nextStep: number
+  nextRunAt: string | null
+  endedAt: string | null
+  messagesSent: number
+  creditGiven: number
+  orderedAt: string | null
+}
+export interface NpsPendingResponse {
+  serviceItemId: string
+  parentOrderId: string
+  serviceNameAr: string
+  serviceNameEn: string
+  completedAt: string
+}
+export interface SubmitNpsRequest {
+  serviceItemId?: string | null
+  score: number
+  comment?: string | null
+}
+export interface NpsPeriodRequest {
+  from?: string | null
+  to?: string | null
+}
+export interface NpsSummaryResponse {
+  from: string
+  to: string
+  responses: number
+  promoters: number
+  passives: number
+  detractors: number
+  nps: number | null
+  weeks: NpsWeekResponse[]
+  comments: NpsCommentResponse[]
+}
+export interface NpsWeekResponse {
+  weekStart: string
+  responses: number
+  nps: number | null
+}
+export interface NpsCommentResponse {
+  customerId: string
+  customerName: string
+  score: number
+  comment: string
+  serviceNameAr: string | null
+  serviceNameEn: string | null
+  createdAt: string
+}
+export interface ChurnListRequest extends PaginatedRequest {
+  band?: ChurnBand | null
+}
+export interface ChurnOverviewResponse {
+  high: number
+  medium: number
+  low: number
+  customers: PaginatedResponse<ChurnCustomerResponse>
+}
+export interface ChurnCustomerResponse {
+  customerId: string
+  customerName: string
+  customerPhone: string | null
+  score: number
+  band: ChurnBand
+  orders: number
+  lastOrderAt: string
+  daysSinceLastOrder: number
+  usualGapDays: number
+  spent: number
+  reasons: string[]
 }
 
 // ── Marketing/MarketingDtos.cs

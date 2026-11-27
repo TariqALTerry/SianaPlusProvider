@@ -945,6 +945,7 @@ export const CustomerCreditKind: EnumMap<T.CustomerCreditKind> = {
   OrderUse: e('دفع في طلب', 'Spent on an order', 'muted'),
   OrderReturn: e('أُعيد من خدمة ملغاة', 'Returned from a cancelled service', 'info'),
   EmergencyLate: e('رد رسوم الطوارئ للتأخير', 'Emergency fee back (late)', 'success'),
+  JourneyReward: e('هدية من رحلة عميل', 'Journey gift', 'success'),
 }
 
 export const LoyaltyEntryKind: EnumMap<T.LoyaltyEntryKind> = {
@@ -978,6 +979,45 @@ export const PayoutBatchStatus: EnumMap<T.PayoutBatchStatus> = {
   Cancelled: e('ملغاة', 'Cancelled', 'muted'),
 }
 
+export const JourneyTrigger: EnumMap<T.JourneyTrigger> = {
+  Inactive: e('غاب عن الطلب', 'Stopped ordering', 'attention'),
+  AbandonedCart: e('ترك السلة', 'Left the cart', 'waiting'),
+  AfterFirstService: e('بعد أول خدمة', 'After the first service', 'info'),
+  LowRating: e('تقييم منخفض', 'Low rating', 'danger'),
+  SignedUpNoOrder: e('سجّل ولم يطلب', 'Signed up, no order', 'info'),
+  NpsDetractor: e('غير راضٍ', 'Detractor', 'danger'),
+  ChurnRisk: e('معرّض للمغادرة', 'At risk of leaving', 'attention'),
+}
+
+export const JourneyStepKind: EnumMap<T.JourneyStepKind> = {
+  Wait: e('انتظار', 'Wait', 'muted'),
+  Notify: e('رسالة', 'Message', 'info'),
+  GiveCredit: e('رصيد هدية', 'Gift credit', 'success'),
+  AlertTeam: e('تنبيه الفريق', 'Alert the team', 'attention'),
+}
+
+export const JourneyLink: EnumMap<T.JourneyLink> = {
+  Home: e('الرئيسية', 'Home', 'neutral'),
+  Cart: e('السلة', 'Cart', 'neutral'),
+  Offers: e('العروض', 'Offers', 'neutral'),
+  Wallet: e('الرصيد', 'Credit', 'neutral'),
+  Orders: e('الطلبات', 'Orders', 'neutral'),
+}
+
+export const JourneyEnrollmentStatus: EnumMap<T.JourneyEnrollmentStatus> = {
+  Active: e('في الرحلة', 'In the journey', 'info'),
+  Completed: e('أكملها', 'Completed', 'muted'),
+  Ordered: e('طلب وخرج', 'Ordered', 'success'),
+  Control: e('مجموعة ضابطة', 'Control group', 'neutral'),
+  Stopped: e('أُوقفت', 'Stopped', 'muted'),
+}
+
+export const ChurnBand: EnumMap<T.ChurnBand> = {
+  Low: e('منخفض', 'Low', 'success'),
+  Medium: e('متوسط', 'Medium', 'attention'),
+  High: e('مرتفع', 'High', 'danger'),
+}
+
 export const enumMaps = {
   ServiceItemStatus, ParentOrderStatus, PaymentStatus, PaymentMethod, OrderSource,
   ProviderVerificationStatus, ProviderBusinessModel, ProviderType, ProviderDocumentType,
@@ -1001,6 +1041,7 @@ export const enumMaps = {
   StaffAssistantAudience, StaffAssistantConversationStatus, StaffAssistantMessageRole, StaffToolKind, StaffAssistantActionStatus,
   CorporateAccountStatus, CorporateBillingMode, CorporateMemberRole, CorporateApprovalStatus, CorporateInvoiceStatus, CouponDiscountType, CouponRedemptionStatus, CustomerCreditKind, LoyaltyEntryKind, LoyaltyTier, MaintenanceReminderStatus, ReferralStatus,
   PayoutBatchStatus,
+  JourneyTrigger, JourneyStepKind, JourneyLink, JourneyEnrollmentStatus, ChurnBand,
 } as const
 
 export type EnumName = keyof typeof enumMaps
